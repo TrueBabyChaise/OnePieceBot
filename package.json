@@ -1,0 +1,13 @@
+{
+    "name": "faucheuse",
+    "version": "1",
+    "description": "description",
+    "main": "main.js",
+    "author": {
+        "name": "Askou"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "discord.js": "^12.5.3"
+    }
+}
