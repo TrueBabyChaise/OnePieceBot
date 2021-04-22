@@ -1,13 +1,18 @@
 {
-    "name": "faucheuse",
-    "version": "1",
-    "description": "description",
-    "main": "main.js",
-    "author": {
-        "name": "Askou"
-    },
-    "license": "MIT",
-    "dependencies": {
-        "discord.js": "^12.5.3"
-    }
+  "name": "Faucheuse",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/bot.js",
+    "start": "node ./src/bot.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "dotenv": "^8.2.0"
+  }
 }
