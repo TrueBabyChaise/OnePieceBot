@@ -27,9 +27,9 @@ module.exports = class DiceRandomCommand extends BaseCommand {
             printHelp(message)
             return;
         }
-    var tmp = ""
-    var max = args.length > 0 ? args[0] : 6;
-    var count = args.length > 1 ? args[1] : 1;
+    let tmp = ""
+    let max = args.length > 0 ? args[0] : 6;
+    let count = args.length > 1 ? args[1] : 1;
     for (let i = 0; i < count; i++) {
             tmp += getRndInteger(1, max).toString();
             tmp += i == count ? "" : " ";
