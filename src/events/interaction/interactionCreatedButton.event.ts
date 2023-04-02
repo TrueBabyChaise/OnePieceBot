@@ -1,4 +1,4 @@
-import { BaseSlashCommand, BaseEvent, BaseClient } from "@src/baseClass";
+import { BaseInteraction, BaseEvent, BaseClient } from "@src/structures";
 import { Base, Events, Interaction } from "discord.js"
 
 /**
@@ -19,11 +19,11 @@ export class InteractionCreatedEvent extends BaseEvent {
 	 * @override
 	 */
 	async execute(client: BaseClient, interaction: Interaction): Promise<void> {
-		if (!interaction.isCommand()) return;
+		if (!interaction.isButton()) return;
 		for (const module of client.getModules().values()) {
 			if (module.getInteractions().size == 0) continue;
-			if (!module.getInteractions().has(interaction.commandName)) continue;
-			const command: BaseSlashCommand = module.getInteractions().get(interaction.commandName)!;
+			if (!module.getInteractions().has(interaction.customId)) continue;
+			const command: BaseInteraction = module.getInteractions().get(interaction.customId)!;
 			if (!command) continue;
 			try {
 				await command.execute(client, interaction);

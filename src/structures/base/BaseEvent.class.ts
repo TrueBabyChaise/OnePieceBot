@@ -1,5 +1,5 @@
 import { Interaction } from "discord.js";
-import { BaseClient } from "@src/baseClass";
+import { BaseClient } from "@src/structures";
 
 /**
  * @description Base class for events

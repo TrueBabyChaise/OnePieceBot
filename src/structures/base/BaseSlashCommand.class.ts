@@ -1,11 +1,11 @@
 import { Interaction, SlashCommandBuilder } from "discord.js";
-import { BaseClient } from "@src/baseClass";
+import { BaseClient } from "@src/structures";
 
 /**
  * @description Base class for slash commands
  * @category BaseClass
  */
-export abstract class BaseSlashCommand  {
+export abstract class BaseInteraction  {
 	private name: string;
 	private description: string;
 	private options: any;

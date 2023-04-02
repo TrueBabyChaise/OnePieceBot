@@ -1,8 +1,5 @@
-import { BaseCommand, BaseSlashCommand, BaseClient } from '@src/baseClass';
-import { Base, Routes } from 'discord.js';
-import { SlashCommandBuilder } from 'discord.js';
-import fs from 'fs';
-
+import { BaseCommand, BaseInteraction, BaseClient } from '@src/structures';
+import { Routes } from 'discord.js';
 
 /**
  * @description Base class for modules
@@ -10,7 +7,7 @@ import fs from 'fs';
  */
 export abstract class BaseModule {
 	private name: string;
-	private interactions: Map<string, BaseSlashCommand> = new Map();
+	private interactions: Map<string, BaseInteraction> = new Map();
 	private aliases: Map<string, BaseCommand> = new Map();
 	private enabled: boolean;
 	// May need to change this to a Collection<string, BaseCommand> if we want to add more properties to the commands same goes the aliases
@@ -29,12 +26,12 @@ export abstract class BaseModule {
 
 	/**
 	 * @description Return interactions of the module
-	 * @returns {Map<string, BaseSlashCommand>}
+	 * @returns {Map<string, BaseInteraction>}
 	 * @example
 	 * // returns Map(1) { 'ping' => [Function: Ping] }
 	 * module.getInteractions();
 	 */
-	public getInteractions(): Map<string, BaseSlashCommand> {
+	public getInteractions(): Map<string, BaseInteraction> {
 		return this.interactions;
 	}
 
@@ -123,7 +120,6 @@ export abstract class BaseModule {
 			}
 			if (!file.endsWith('command.ts')) continue;
 			const Command = (await import(`${path}/${file}`));
-			console.log(Command);
 			for (const kVal in Object.keys(Command)) {
 				const value = Object.values(Command)[kVal];
 				try {

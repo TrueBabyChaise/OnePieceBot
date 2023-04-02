@@ -1,5 +1,5 @@
-import { BaseEvent } from "@src/baseClass";
-import { BaseClient } from "@src/baseClass";
+import { BaseEvent } from "@src/structures";
+import { BaseClient } from "@src/structures";
 import { readdirSync } from "fs";
 
 /**
@@ -28,7 +28,6 @@ export = async (client: BaseClient) => {
 						} else {
 							client.on(event.name, (...args: any) => event.execute(client, ...args));
 						}
-						console.log(`Loaded event ${event.name}`);
 					} catch (error) {
 						console.log("Could not load event " + file + "/" + subFile + "");
 					}

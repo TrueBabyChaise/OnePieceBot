@@ -1,5 +1,5 @@
 import { Client, REST } from 'discord.js';
-import { BaseModule } from '@src/baseClass';
+import { BaseModule } from '@src/structures';
 import eventLoader from '@events/loader'
 
 /**
@@ -93,7 +93,7 @@ export class BaseClient extends Client {
 	async loadModules(): Promise<void> {
 		this.modules.forEach(async (module: BaseModule) => {
 			await module.loadCommands('src/commands');
-			await module.loadSlashCommands('src/slashCommands')
+			await module.loadSlashCommands('src/commands')
 			await module.registerSlashCommands(this);
 		});
 	}

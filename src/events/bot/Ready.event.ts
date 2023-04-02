@@ -1,4 +1,4 @@
-import { BaseEvent, BaseClient  } from "@src/baseClass";
+import { BaseEvent, BaseClient  } from "@src/structures";
 import { ActivitiesOptions, ActivityType } from "discord.js";
 
 /**
