@@ -1,5 +1,5 @@
 import { BaseEvent } from "@src/baseClass";
-import { Client } from "discord.js";
+import { BaseClient } from "@src/baseClass";
 import { readdirSync } from "fs";
 
 /**
@@ -12,7 +12,7 @@ import { readdirSync } from "fs";
  * @memberof module:Events
  * @inner
  */
-export = async (client: Client) => {
+export = async (client: BaseClient) => {
 	const eventFiles = readdirSync('./src/events');
 	for (const file of eventFiles) {
 		const lstat = await (await import(`fs`)).promises.lstat(`./src/events/${file}`);

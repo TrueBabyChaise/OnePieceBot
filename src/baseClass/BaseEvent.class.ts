@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Interaction } from "discord.js";
 import { BaseClient } from "@src/baseClass";
 
 /**
@@ -18,8 +18,9 @@ export abstract class BaseEvent {
 	 * @description Executes the event
 	 * @param {BaseClient} client
 	 * @param {...args} args
+	 * @returns {Promise<void>}
 	 */
-	public execute(client: BaseClient, ...args: any): void {
+	async execute(client: BaseClient, ...args: any): Promise<void> {
 		throw new Error(`The execute method has not been implemented in ${this.name}`);
 	}
 }

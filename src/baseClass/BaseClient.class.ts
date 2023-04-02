@@ -1,4 +1,4 @@
-import { Client } from 'discord.js';
+import { Client, REST } from 'discord.js';
 import { BaseModule } from '@src/baseClass';
 import eventLoader from '@events/loader'
 
@@ -9,12 +9,15 @@ import eventLoader from '@events/loader'
 export class BaseClient extends Client {
 
 	private prefix: string;
-	private interactions: Map<string, any> = new Map();
 	private modules: Map<string, BaseModule> = new Map();
+	private clientId: string;
+	private baseRest: REST;
 
-	constructor(config: any, prefix: string) {
+	constructor(config: any, prefix: string, clientId: string, rest: REST) {
 		super(config);
 		this.prefix = prefix;
+		this.clientId = clientId;
+		this.baseRest = rest;
 	}
 
 	/**
@@ -26,6 +29,22 @@ export class BaseClient extends Client {
 	 */
 	public getModules(): Map<string, BaseModule> {
 		return this.modules;
+	}
+
+	/**
+	 * @description Returns the client id
+	 * @returns {string}
+	 */
+	public getClientId(): string {
+		return this.clientId;
+	}
+
+	/**
+	 * @description Returns the prefix of the client
+	 * @returns {string}
+	 */
+	public getBaseRest(): REST {
+		return this.baseRest;
 	}
 
 	/**
@@ -74,6 +93,8 @@ export class BaseClient extends Client {
 	async loadModules(): Promise<void> {
 		this.modules.forEach(async (module: BaseModule) => {
 			await module.loadCommands('src/commands');
+			await module.loadSlashCommands('src/slashCommands')
+			await module.registerSlashCommands(this);
 		});
 	}
 
