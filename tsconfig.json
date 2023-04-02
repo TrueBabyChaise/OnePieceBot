@@ -25,6 +25,12 @@
 			"@modules/*": ["./src/modules/*"],
 		}
 	},
+	"typedocOptions": {
+        "entryPoints": [
+		"./src"],
+        "out": "docs",
+		"entryPointStrategy": "expand"
+    },
 	"ts-node": {
 		"require": [
 		  	"tsconfig-paths/register"

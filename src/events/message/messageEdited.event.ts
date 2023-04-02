@@ -1,7 +1,13 @@
 import { Message } from 'discord.js';
 import { BaseEvent, BaseClient  } from "@src/baseClass";
 
-export default class MessageEditedEvent extends BaseEvent {
+/**
+ * @description MessageEdited event
+ * @class MessageEditedEvent
+ * @extends BaseEvent
+ * @method execute - Executes the event
+ */
+export class MessageEditedEvent extends BaseEvent {
 	constructor() {
 		super('messageUpdate', false);
 	}

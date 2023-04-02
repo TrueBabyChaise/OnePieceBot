@@ -1,7 +1,13 @@
 import { BaseEvent, BaseClient  } from "@src/baseClass";
 import { ActivitiesOptions, ActivityType } from "discord.js";
 
-export default class ReadyEvent extends BaseEvent {
+/**
+ * @description Ready event
+ * @class ReadyEvent
+ * @extends BaseEvent
+ * @method execute - Executes the event
+ */
+export class ReadyEvent extends BaseEvent {
 	constructor() {
 		super('ready', false);
 	}

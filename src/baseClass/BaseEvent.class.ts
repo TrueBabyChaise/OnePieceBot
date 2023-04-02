@@ -1,9 +1,14 @@
-import BaseClient from "./BaseClient.class";
 import { Message } from "discord.js";
+import { BaseClient } from "@src/baseClass";
 
-export default class BaseEvent {
+/**
+ * @description Base class for events
+ * @category BaseClass
+ */
+export abstract class BaseEvent {
 	name: string;
 	once: boolean;
+	
 	constructor(name: string, once: boolean = false) {
 		this.name = name;
 		this.once = once;
