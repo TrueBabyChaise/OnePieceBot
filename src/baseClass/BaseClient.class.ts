@@ -1,9 +1,12 @@
 import { Client } from 'discord.js';
-import BaseEvent from './BaseEvent.class';
-import BaseModule from './BaseModule.class';
+import { BaseModule } from '@src/baseClass';
 import eventLoader from '@events/loader'
 
-export default class BaseClient extends Client {
+/**
+ * @description Base class for client
+ * @category BaseClass
+ */
+export class BaseClient extends Client {
 
 	private prefix: string;
 	private interactions: Map<string, any> = new Map();

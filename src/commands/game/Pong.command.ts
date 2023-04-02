@@ -1,7 +1,13 @@
 import { Message } from 'discord.js';
 import { BaseCommand, BaseClient } from "@src/baseClass";
 
-export default class Pong extends BaseCommand {
+/**
+ * @description Pong command
+ * @class Pong
+ * @extends BaseCommand
+ * @method execute - Executes the command
+ */
+export class PongCommand extends BaseCommand {
 	constructor() {
 		super('pong', ['ping'], 'Ping! Pong!', 'Test', 0, true, []);
 	}

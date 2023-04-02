@@ -1,7 +1,13 @@
 import { Guild } from "discord.js";
 import { BaseEvent, BaseClient } from "@src/baseClass";
 
-export default class GuildUpdateEvent extends BaseEvent {
+/**
+ * @description GuildUpdate event
+ * @class GuildUpdateEvent
+ * @extends BaseEvent
+ * @method execute - Executes the event
+ */
+export class GuildUpdateEvent extends BaseEvent {
 	constructor() {
 		super('guildUpdate', false);
 	}

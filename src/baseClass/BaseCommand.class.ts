@@ -1,7 +1,12 @@
 import { Message } from 'discord.js';
-import BaseClient from '@src/baseClass/BaseClient.class';
+import { BaseClient } from './BaseClient.class';
 
-export default class BaseCommand {
+
+/**
+ * @description Base class for commands
+ * @category BaseClass
+ */
+export abstract class BaseCommand {
 	private name: string;
 	private aliases: string[];
 	private enabled: boolean;
