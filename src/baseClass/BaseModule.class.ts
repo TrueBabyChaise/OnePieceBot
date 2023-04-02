@@ -1,12 +1,22 @@
-import BaseCommand from '@src/baseClass/BaseCommand.class';
+import { BaseCommand } from './BaseCommand.class';
 import fs from 'fs';
 
-export default class BaseModule {
+
+/**
+ * @description Base class for modules
+ * @category BaseClass
+ */
+export abstract class BaseModule {
 	private name: string;
 	private aliases: Map<string, BaseCommand> = new Map();
 	private enabled: boolean;
 	private commands: Map<string, BaseCommand> = new Map();
 
+	/**
+	 * @description Creates a new module
+	 * @param name 
+	 * @param isEnabled 
+	 */
 	constructor(name: string, isEnabled?: boolean) {
 		this.name = name;
 		this.enabled = isEnabled || true;
@@ -48,13 +58,35 @@ export default class BaseModule {
 	 * @example
 	 * // returns Map(1) { 'ping' => [Function: Ping] }
 	 * module.getCommands();
-	 * @example
-	 * // returns [Function: Ping]
-	 * module.getCommands().get('ping');
-	 * @example
 	 */
 	public getCommands(): Map<string, BaseCommand> {
 		return this.commands;
+	}
+	
+	/**
+	 * @description Checks if the module has a command
+	 * @param {string} name
+	 * @returns {boolean}
+	 * @example
+	 * // returns true
+	 * module.hasCommand('ping');
+	 */
+	public hasCommand(name: string): boolean {
+		return this.commands.has(name) || this.aliases.has(name);
+	}
+
+	/**
+	 * @description Returns a command from the module
+	 * @param {string} name
+	 * @returns {BaseCommand | undefined}
+	 * @example
+	 * // returns [Function: Ping]
+	 * module.getCommand('ping');
+	 */
+	public getCommand(name: string): BaseCommand | undefined {
+		if (this.commands.has(name)) return this.commands.get(name);
+		if (this.aliases.has(name)) return this.aliases.get(name);
+		return undefined;
 	}
 
 	/**
@@ -74,15 +106,22 @@ export default class BaseModule {
 				continue;
 			}
 			if (!file.endsWith('command.ts')) continue;
-			const Command = (await import(`${path}/${file}`)).default;
-			const command = new Command();
-			console.log(`Loading command ${command.name}`);
-			this.commands.set(command.name, command);
-			if (!command.aliases) continue;
-			for (const alias of command.aliases) {
-				this.aliases.set(alias, command);
-			}
-			
+			const Command = (await import(`${path}/${file}`));
+			console.log(Command);
+			for (const kVal in Object.keys(Command)) {
+				const value = Object.values(Command)[kVal];
+				try {
+					const command = new (value as any)();
+					this.commands.set(command.name, command);
+					if (!command.aliases) continue;
+					for (const alias of command.aliases) {
+						this.aliases.set(alias, command);
+					}
+				} catch (error) {
+					console.error(error);
+					console.log(`Could not load command ${path}/${file}`);
+				}
+			};
 		}
 	}
 

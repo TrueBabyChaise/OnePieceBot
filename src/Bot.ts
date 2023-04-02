@@ -1,7 +1,7 @@
 require('dotenv').config(); // LOAD CONFIG (.env)
 const { Client, GatewayIntentBits, Partials } = require('discord.js');
-import BaseClient from './baseClass/BaseClient.class';
-import GameModule from './modules/Game.module';
+import { BaseClient } from '@src/baseClass';
+import { GameModule } from './modules/Game.module';
 
 const config ={
 	intents: [
