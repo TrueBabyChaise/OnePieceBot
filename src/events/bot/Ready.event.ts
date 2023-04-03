@@ -21,7 +21,7 @@ export class ReadyEvent extends BaseEvent {
 
 		var statusIndex = 0;
 		setInterval(() => {
-			const status = ['NeedName v0.1', `Developed by Serena Satella`, `NeedName Beta`]; // You can change the status here
+			const status = ['NeedName v0.1', `Developped by Serena Satella`, `NeedName Beta`]; // You can change the status here
 			const activity = { 
 				type: ActivityType.Streaming, 
 				name: status[statusIndex],
