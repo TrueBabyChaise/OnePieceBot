@@ -1,4 +1,4 @@
-import { Message } from 'discord.js';
+import { Message, Events } from 'discord.js';
 import { BaseEvent, BaseClient  } from "@src/structures";
 
 /**
@@ -9,7 +9,7 @@ import { BaseEvent, BaseClient  } from "@src/structures";
  */
 export class MessageCreatedEvent extends BaseEvent {
 	constructor() {
-		super('messageCreate', false);
+		super(Events.MessageCreate, false);
 	}
 
 	async execute(client: BaseClient, message: Message) {
