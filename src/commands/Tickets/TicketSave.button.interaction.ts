@@ -1,5 +1,6 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { Attachment, ChatInputCommandInteraction, AttachmentBuilder, AttachmentData } from 'discord.js';
+import { TicketManager } from '@src/structures/utils/ticketManager.class';
 
 /**
  * @description TicketClose button interaction
@@ -18,6 +19,22 @@ export class TicketCloseButtonInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
     async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
-        await interaction.reply('Ticket saved!');
+        if (!interaction.guildId) {
+            await interaction.reply('This command can only be used in a server');
+            return;
+        }
+        if (!interaction.channelId) {
+            await interaction.reply('This command can only be used in a channel');
+            return;
+        }
+
+        // Create Attachment
+        const transcript = await TicketManager.getInstance().buildTranscript(interaction.channelId, interaction.guildId!, client);
+        const bufferResolvable = Buffer.from(transcript);
+        const attachment = new AttachmentBuilder(bufferResolvable, {
+            name: 'transcript.html',
+        });
+
+        await interaction.reply({ files: [attachment] });
     }
 }

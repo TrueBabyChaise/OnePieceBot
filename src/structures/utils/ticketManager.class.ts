@@ -183,24 +183,44 @@ export class TicketManager {
     async buildTranscript(channelId : string, guildId: string, client: BaseClient) {
         const guild = client.guilds.cache.get(guildId);
         const channel = guild?.channels.cache.get(channelId) as TextChannel;
-        const messages = await channel.messages.fetch({ limit: 100 });
+        const messages = (await channel.messages.fetch({ cache: true })).reverse();
 
         let transcript = "<body>";
-        transcript + "<head><style>" + await this.loadStyles() + "</style></head>";
+        transcript += "<head><style>" + await this.loadStyles() + "</style></head>";
 
-        transcript
+        transcript += "<div class='chatBox'>";
+
+        let lastUser = "none";
 
         messages.forEach((message) => {
             const date = new Date(message.createdTimestamp);
             const formattedDate = date.toLocaleDateString() + " " + date.toLocaleTimeString();
-            
-            
-
+            if (message.author.bot) return;
+            if (lastUser != message.author.id && lastUser != "none")
+                transcript += `<li style='padding-top: 20px;'></li>`
+            transcript += `<li class='chatListItem'><div class='chatContent'>`;
+            if (lastUser != message.author.id) {
+                transcript += 
+                `<div class='userContent'>`
+                + `<div class='chatUsername username'>${message.author.username}</div>`
+                + `<div class='chatUsername userId'>${message.author.tag + ' ' + message.author.id}</div>`
+                + `<div class='chatTimeStamp'>Today at ${formattedDate.split(' ')[1]}</div>`
+                + `<img class='chatAvatar' src='${message.author.displayAvatarURL({ forceStatic: true})}' alt=${message.author.username}>`
+                + `</div></div>`
+                + `<div class='chatContent'><div class='chatInput'>${message.content}</div>`;
+            } else {
+                transcript += `<div class='chatInput'>${message.content}</div>`;
+            }
+            transcript += `</div></li>`;
+            lastUser = message.author.id;
         })
+
+        transcript += "</div></body>";
+        return transcript;
     }
 
     async loadStyles() {
-        const css = fs.readFileSync('../css/test.css', 'utf8');
+        const css = fs.readFileSync('./src/structures/css/transcript.css', 'utf8');
         return css;
     }
 }
