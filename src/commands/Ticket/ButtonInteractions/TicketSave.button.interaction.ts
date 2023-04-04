@@ -5,7 +5,7 @@ import { TicketManager } from '@src/structures/utils/ticketManager.class';
 /**
  * @description TicketSave button interaction
  * @class TicketSaveButtonInteraction
- * @extends BaseButtonInteraction
+ * @extends BaseInteraction
  */
 export class TicketSaveButtonInteraction extends BaseInteraction {
     constructor() {
@@ -29,7 +29,12 @@ export class TicketSaveButtonInteraction extends BaseInteraction {
         }
 
         // Create Attachment
-        const transcript = await TicketManager.getInstance().buildTranscript(interaction.channelId, interaction.guildId!, client);
+        const ticket = TicketManager.getInstance().getTicket(interaction.channelId);
+        if (!ticket) {
+            await interaction.reply('This command can only be used in a ticket');
+            return;
+        }
+        const transcript = await ticket.buildTranscript(interaction.guildId!, client);
         const bufferResolvable = Buffer.from(transcript);
         const attachment = new AttachmentBuilder(bufferResolvable, {
             name: 'transcript.html',

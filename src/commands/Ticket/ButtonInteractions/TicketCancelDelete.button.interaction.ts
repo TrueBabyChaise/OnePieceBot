@@ -28,7 +28,7 @@ export class TicketCancelDeleteButtonInteraction extends BaseInteraction {
             await interaction.reply('This command can only be used in a channel, if you are in a ticket, try again discord may have not updated the channel id yet');
             return;
         }
-        TicketManager.getInstance().cancelDeleteTicket(interaction.channelId, client);
+        TicketManager.getInstance().cancelDeleteTicket(interaction.channelId);
         await interaction.reply('Ticket deletion cancelled');
         await interaction.deleteReply();
     }

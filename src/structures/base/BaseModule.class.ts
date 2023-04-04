@@ -1,4 +1,4 @@
-import { BaseCommand, BaseInteraction, BaseClient } from '@src/structures';
+import { BaseCommand, BaseInteraction, BaseClient, BaseSlashCommand } from '@src/structures';
 import { Routes } from 'discord.js';
 
 /**
@@ -176,13 +176,22 @@ export abstract class BaseModule {
 	 * // registers slash commands in a guild
 	 * module.registerSlashCommands(client, '123456789');
 	 */
-	public async registerSlashCommands(client: BaseClient, guildId?: string): Promise<void> {
+	public async registerSlashCommands(client: BaseClient, alreadyAdded: Array<string> , guildId?: string): Promise<void> {
 		const toRegister = new Array();
 		for (const [_, interaction] of this.interactions) {
+			if (!(interaction instanceof BaseSlashCommand)) continue;
+			if (alreadyAdded.includes(interaction.getName())) continue;
 			toRegister.push(interaction.getSlashCommand().toJSON());
 		}
 		
-		if (!guildId) {
+		if (toRegister.length === 0) {
+			console.log(`No slash commands to register for module ${this.name}`);
+			return;
+		}
+
+		console.table(toRegister);
+
+		/*if (!guildId) {
 			const data = await client.getBaseRest().put(
 				Routes.applicationCommands(client.getClientId()),
 				{ body: toRegister }
@@ -192,7 +201,7 @@ export abstract class BaseModule {
 				Routes.applicationGuildCommands(client.getClientId(), guildId),
 				{ body: toRegister }
 			)
-		}
+		}*/
 	}
 
 

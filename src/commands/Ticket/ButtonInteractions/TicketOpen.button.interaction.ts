@@ -1,16 +1,15 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
 import { TicketManager } from '@src/structures/utils/ticketManager.class';
-import { time } from 'console';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 /**
- * @description TicketDelete button interaction
- * @class TicketDeleteButtonInteraction
- * @extends BaseButtonInteraction
+ * @description TicketOpen button interaction
+ * @class TicketOpenButtonInteraction
+ * @extends BaseInteraction
  */
-export class TicketDeleteButtonInteraction extends BaseInteraction {
+export class TicketOpenButtonInteraction extends BaseInteraction {
     constructor() {
-        super('ticketdelete', 'Delete a ticket');
+        super('ticketopen', 'Open a ticket');
     }
 
     /**
@@ -20,8 +19,10 @@ export class TicketDeleteButtonInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
     async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
-        TicketManager.getInstance().deleteTicket(interaction, client);
+        const ticket = TicketManager.getInstance().getTicket(interaction.channelId)
+        if (ticket)
+            await ticket.closeTicket(interaction, client);
+        else
+            interaction.reply('Ticket not found');
     }
-
-    
 }

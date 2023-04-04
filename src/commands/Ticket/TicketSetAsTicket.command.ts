@@ -9,7 +9,7 @@ import { Message } from "discord.js";
  */
 export class TicketCreateCommand extends BaseCommand {
     constructor() {
-        super('ticketcreate', ['tc'], 'Create a ticket', 'Tickets', 0, true, []);
+        super('ticketset', ['ts'], 'Set a channel as ticket', 'Tickets', 0, true, []);
     }
 
     /**
@@ -21,10 +21,8 @@ export class TicketCreateCommand extends BaseCommand {
      */
 
     async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
-        await TicketManager.getInstance().createTicket(message, client);
-
-		if (message.guild)
-			console.log(TicketManager.getInstance().getTicket(message.guild.id));
+       	TicketManager.getInstance().setNewTicketFromMessage(message);
+		console.log(TicketManager.getInstance().getTicket(message.channel.id));
     }
 
 }

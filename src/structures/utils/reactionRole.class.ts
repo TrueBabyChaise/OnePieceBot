@@ -1,22 +1,22 @@
 import { MessageReaction, User } from "discord.js";
 
 
-export class ReactionRoleAdding {
+export class ReactionRole {
 
-	private static instance: ReactionRoleAdding = new ReactionRoleAdding();
+	private static instance: ReactionRole = new ReactionRole();
 	private roleMatch: Map<string, string> = new Map<string, string>();
 
 	constructor() {
-		if (ReactionRoleAdding.instance) {
-			throw new Error('Error: Instantiation failed: Use ReactionRoleAdding.getInstance() instead of new.');
+		if (ReactionRole.instance) {
+			throw new Error('Error: Instantiation failed: Use ReactionRole.getInstance() instead of new.');
 		}
-		ReactionRoleAdding.instance = this;
+		ReactionRole.instance = this;
 		// LOAD ROLES HERE WITH DB
 		this.roleMatch.set('👍', 'Test');
 	}
 
-	public static getInstance(): ReactionRoleAdding {
-		return ReactionRoleAdding.instance;
+	public static getInstance(): ReactionRole {
+		return ReactionRole.instance;
 	}
 
 
@@ -37,7 +37,6 @@ export class ReactionRoleAdding {
 
  	async addMemberRole(reaction: MessageReaction, user: User) {
 		const member = reaction.message.guild?.members.cache.get(user.id);
-		console.log(member);
 		if (member) {
 			const role = reaction.message.guild?.roles.cache.find(role => role.name === this.roleMatch.get(reaction.emoji.name!));
 			if (role && !member.roles.cache.has(role.id)) {
