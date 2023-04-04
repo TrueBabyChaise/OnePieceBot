@@ -92,8 +92,8 @@ export class BaseClient extends Client {
 	 */
 	async loadModules(): Promise<void> {
 		this.modules.forEach(async (module: BaseModule) => {
-			await module.loadCommands('src/commands');
-			await module.loadSlashCommands('src/commands')
+			await module.loadCommands('src/commands' + '/' + module.getName());
+			await module.loadSlashCommands('src/commands' + '/' + module.getName());
 			await module.registerSlashCommands(this);
 		});
 	}

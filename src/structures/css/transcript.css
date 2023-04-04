@@ -38,6 +38,11 @@
     list-style: none;
 }
 
+a {
+    color: #00A8FC;
+    text-decoration: none;
+}
+
 .chatTimeStamp {
     font-size: 0.75rem;
     line-height: 1.125;
@@ -53,9 +58,15 @@
     font-style: 16px var(--font-primary);
 }
 
+.chatGif {
+    height: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+}
+
 .chatImage {
     width: 100%;
-    max-width: 550px;
+    max-width: 450px;
     border-radius: 8px;
 }
 
@@ -114,6 +125,22 @@
     text-indent: 0;
     color: #DBDEE1
 }
+
+.code {
+    width: calc(100% - 72px);
+    user-select: text;
+    overflow: hidden;
+    position: relative;
+    font-size: 1rem;
+    text-indent: 0;
+    line-height: 1.375rem;
+    color : #DBDEE1;
+    background: rgb(66,69,73);
+    border-radius: 8px;
+    font-style: 16px var(--font-primary);
+    white-space: break-spaces;
+}
+
 
 .chatInputImage {
     user-select: text;

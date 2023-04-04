@@ -3,11 +3,11 @@ import { Attachment, ChatInputCommandInteraction, AttachmentBuilder, AttachmentD
 import { TicketManager } from '@src/structures/utils/ticketManager.class';
 
 /**
- * @description TicketClose button interaction
- * @class TicketCloseButtonInteraction
+ * @description TicketSave button interaction
+ * @class TicketSaveButtonInteraction
  * @extends BaseButtonInteraction
  */
-export class TicketCloseButtonInteraction extends BaseInteraction {
+export class TicketSaveButtonInteraction extends BaseInteraction {
     constructor() {
         super('ticketsave', 'Save transcript of a ticket');
     }
