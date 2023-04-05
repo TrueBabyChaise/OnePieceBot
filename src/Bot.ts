@@ -47,7 +47,7 @@ async function main() {
 	if (!process.env.DISCORD_BOT_APP_ID) throw new Error('DISCORD_BOT_APP_ID is not defined in .env');
 	
 	const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN);
-	const baseClient = new BaseClient(config, process.env.DISCORD_BOT_PREFIX, process.env.DISCORD_BOT_APP_ID, rest);
+	const baseClient = new BaseClient(config, process.env.DISCORD_BOT_PREFIX, process.env.DISCORD_BOT_APP_ID, rest, process.env.AUTHOR_ID);
 	// Load modules
 	console.log('Loading modules...');
 	baseClient.addModule(new GameModule());
