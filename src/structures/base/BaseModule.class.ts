@@ -180,7 +180,10 @@ export abstract class BaseModule {
 		const toRegister = new Array();
 		for (const [_, interaction] of this.interactions) {
 			if (!(interaction instanceof BaseSlashCommand)) continue;
-			if (alreadyAdded.includes(interaction.getName())) continue;
+			if (alreadyAdded.includes(interaction.getName())) {
+				console.log(`Interaction ${interaction.getName()} already added`);
+				continue;
+			}
 			toRegister.push(interaction.getSlashCommand().toJSON());
 		}
 		
@@ -189,19 +192,22 @@ export abstract class BaseModule {
 			return;
 		}
 
-		console.table(toRegister);
+		console.table("To Register", toRegister)
 
-		/*if (!guildId) {
-			const data = await client.getBaseRest().put(
+		/*let data;
+		if (!guildId) {
+			data = await client.getBaseRest().put(
 				Routes.applicationCommands(client.getClientId()),
 				{ body: toRegister }
 			)
 		} else {
-			const data = await client.getBaseRest().put(
+			data = await client.getBaseRest().put(
 				Routes.applicationGuildCommands(client.getClientId(), guildId),
 				{ body: toRegister }
 			)
-		}*/
+		}
+
+		console.log(data);*/
 	}
 
 
