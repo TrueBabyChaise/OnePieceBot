@@ -3,7 +3,7 @@ import { Client, GatewayIntentBits, Partials, REST } from 'discord.js';
 import { BaseClient } from '@src/structures';
 import { GameModule } from './modules/Game.module';
 
-import { DBConnection } from './structures/database/dbConnection.db.class';
+import databaseSynchronisation from './structures/utils/sync.db';
 
 const config ={
 	intents: [
@@ -32,7 +32,8 @@ const config ={
 
 async function load() {
 	new Promise(async (resolve, reject) => {
-		const res = await DBConnection.getInstance().sequelize.sync();
+		const res = await databaseSynchronisation();
+		
 		resolve(res);
 	});
 }

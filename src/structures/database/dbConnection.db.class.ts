@@ -14,6 +14,16 @@ export class DBConnection {
 			database: process.env.DB_NAME,
 			port: Number(process.env.DB_PORT),
 			storage: "./src/structures/database/dbConnection.db",
+			dialectOptions: {
+				options: {
+					requestTimeout: 30000,
+					connectTimeout: 30000,
+				},
+			},
+			pool: {
+				max: 5,
+				min: 2,
+			},
 		});
 
 		this._sequelize.authenticate().then(() => {
