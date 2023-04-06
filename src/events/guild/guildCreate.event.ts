@@ -1,5 +1,5 @@
-import { Guild } from "discord.js";
-import { BaseEvent, BaseClient } from "@src/baseClass";
+import { Guild, Events } from "discord.js";
+import { BaseEvent, BaseClient } from "@src/structures";
 
 
 /**
@@ -10,7 +10,7 @@ import { BaseEvent, BaseClient } from "@src/baseClass";
  */
 export class GuildCreateEvent extends BaseEvent {
 	constructor() {
-		super('guildCreate', false);
+		super(Events.GuildCreate, false);
 	}
 
 	/**

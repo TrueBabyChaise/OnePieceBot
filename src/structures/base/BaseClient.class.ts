@@ -1,20 +1,34 @@
-import { Client } from 'discord.js';
-import { BaseModule } from '@src/baseClass';
+import { Client, REST } from 'discord.js';
+import { BaseModule } from '@src/structures';
 import eventLoader from '@events/loader'
 
 /**
  * @description Base class for client
  * @category BaseClass
  */
+
+
+interface BaseClientInfo {
+	prefix: string;
+	authorId?: string;
+	modules: Map<string, BaseModule>;
+}
+
+
 export class BaseClient extends Client {
 
 	private prefix: string;
-	private interactions: Map<string, any> = new Map();
 	private modules: Map<string, BaseModule> = new Map();
+	private clientId: string;
+	private baseRest: REST;
+	private authorId?: string;
 
-	constructor(config: any, prefix: string) {
+	constructor(config: any, prefix: string, clientId: string, rest: REST, authorId?: string) {
 		super(config);
 		this.prefix = prefix;
+		this.clientId = clientId;
+		this.baseRest = rest;
+		this.authorId = authorId;
 	}
 
 	/**
@@ -26,6 +40,35 @@ export class BaseClient extends Client {
 	 */
 	public getModules(): Map<string, BaseModule> {
 		return this.modules;
+	}
+
+	/**
+	 * @description Returns the author id
+	 * @returns {string}
+	 * @example
+	 * // returns the author id
+	 * client.getAuthorId();
+	 * @throws {Error} If the author id is not set
+	 */
+	public getAuthorId(): string {
+		if (!this.authorId) throw new Error('The author id is not set');
+		return this.authorId;
+	}
+
+	/**
+	 * @description Returns the client id
+	 * @returns {string}
+	 */
+	public getClientId(): string {
+		return this.clientId;
+	}
+
+	/**
+	 * @description Returns the prefix of the client
+	 * @returns {string}
+	 */
+	public getBaseRest(): REST {
+		return this.baseRest;
 	}
 
 	/**
@@ -74,6 +117,8 @@ export class BaseClient extends Client {
 	async loadModules(): Promise<void> {
 		this.modules.forEach(async (module: BaseModule) => {
 			await module.loadCommands('src/commands');
+			await module.loadSlashCommands('src/commands')
+			await module.registerSlashCommands(this);
 		});
 	}
 
@@ -110,5 +155,17 @@ export class BaseClient extends Client {
 	public getPrefix(): string {
 		return this.prefix;
 	}
-	
+
+	/**
+	 * @description Returns information about the client
+	 * @returns {BaseClientInfo}
+	 */
+
+	public getInfo(): BaseClientInfo {
+		return {
+			prefix: this.prefix,
+			modules: this.modules,
+			authorId: this.authorId
+		};
+	}
 }

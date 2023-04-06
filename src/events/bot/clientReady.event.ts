@@ -1,5 +1,5 @@
-import { BaseEvent, BaseClient  } from "@src/baseClass";
-import { ActivitiesOptions, ActivityType } from "discord.js";
+import { BaseEvent, BaseClient  } from "@src/structures";
+import { ActivitiesOptions, ActivityType, Events } from "discord.js";
 
 /**
  * @description Ready event
@@ -9,7 +9,7 @@ import { ActivitiesOptions, ActivityType } from "discord.js";
  */
 export class ReadyEvent extends BaseEvent {
 	constructor() {
-		super('ready', false);
+		super(Events.ClientReady, false);
 	}
 
 	/**

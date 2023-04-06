@@ -1,5 +1,5 @@
-import { Message } from 'discord.js';
-import { BaseEvent, BaseClient  } from "@src/baseClass";
+import { Message,Events } from 'discord.js';
+import { BaseEvent, BaseClient  } from "@src/structures";
 
 /**
  * @description MessageEdited event
@@ -9,7 +9,7 @@ import { BaseEvent, BaseClient  } from "@src/baseClass";
  */
 export class MessageEditedEvent extends BaseEvent {
 	constructor() {
-		super('messageUpdate', false);
+		super(Events.MessageUpdate, false);
 	}
 
 	/**

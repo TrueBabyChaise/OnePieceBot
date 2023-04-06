@@ -2,10 +2,10 @@
   "name": "Faucheuse",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/Bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -q ./src/bot.ts",
+    "dev": "nodemon -q ./src/Bot.ts",
     "start": "ts-node src/Bot.ts"
   },
   "keywords": [],
@@ -13,7 +13,10 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^14.8.0",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "mariadb": "^3.1.1",
+    "sequelize": "^6.30.0",
+    "sqlite3": "^5.1.6"
   },
   "devDependencies": {
     "@types/node": "^18.15.11",
