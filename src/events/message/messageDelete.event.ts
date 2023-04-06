@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, Events } from "discord.js";
 import { BaseEvent, BaseClient  } from "@src/structures";
 
 /**
@@ -9,7 +9,7 @@ import { BaseEvent, BaseClient  } from "@src/structures";
  */
 export class MessageDeletedEvent extends BaseEvent {
 	constructor() {
-		super('messageDelete', false);
+		super(Events.MessageDelete, false);
 	}
 
 	/**
