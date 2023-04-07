@@ -1,8 +1,9 @@
-import { Message, EmbedBuilder, TextChannel, ChannelType, ColorResolvable, Colors, CategoryChannelResolvable, MessageCreateOptions, GuildChannel, Channel } from 'discord.js';
+import { Message, EmbedBuilder, TextChannel, ChannelType, ColorResolvable, Colors, CategoryChannelResolvable, MessageCreateOptions, GuildChannel, Channel, Interaction } from 'discord.js';
 import { BaseEvent, BaseClient } from '@src/structures';
 import { ButtonBuilder, ActionRowBuilder } from '@discordjs/builders';
-import { ButtonStyle } from 'discord.js';
+import { ButtonStyle, MessageType, ChatInputCommandInteraction } from 'discord.js';
 import fs from 'fs';
+import { Ticket } from './Ticket.class';
 
 interface EmbebError {
     title: string;
@@ -16,7 +17,7 @@ interface EmbebError {
  */
 export class TicketManager {
     private static instance: TicketManager = new TicketManager();
-    private guildTickets: Map<string, Map<string, string>> = new Map();
+    private tickets: Map<string, Ticket> = new Map();
 
     constructor() {
         if (TicketManager.instance) {
@@ -38,8 +39,12 @@ export class TicketManager {
      * @param guildId 
      * @returns 
      */
-    public getTickets(guildId: string): Map<string, string> | undefined {
-        return this.guildTickets.get(guildId);
+    public getTicket(channelId: string): Ticket | undefined {
+        return this.tickets.get(channelId);
+    }
+
+    public setNewTicketFromMessage(message: Message) {
+        this.tickets.set(message.channelId!, new Ticket(message.channel as TextChannel));
     }
 
     /**
@@ -48,11 +53,11 @@ export class TicketManager {
      * @param {BaseClient} client
      * @returns {Promise<void>}
      */
-    async createTicket(message: Message, client: BaseClient) {
+    async createTicket(message: Message, client: BaseClient): Promise<void> {
         const channel = message.channel as TextChannel;
         const guild = message.guild;
         const member = message.member;
-        // Need CategoryChannelResolvable
+
         if (!guild || !guild.id) {
             const embedError = this.buildEmbedError(message, client, {
                 title: 'Error',
@@ -70,20 +75,45 @@ export class TicketManager {
                 color: Colors.Red,
             });
             message.channel.send({ embeds: [embedError] });
+            return;
         }
         const ticketChannel = await guild?.channels.create({
             name: `ticket-${member?.user.username}`,
             type: ChannelType.GuildText,
             parent: ticketCategory,
+            permissionOverwrites: [
+                {
+                    id: guild?.id,
+                    deny: ['ViewChannel'],
+                },
+                {
+                    id: member!.user.id,
+                    allow: ['ViewChannel'],
+                },
+            ],
         });
-
-        ticketChannel?.send(this.optionsTicketCommandEmbed());
         
-        if (!this.guildTickets.has(guild!.id))
-            this.guildTickets.set(guild!.id, new Map());
-        this.guildTickets.get(guild!.id)?.set(member!.id, ticketChannel!.id);
+        this.tickets.set(ticketChannel?.id!, new Ticket(ticketChannel));
     }
 
+    async deleteTicket(interaction: ChatInputCommandInteraction, client: BaseClient) {
+        if (!interaction.channel)
+            return;
+        if (!this.getTicket(interaction.channelId!)) {
+            const embedError = this.buildEmbedError(interaction, client, {
+                title: 'Error',
+                description: "Can't be deleted because it is not a ticket",
+                color: Colors.Red,
+            });
+            interaction.channel!.send({ embeds: [embedError] });
+            return;
+        }
+        this.tickets.get(interaction.channelId!)?.deleteTicket(interaction, client);
+    }
+
+    async cancelDeleteTicket(channelId: string) {
+        this.tickets.get(channelId)?.setIsBeingDeleted(false);
+    }
 
     /**
      * @description Build embed error
@@ -92,115 +122,21 @@ export class TicketManager {
      * @param {EmbebError} options
      * @returns {EmbedBuilder}
      */
-    private buildEmbedError(message: Message, client: BaseClient, options: EmbebError): EmbedBuilder {
+    private buildEmbedError(message: Message | ChatInputCommandInteraction, client: BaseClient, options: EmbebError): EmbedBuilder {
+        let username = '';
+        if (message instanceof ChatInputCommandInteraction)
+            username = message.user.username;
+        if (message instanceof Message)
+            username = message.author.username;
+        
+
         const embedError = new EmbedBuilder()
             .setTitle(options.title)
             .setDescription(options.description)
             .setColor(options.color)
             .setFooter({
-                text: `Requested by ${message.author.username}`,
+                text: `Requested by ${username}`,
             });
         return embedError;
-    }
-
-
-	async isTicketChannel(channelId: string, guildId: string): Promise<boolean> {
-		const tickets = TicketManager.getInstance().getTickets(guildId);
-		if (tickets) {
-			for (const [key, value] of tickets) {
-				if (value == channelId) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	async isTicketOwner(userId: string, guildId: string): Promise<boolean> {
-		const tickets = TicketManager.getInstance().getTickets(guildId);
-		if (tickets) {
-			for (const [key, value] of tickets) {
-				if (key == userId) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	private optionsTicketCommandEmbed(): MessageCreateOptions {
-		const row = new ActionRowBuilder<ButtonBuilder>()
-			.addComponents(
-				new ButtonBuilder()
-					.setCustomId('ticketclose')
-					.setLabel('Close Ticket')
-					.setStyle(ButtonStyle.Secondary)
-					.setEmoji({
-						name: '🔒',
-					}),
-				/*new ButtonBuilder()
-					.setCustomId('addUser')
-					.setLabel('Add User')
-					.setStyle(ButtonStyle.Success)
-					.setEmoji({
-						name: '✅',
-					}),
-				new ButtonBuilder()
-					.setCustomId('removeUser')
-					.setLabel('Remove User')
-					.setStyle(ButtonStyle.Danger)
-					.setEmoji({
-						name: '❎',
-					}),*/
-				new ButtonBuilder()
-					.setCustomId('ticketsave')
-					.setLabel('Save Transcript')
-					.setStyle(ButtonStyle.Primary)
-					.setEmoji({
-						name: '💾',
-					}),
-				new ButtonBuilder()
-					.setCustomId('ticketdelete')
-					.setLabel('Delete Ticket')
-					.setStyle(ButtonStyle.Danger)
-					.setEmoji({
-						name: '🗑️',
-					}),
-			);
-					
-		
-		const embed = new EmbedBuilder()
-			.setColor('#0099ff')
-			.setTitle('Ticket Options')
-			.setDescription('Choose an option')
-			.setTimestamp()
-			.setFooter({
-				text: 'Ticket Options',
-			})
-	    return {embeds: [embed], components: [row] };
-	}
-
-    async buildTranscript(channelId : string, guildId: string, client: BaseClient) {
-        const guild = client.guilds.cache.get(guildId);
-        const channel = guild?.channels.cache.get(channelId) as TextChannel;
-        const messages = await channel.messages.fetch({ limit: 100 });
-
-        let transcript = "<body>";
-        transcript + "<head><style>" + await this.loadStyles() + "</style></head>";
-
-        transcript
-
-        messages.forEach((message) => {
-            const date = new Date(message.createdTimestamp);
-            const formattedDate = date.toLocaleDateString() + " " + date.toLocaleTimeString();
-            
-            
-
-        })
-    }
-
-    async loadStyles() {
-        const css = fs.readFileSync('../css/test.css', 'utf8');
-        return css;
     }
 }

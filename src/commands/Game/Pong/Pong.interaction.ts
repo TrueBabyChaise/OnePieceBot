@@ -1,4 +1,4 @@
-import { BaseInteraction, BaseClient } from "@src/structures";
+import { BaseSlashCommand, BaseClient } from "@src/structures";
 import { ChatInputCommandInteraction } from "discord.js";
 
 /**
@@ -6,7 +6,7 @@ import { ChatInputCommandInteraction } from "discord.js";
  * @class Pong
  * @extends BaseSlashCommand
  */
-export class PongSlashCommand extends BaseInteraction {
+export class PongSlashCommand extends BaseSlashCommand {
 	constructor() {
 		super('pong', 'Ping! Pong!', 'Test', 0, true, []);
 	}

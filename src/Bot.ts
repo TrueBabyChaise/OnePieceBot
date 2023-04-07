@@ -2,8 +2,8 @@ require('dotenv').config(); // LOAD CONFIG (.env)
 import { Client, GatewayIntentBits, Partials, REST } from 'discord.js';
 import { BaseClient } from '@src/structures';
 import { GameModule } from './modules/Game.module';
-
 import databaseSynchronisation from './structures/utils/sync.db';
+import { TicketModule } from './modules/Ticket.module';
 
 const config ={
 	intents: [
@@ -33,7 +33,6 @@ const config ={
 async function load() {
 	new Promise(async (resolve, reject) => {
 		const res = await databaseSynchronisation();
-		
 		resolve(res);
 	});
 }
@@ -52,6 +51,7 @@ async function main() {
 	// Load modules
 	console.log('Loading modules...');
 	baseClient.addModule(new GameModule());
+	baseClient.addModule(new TicketModule());
 	await baseClient.loadModules();
 	// Load events
 	await baseClient.loadEvents();

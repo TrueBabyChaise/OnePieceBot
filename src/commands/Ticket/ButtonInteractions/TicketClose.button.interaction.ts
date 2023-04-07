@@ -1,4 +1,5 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
+import { TicketManager } from '@src/structures/utils/ticketManager.class';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 /**
@@ -18,6 +19,10 @@ export class TicketCloseButtonInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
     async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
-        await interaction.reply('Ticket closed!');
+        const ticket = TicketManager.getInstance().getTicket(interaction.channelId)
+        if (ticket)
+            await ticket.closeTicket(interaction, client);
+        else
+            interaction.reply('Ticket not found');
     }
 }
