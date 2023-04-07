@@ -1,9 +1,11 @@
 import { BaseEvent, BaseClient  } from "@src/structures";
-import { ActivitiesOptions, ActivityType, Events } from "discord.js";
+import { ActivitiesOptions, ActivityType, Events, Guild } from "discord.js";
 import { Guild as GuildDB } from "@src/structures/class/guild.class";
 import { User as UserDB } from "@src/structures/class/user.class";
+import { TicketDB } from "@src/structures/class/ticket.class";
+import { TicketManager } from "@src/structures/utils/ticketManager.class";
 
-/**
+/**TicketDB
  * @description Ready event
  * @class ReadyEvent
  * @extends BaseEvent
@@ -34,7 +36,10 @@ export class ReadyEvent extends BaseEvent {
 			})
 			if (statusIndex < status.length - 1) statusIndex++; else statusIndex = 0;
 		}, 10000);
+		await this.loadingGuilds(client);
+	}
 
+	async loadingGuilds(client: BaseClient): Promise<void> {
 		(await client.guilds.fetch()).forEach(clientGuild => {
 			clientGuild.fetch().then(async guild => {
 				console.log(`Working on: ${guild.name} with ${guild.memberCount} members`);
@@ -46,23 +51,43 @@ export class ReadyEvent extends BaseEvent {
 					guildDB = await GuildDB.createGuild(parseInt(guild.id), guild.name);
 					if (!guildDB) { return console.log(`Guild ${guild.name} couldn't be created`); }
 					console.log(`Guild ${guild.name} created`);
-					const guildMembers = await guild.members.fetch();
-					const idAlreadyAdded = await guildDB.getUsers();
-					for (const member of guildMembers) {
-						if (member[1].user.bot) { continue; }
-						if (idAlreadyAdded.find((userId) => userId === parseInt(member[1].id))) { continue; }
-						let userDB = await UserDB.getUserById(parseInt(member[1].id));
-						if (!userDB) {
-							console.log(`User ${member[1].user.tag} not found in database, creating it`);
-							userDB = await UserDB.createUser(parseInt(member[1].id), member[1].user.tag);
-							if (!userDB) { console.log(`User ${member[1].user.tag} couldn't be created`); continue; }
-							console.log(`User ${member[1].user.tag} created`);
-						}
-						await guildDB.addUserToGuild(parseInt(member[1].id));
-					}
+					await this.loadingUsers(guild, guildDB);
+					await this.loadingTickets(guild, guildDB);
 				}
 			});
-			// DB stuff here
-		});
+		})
+	}
+
+	async loadingUsers(guild: Guild, guildDB: GuildDB): Promise<void> {
+		const guildMembers = await guild.members.fetch();
+		const idAlreadyAdded = await guildDB.getUsers();
+		for (const member of guildMembers) {
+			if (member[1].user.bot) { continue; }
+			if (idAlreadyAdded.find((userId) => userId === parseInt(member[1].id))) { continue; }
+			let userDB = await UserDB.getUserById(parseInt(member[1].id));
+			if (!userDB) {
+				console.log(`User ${member[1].user.tag} not found in database, creating it`);
+				userDB = await UserDB.createUser(parseInt(member[1].id), member[1].user.tag);
+				if (!userDB) { console.log(`User ${member[1].user.tag} couldn't be created`); continue; }
+				console.log(`User ${member[1].user.tag} created`);
+			}
+			await guildDB.addUserToGuild(parseInt(member[1].id));
+		}
+	}
+
+	async loadingTickets(guild: Guild, guildDB: GuildDB): Promise<void> {
+		TicketDB.getTicketOfGuild(guildDB.id).then(async tickets => {
+			
+			if (!tickets) { return; }
+			for (const ticket of tickets) {
+				const channel = await guild.channels.fetch(ticket.id);
+				if (!channel) {
+					console.log(`Ticket ${ticket.id} not found in guild ${guild.name}, deleting it`);
+					await guildDB.removeTicket(ticket.id);
+					await TicketDB.deleteTicket(ticket.id);
+					console.log(`Ticket ${ticket.id} deleted`);
+				}
+			}
+		}
 	}
 }

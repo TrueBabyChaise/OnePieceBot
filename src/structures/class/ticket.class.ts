@@ -1,7 +1,7 @@
 import { OverwriteResolvable } from "discord.js";
 import { TicketModel, GuildTicketModel, UserTicketModel } from "../database/models/ticket.db.model";
 
-export class Ticket {
+export class TicketDB {
     private _id: number = 0;
     private _owner: number = 0;
     private _permissions: Array<OverwriteResolvable> = [];
@@ -23,8 +23,8 @@ export class Ticket {
         return this._users;
     }
 
-    public static async getTicketById(id: number): Promise<Ticket | null> {
-        const ticket = new Ticket();
+    public static async getTicketById(id: number): Promise<TicketDB | null> {
+        const ticket = new TicketDB();
         const ticketDB = await TicketModel.findOne({ where: { id: id } });
         if (!ticketDB) { return null; }
         ticket._id = ticketDB.get("id") as number;
@@ -33,8 +33,8 @@ export class Ticket {
         return ticket;
     }
 
-    public static async createTicket(id: number, owner: number, permissions: object): Promise<Ticket | null> {
-        const ticket = new Ticket();
+    public static async createTicket(id: number, owner: number, permissions: object): Promise<TicketDB | null> {
+        const ticket = new TicketDB();
         const ticketDB = await TicketModel.create({ id: id, owner: owner, permissions: permissions });
         if (!ticketDB) { return null; }
         ticket._id = ticketDB.get("id") as number;
@@ -55,12 +55,12 @@ export class Ticket {
         return true;
     }
 
-    public static async getTicketByOwner(owner: number): Promise<Ticket[] | null> {
-        const ticket = new Array<Ticket>();
+    public static async getTicketByOwner(owner: number): Promise<TicketDB[] | null> {
+        const ticket = new Array<TicketDB>();
         const ticketDB = await TicketModel.findAll({ where: { owner: owner } });
         if (!ticketDB) { return null; }
         for (let i = 0; i < ticketDB.length; i++) {
-            ticket[i] = new Ticket();
+            ticket[i] = new TicketDB();
             ticket[i]._id = ticketDB[i].get("id") as number;
             ticket[i]._owner = ticketDB[i].get("owner") as number;
             ticket[i]._permissions = ticketDB[i].get("permissions") as Array<OverwriteResolvable>;

@@ -4,7 +4,7 @@ import { ButtonBuilder, ActionRowBuilder } from '@discordjs/builders';
 import { ButtonStyle, MessageType, ChatInputCommandInteraction } from 'discord.js';
 import fs from 'fs';
 import { Ticket } from './Ticket.class';
-import { Ticket as TicketController } from '@src/structures/class/ticket.class';
+import { TicketDB } from '@src/structures/class/ticket.class';
 
 interface EmbebError {
     title: string;
@@ -46,7 +46,7 @@ export class TicketManager {
 
     public async setNewTicketFromMessage(message: Message) {
         if (!this.tickets.get(message.channelId!)) {
-            let ticket = await TicketController.getTicketById(parseInt(message.channelId!));
+            let ticket = await TicketDB.getTicketById(parseInt(message.channelId!));
             if (!ticket) { return; }
             this.tickets.set(message.channelId!, new Ticket(message.channel as TextChannel, ticket?.owner, ticket.permissions)); 
         } else {
