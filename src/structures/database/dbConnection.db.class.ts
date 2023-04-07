@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize";
+import { Sequelize, ConnectionError, ConnectionTimedOutError, TimeoutError } from "sequelize";
 require('dotenv').config(); // LOAD CONFIG (.env)
 
 export class DBConnection {
@@ -6,31 +6,26 @@ export class DBConnection {
 	private _sequelize: Sequelize;
 
 	private constructor() {
-		this._sequelize = new Sequelize({
-			dialect: "mariadb",
-			host: process.env.DB_HOST,
-			username: process.env.DB_USER,
-			password: process.env.DB_PASS,
-			database: process.env.DB_NAME,
-			port: Number(process.env.DB_PORT),
-			storage: "./src/structures/database/dbConnection.db",
-			dialectOptions: {
-				options: {
-					requestTimeout: 30000,
-					connectTimeout: 30000,
+		this._sequelize = new Sequelize(
+			process.env.DB_NAME!,
+			process.env.DB_USER!,
+			process.env.DB_PASS,
+			{
+				dialect: "mariadb",
+				host: process.env.DB_HOST,
+				port: parseInt(process.env.DB_PORT!),
+				retry: {
+					max: 5,
+					match: [
+						ConnectionError,
+						ConnectionTimedOutError,
+						TimeoutError,
+						/Deadlock/i,
+						'SQLITE_BUSY',
+					]
 				},
-			},
-			pool: {
-				max: 5,
-				min: 2,
-			},
-		});
-
-		this._sequelize.authenticate().then(() => {
-			console.log("Connection has been established successfully.");
-		}).catch((err: Error) => {
-			console.error("Unable to connect to the database:", err);
-		});
+			}
+		);
 	}
 
 	public static getInstance(): DBConnection {

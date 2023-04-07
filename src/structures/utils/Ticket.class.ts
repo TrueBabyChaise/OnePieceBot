@@ -1,24 +1,39 @@
 import { ButtonBuilder, ActionRowBuilder } from '@discordjs/builders';
 import { ButtonStyle, MessageType, ChatInputCommandInteraction, 
-	TextChannel, Message, MessageCreateOptions, User} from 'discord.js';
+	TextChannel, Message, MessageCreateOptions, User, OverwriteResolvable} from 'discord.js';
 import { EmbedBuilder } from 'discord.js';
 import fs from 'fs';
 import { BaseClient } from '@src/structures';
+import { Ticket as TicketController  } from '../class/ticket.class';
 
 export class Ticket {
 	private id: string;
 	private channel: TextChannel;
+	private owner: number;
 	private isBeingDeleted: boolean = false;
 	private isDeleted: boolean = false;
 	private isClosed: boolean = false;
 	private messageEmbed: Message<boolean> | null = null;
+	private permissions: Array<OverwriteResolvable>;
+	private ticket: TicketController | null = null;
 
-	constructor(channel: TextChannel) {
+	constructor(channel: TextChannel, owner: number, permissions: Array<OverwriteResolvable>) {
 		this.id = channel.id;
 		this.channel = channel;
 		this.messageEmbed = null;
+		this.owner = owner;
+		this.permissions = permissions;
 
 		(async () => {
+			this.ticket = await TicketController.getTicketById(parseInt(channel.id));
+			if (!this.ticket) {
+				console.log('Ticket not found, creating new ticket');
+				this.ticket = await TicketController.createTicket(parseInt(channel.id), owner, permissions);
+				this.ticket?.addTicketToGuild(parseInt(channel.guild.id));
+				this.ticket?.addTicketToUser(owner);
+			}
+			console.log('Ticket found');
+			console.log(this.ticket);
 			this.messageEmbed = await channel.send(this.optionsTicketCommandEmbed(this.isClosed))
 		})();
    	}

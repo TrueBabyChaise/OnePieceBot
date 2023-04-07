@@ -1,9 +1,10 @@
-import { Message, EmbedBuilder, TextChannel, ChannelType, ColorResolvable, Colors, CategoryChannelResolvable, MessageCreateOptions, GuildChannel, Channel, Interaction } from 'discord.js';
+import { Message, EmbedBuilder, TextChannel, ChannelType, ColorResolvable, Colors, CategoryChannelResolvable, MessageCreateOptions, GuildChannel, Channel, Interaction, Collection, OverwriteResolvable } from 'discord.js';
 import { BaseEvent, BaseClient } from '@src/structures';
 import { ButtonBuilder, ActionRowBuilder } from '@discordjs/builders';
 import { ButtonStyle, MessageType, ChatInputCommandInteraction } from 'discord.js';
 import fs from 'fs';
 import { Ticket } from './Ticket.class';
+import { Ticket as TicketController } from '@src/structures/class/ticket.class';
 
 interface EmbebError {
     title: string;
@@ -43,8 +44,14 @@ export class TicketManager {
         return this.tickets.get(channelId);
     }
 
-    public setNewTicketFromMessage(message: Message) {
-        this.tickets.set(message.channelId!, new Ticket(message.channel as TextChannel));
+    public async setNewTicketFromMessage(message: Message) {
+        if (!this.tickets.get(message.channelId!)) {
+            let ticket = await TicketController.getTicketById(parseInt(message.channelId!));
+            if (!ticket) { return; }
+            this.tickets.set(message.channelId!, new Ticket(message.channel as TextChannel, ticket?.owner, ticket.permissions)); 
+        } else {
+            this.tickets.set(message.channelId!, new Ticket(message.channel as TextChannel, parseInt(message.author.id),  []));
+        }
     }
 
     /**
@@ -77,23 +84,25 @@ export class TicketManager {
             message.channel.send({ embeds: [embedError] });
             return;
         }
+
+        const setPermissions = new Array<OverwriteResolvable>();
+        setPermissions.push({
+            id: guild?.id,
+            deny: ['ViewChannel'],
+        });
+        setPermissions.push({
+            id: member!.user.id,
+            allow: ['ViewChannel'],
+        });
+
         const ticketChannel = await guild?.channels.create({
             name: `ticket-${member?.user.username}`,
             type: ChannelType.GuildText,
             parent: ticketCategory,
-            permissionOverwrites: [
-                {
-                    id: guild?.id,
-                    deny: ['ViewChannel'],
-                },
-                {
-                    id: member!.user.id,
-                    allow: ['ViewChannel'],
-                },
-            ],
+            permissionOverwrites: setPermissions,
         });
         
-        this.tickets.set(ticketChannel?.id!, new Ticket(ticketChannel));
+        this.tickets.set(ticketChannel?.id!, new Ticket(ticketChannel, parseInt(message.author.id), setPermissions));
     }
 
     async deleteTicket(interaction: ChatInputCommandInteraction, client: BaseClient) {
