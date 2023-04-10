@@ -1,6 +1,6 @@
-import { GuildModel, GuildUserModel } from "../database/models/guild.db.model";
+import { GuildModel, GuildUserModel } from "../models/guild.db.model";
 
-export class Guild {
+export class GuildHandler {
 	private _id: string = '';
 	private _name: string = "";
 
@@ -12,8 +12,8 @@ export class Guild {
 		return this._name;
 	}
 
-	public static async getGuildById(id: string): Promise<Guild | null> {
-		const guild = new Guild();
+	public static async getGuildById(id: string): Promise<GuildHandler | null> {
+		const guild = new GuildHandler();
 		const guildDB = await GuildModel.findOne({ where: { id: id } });
 		if (!guildDB) { return null; }
 		guild._id = guildDB.get("id") as string;
@@ -21,8 +21,8 @@ export class Guild {
 		return guild;
 	}
 
-	public static async getGuildByName(name: string): Promise<Guild | null> {
-		const guild = new Guild();
+	public static async getGuildByName(name: string): Promise<GuildHandler | null> {
+		const guild = new GuildHandler();
 		const guildDB = await GuildModel.findOne({ where: { name: name } });
 		if (!guildDB) { return null; }
 		guild._id = guildDB.get("id") as string;
@@ -30,8 +30,8 @@ export class Guild {
 		return guild;
 	}
 
-	public static async createGuild(id: string, name: string): Promise<Guild | null> {
-		const guild = new Guild();
+	public static async createGuild(id: string, name: string): Promise<GuildHandler | null> {
+		const guild = new GuildHandler();
 		const guildDB = await GuildModel.create({ id: id, name: name });
 		if (!guildDB) { return null; }
 		guild._id = guildDB.get("id") as string;
