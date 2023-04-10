@@ -1,6 +1,8 @@
-import { Message } from 'discord.js';
+import { EmbedBuilder, Message } from 'discord.js';
 import { BaseCommand, BaseClient } from "@src/structures";
-
+import { TicketManager } from "@src/structures/utils/ticketManager.class";
+import { ButtonBuilder, ActionRowBuilder } from '@discordjs/builders';
+import { ButtonStyle } from 'discord.js';
 /**
  * @description Pong command
  * @class Pong
@@ -19,7 +21,6 @@ export class PongCommand extends BaseCommand {
 	 * @param {string[]} args
 	 */
 	async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
-
 		if (args.length == 0) {
 			message.channel.send('Ping!');
 			return;

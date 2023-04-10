@@ -116,13 +116,19 @@ export class BaseClient extends Client {
 	 */
 	async loadModules(): Promise<void> {
 		this.modules.forEach(async (module: BaseModule) => {
-			await module.loadCommands('src/commands');
-			await module.loadSlashCommands('src/commands')
-			await module.registerSlashCommands(this);
+			const restResponse = await this.baseRest.get(
+				`/applications/${this.clientId}/commands`,
+			) as Array<{ name: string }>;
+
+			let addedSlashCommands: string[] = [];
+			for (let i = 0; i < restResponse.length; i++) {
+				addedSlashCommands.push(restResponse[i].name);
+			}
+			await module.loadCommands('src/commands' + '/' + module.getName());
+			await module.loadSlashCommands('src/commands' + '/' + module.getName());
+			await module.registerSlashCommands(this, addedSlashCommands);
 		});
 	}
-
-
 
 	/**
 	 * @description Load the events of the client

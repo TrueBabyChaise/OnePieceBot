@@ -39,7 +39,6 @@ export class MessageCreatedEvent extends BaseEvent {
 				])
 
 			for (const [key, value] of info.modules.entries()) {
-				console.log(key, value)
 				embed.addFields([
 					{ name: "Module", value: value.getName(), inline: true },
 					{ name: "Commands", value: value.getCommands().size.toString(), inline: true},
