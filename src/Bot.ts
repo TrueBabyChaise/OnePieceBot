@@ -1,8 +1,8 @@
 require('dotenv').config(); // LOAD CONFIG (.env)
-import { Client, GatewayIntentBits, Partials, REST } from 'discord.js';
+import { GatewayIntentBits, Partials, REST } from 'discord.js';
 import { BaseClient } from '@src/structures';
 import { GameModule } from './modules/Game.module';
-import databaseSynchronisation from './structures/utils/sync.db';
+import databaseSynchronisation from './structures/database/sync.db';
 import { DBConnection } from './structures/database/dbConnection.db.class';
 import { TicketModule } from './modules/Ticket.module';
 
