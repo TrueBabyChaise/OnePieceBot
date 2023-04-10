@@ -1,7 +1,7 @@
 import { OverwriteResolvable } from "discord.js";
-import { TicketModel, GuildTicketModel, UserTicketModel } from "../database/models/ticket.db.model";
+import { TicketModel, GuildTicketModel, UserTicketModel } from "../models/ticket.db.model";
 
-export class TicketDB {
+export class TicketHandler {
     private _id: string = '';
     private _owner: string = '';
     private _permissions: Array<OverwriteResolvable> = [];
@@ -32,8 +32,8 @@ export class TicketDB {
         return this._users;
     }
 
-    public static async getTicketById(id: string): Promise<TicketDB | null> {
-        const ticket = new TicketDB();
+    public static async getTicketById(id: string): Promise<TicketHandler | null> {
+        const ticket = new TicketHandler();
         const ticketDB = await TicketModel.findOne({ where: { id: id } });
         if (!ticketDB) { return null; }
         ticket._id = ticketDB.get("id") as string;
@@ -43,8 +43,8 @@ export class TicketDB {
         return ticket;
     }
 
-    public static async createTicket(id: string, owner: string, permissions: object, embedMessage: string = ''): Promise<TicketDB | null> {
-        const ticket = new TicketDB();
+    public static async createTicket(id: string, owner: string, permissions: object, embedMessage: string = ''): Promise<TicketHandler | null> {
+        const ticket = new TicketHandler();
         const ticketDB = await TicketModel.create({ id: id, owner: owner, permissions: permissions, embedMessage: embedMessage });
         if (!ticketDB) { return null; }
         ticket._id = ticketDB.get("id") as string;
@@ -82,12 +82,12 @@ export class TicketDB {
         return true;
     }
 
-    public static async getTicketByOwner(owner: string): Promise<TicketDB[] | null> {
-        const ticket = new Array<TicketDB>();
+    public static async getTicketByOwner(owner: string): Promise<TicketHandler[] | null> {
+        const ticket = new Array<TicketHandler>();
         const ticketDB = await TicketModel.findAll({ where: { owner: owner } });
         if (!ticketDB) { return null; }
         for (let i = 0; i < ticketDB.length; i++) {
-            ticket[i] = new TicketDB();
+            ticket[i] = new TicketHandler();
             ticket[i]._id = ticketDB[i].get("id") as string;
             ticket[i]._owner = ticketDB[i].get("owner") as string;
             ticket[i]._permissions = ticketDB[i].get("permissions") as Array<OverwriteResolvable>;

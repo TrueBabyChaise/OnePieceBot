@@ -1,8 +1,5 @@
-import { EmbedBuilder, Message } from 'discord.js';
+import { Message } from 'discord.js';
 import { BaseCommand, BaseClient } from "@src/structures";
-import { TicketManager } from "@src/structures/utils/ticketManager.class";
-import { ButtonBuilder, ActionRowBuilder } from '@discordjs/builders';
-import { ButtonStyle } from 'discord.js';
 /**
  * @description Pong command
  * @class Pong

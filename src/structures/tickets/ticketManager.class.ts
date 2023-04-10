@@ -1,10 +1,8 @@
 import { Message, EmbedBuilder, TextChannel, ChannelType, ColorResolvable, Colors, CategoryChannelResolvable, MessageCreateOptions, GuildChannel, Channel, Interaction, Collection, OverwriteResolvable } from 'discord.js';
-import { BaseEvent, BaseClient } from '@src/structures';
-import { ButtonBuilder, ActionRowBuilder } from '@discordjs/builders';
-import { ButtonStyle, MessageType, ChatInputCommandInteraction } from 'discord.js';
-import fs from 'fs';
-import { Ticket } from './Ticket.class';
-import { TicketDB } from '@src/structures/class/ticket.class';
+import { BaseClient } from '@src/structures';
+import { ChatInputCommandInteraction } from 'discord.js';
+import { Ticket } from './ticket.class'
+import { TicketHandler } from '@src/structures/database/handler/ticket.handler.class';
 
 interface EmbebError {
     title: string;
@@ -45,7 +43,7 @@ export class TicketManager {
     }
 
     public async setNewTicketFromMessage(message: Message) {
-        let ticket = await TicketDB.getTicketById(message.channelId!);
+        let ticket = await TicketHandler.getTicketById(message.channelId!);
         if (!this.tickets.get(message.channelId!) && ticket) {
             this.tickets.set(message.channelId!, new Ticket(message.channel as TextChannel, ticket?.owner, ticket.permissions)); 
         }

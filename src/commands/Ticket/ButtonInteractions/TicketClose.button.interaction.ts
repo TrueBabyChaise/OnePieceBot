@@ -1,5 +1,5 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
-import { TicketManager } from '@src/structures/utils/ticketManager.class';
+import { TicketManager } from "@src/structures/tickets/ticketManager.class";
 import { ChatInputCommandInteraction } from 'discord.js';
 
 /**

@@ -1,6 +1,6 @@
-import { UserModel } from "../database/models/user.db.model";
+import { UserModel } from "../models/user.db.model";
 
-export class User {
+export class UserHandler {
 	private _id: string = '';
 	private _username: string = "";
 	
@@ -12,8 +12,8 @@ export class User {
 		return this._username;
 	}
 
-	public static async getUserById(id: string): Promise<User | null> {
-		const user = new User();
+	public static async getUserById(id: string): Promise<UserHandler | null> {
+		const user = new UserHandler();
 		const userDB = await UserModel.findOne({ where: { id: id } });
 		if (!userDB) { return null; }
 		user._id = userDB.get("id") as string;
@@ -21,8 +21,8 @@ export class User {
 		return user;
 	}
 
-	public static async getUserByUsername(username: string): Promise<User | null> {
-		const user = new User();
+	public static async getUserByUsername(username: string): Promise<UserHandler | null> {
+		const user = new UserHandler();
 		const userDB = await UserModel.findOne({ where: { username: username } });
 		if (!userDB) { return null; }
 		user._id = userDB.get("id") as string;
@@ -30,8 +30,8 @@ export class User {
 		return user;
 	}
 
-	public static async createUser(id: string, username: string): Promise<User | null> {
-		const user = new User();
+	public static async createUser(id: string, username: string): Promise<UserHandler | null> {
+		const user = new UserHandler();
 		const userDB = await UserModel.create({ id: id, username: username });
 		if (!userDB) { return null; }
 		user._id = userDB.get("id") as string;

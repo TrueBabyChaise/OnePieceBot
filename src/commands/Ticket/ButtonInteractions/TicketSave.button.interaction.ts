@@ -1,6 +1,6 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
 import { Attachment, ChatInputCommandInteraction, AttachmentBuilder, AttachmentData } from 'discord.js';
-import { TicketManager } from '@src/structures/utils/ticketManager.class';
+import { TicketManager } from '@src/structures/tickets/ticketManager.class';
 
 /**
  * @description TicketSave button interaction
@@ -35,6 +35,10 @@ export class TicketSaveButtonInteraction extends BaseInteraction {
             return;
         }
         const transcript = await ticket.buildTranscript(interaction.guildId!, client);
+        if (!transcript) {
+            await interaction.reply('An error occurred while building the transcript');
+            return;
+        }
         const bufferResolvable = Buffer.from(transcript);
         const attachment = new AttachmentBuilder(bufferResolvable, {
             name: 'transcript.html',
