@@ -17,17 +17,17 @@ export class MemberLeaveEvent extends BaseEvent {
 		console.log(`Member ${member.user.tag} has leaved the guild ${member.guild.name}`);
 
 		if (member.user.bot) { return; }
-		if (!parseInt(member.id) || !member.user.tag) { return; }
+		if (!member.id || !member.user.tag) { return; }
 
-		const user = await User.getUserById(parseInt(member.id));
+		const user = await User.getUserById(member.id);
 		if (user) {
-			await User.deleteUser(parseInt(member.id));
+			await User.deleteUser(member.id);
 		}
 
 		if (!member.guild) { return; }
-		let guild = await Guild.getGuildById(parseInt(member.guild.id));
+		let guild = await Guild.getGuildById(member.guild.id);
 		if (guild) {
-			await guild.removeUserFromGuild(parseInt(member.id));
+			await guild.removeUserFromGuild(member.id);
 		}
 	}
 }

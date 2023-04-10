@@ -1,10 +1,10 @@
 import { GuildModel, GuildUserModel } from "../database/models/guild.db.model";
 
 export class Guild {
-	private _id: number = 0;
+	private _id: string = '';
 	private _name: string = "";
 
-	public get id(): number {
+	public get id(): string {
 		return this._id;
 	}
 
@@ -12,11 +12,11 @@ export class Guild {
 		return this._name;
 	}
 
-	public static async getGuildById(id: number): Promise<Guild | null> {
+	public static async getGuildById(id: string): Promise<Guild | null> {
 		const guild = new Guild();
 		const guildDB = await GuildModel.findOne({ where: { id: id } });
 		if (!guildDB) { return null; }
-		guild._id = guildDB.get("id") as number;
+		guild._id = guildDB.get("id") as string;
 		guild._name = guildDB.get("name") as string;
 		return guild;
 	}
@@ -25,55 +25,55 @@ export class Guild {
 		const guild = new Guild();
 		const guildDB = await GuildModel.findOne({ where: { name: name } });
 		if (!guildDB) { return null; }
-		guild._id = guildDB.get("id") as number;
+		guild._id = guildDB.get("id") as string;
 		guild._name = guildDB.get("name") as string;
 		return guild;
 	}
 
-	public static async createGuild(id: number, name: string): Promise<Guild | null> {
+	public static async createGuild(id: string, name: string): Promise<Guild | null> {
 		const guild = new Guild();
 		const guildDB = await GuildModel.create({ id: id, name: name });
 		if (!guildDB) { return null; }
-		guild._id = guildDB.get("id") as number;
+		guild._id = guildDB.get("id") as string;
 		guild._name = guildDB.get("name") as string;
 		return guild;
 	}
 
-	public static async deleteGuild(id: number): Promise<boolean> {
+	public static async deleteGuild(id: string): Promise<boolean> {
 		const guildDB = await GuildModel.destroy({ where: { id: id } });
 		if (!guildDB) { return false; }
 		return true;
 	}
 
-	public async addUserToGuild(id: number): Promise<boolean> {
+	public async addUserToGuild(id: string): Promise<boolean> {
 		const guildUserDB = await GuildUserModel.create({ fkUser: id, fkGuild: this._id });
 		if (!guildUserDB) { return false; }
 		return true;
 	}
 
-	public async getUsers(): Promise<number[]> {
+	public async getUsers(): Promise<string[]> {
 		const guildUsersDB = await GuildUserModel.findAll({ where: { fkGuild: this._id } });
 		if (!guildUsersDB) { return []; }
-		const users: number[] = [];
+		const users: string[] = [];
 		for (const guildUserDB of guildUsersDB) {
-			users.push(guildUserDB.get("fkUser") as number);
+			users.push(guildUserDB.get("fkUser") as string);
 		}
 		return users;
 	}
 
-	public async removeUserFromGuild(id: number): Promise<boolean> {
+	public async removeUserFromGuild(id: string): Promise<boolean> {
 		const guildUserDB = await GuildUserModel.destroy({ where: { fkUser: id, fkGuild: this._id } });
 		if (!guildUserDB) { return false; }
 		return true;
 	}
 
-	public async isUserInGuild(id: number): Promise<boolean> {
+	public async isUserInGuild(id: string): Promise<boolean> {
 		const guildUserDB = await GuildUserModel.findOne({ where: { fkUser: id, fkGuild: this._id } });
 		if (!guildUserDB) { return false; }
 		return true;
 	}
 
-	public async addUsersToGuild(ids: number[]): Promise<boolean> {
+	public async addUsersToGuild(ids: string[]): Promise<boolean> {
 		for (const id of ids) {
 			const guildUserDB = await GuildUserModel.create({ fkUser: id, fkGuild: this._id });
 			if (!guildUserDB) { return false; }

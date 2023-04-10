@@ -7,7 +7,7 @@ const sequelize = DBConnection.getInstance().sequelize
 export const GuildModel = sequelize.define(
 	"guilds", {
 		id: {
-			type: Sequelize.BIGINT,
+			type: Sequelize.STRING,
 			primaryKey: true,
 		},
 		name: {
@@ -19,7 +19,7 @@ export const GuildModel = sequelize.define(
 export const GuildUserModel = sequelize.define(
 	"guild_users", {
 		fkUser: {
-			type: Sequelize.BIGINT,
+			type: Sequelize.STRING,
 			references: {
 				model: UserModel,
 				key: "id",
@@ -28,7 +28,7 @@ export const GuildUserModel = sequelize.define(
 			primaryKey: true,
 		},
 		fkGuild: {
-			type: Sequelize.BIGINT,
+			type: Sequelize.STRING,
 			references: {
 				model: GuildModel,
 				key: "id",

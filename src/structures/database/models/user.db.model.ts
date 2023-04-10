@@ -5,7 +5,7 @@ const sequelize = DBConnection.getInstance().sequelize
 export const UserModel = sequelize.define(
 	"users", {
 		id: {
-			type: Sequelize.BIGINT,
+			type: Sequelize.STRING,
 			primaryKey: true,
 		},
 		username: {

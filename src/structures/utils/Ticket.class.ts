@@ -9,7 +9,7 @@ import { TicketDB  } from '../class/ticket.class';
 export class Ticket {
 	private id: string;
 	private channel: TextChannel;
-	private owner: number;
+	private owner: string;
 	private isBeingDeleted: boolean = false;
 	private isDeleted: boolean = false;
 	private isClosed: boolean = false;
@@ -17,7 +17,7 @@ export class Ticket {
 	private permissions: Array<OverwriteResolvable>;
 	private ticketDB: TicketDB | null = null;
 
-	constructor(channel: TextChannel, owner: number, permissions: Array<OverwriteResolvable>) {
+	constructor(channel: TextChannel, owner: string, permissions: Array<OverwriteResolvable>) {
 		this.id = channel.id;
 		this.channel = channel;
 		this.messageEmbed = null;
@@ -25,16 +25,19 @@ export class Ticket {
 		this.permissions = permissions;
 
 		(async () => {
-			this.ticketDB = await TicketDB.getTicketById(parseInt(channel.id));
+			this.ticketDB = await TicketDB.getTicketById(channel.id);
 			if (!this.ticketDB) {
 				console.log('Ticket not found, creating new ticket');
-				this.ticketDB = await TicketDB.createTicket(parseInt(channel.id), owner, permissions);
-				this.ticketDB?.addTicketToGuild(parseInt(channel.guild.id));
+				this.messageEmbed = await channel.send(this.optionsTicketCommandEmbed(this.isClosed))
+				this.ticketDB = await TicketDB.createTicket(channel.id, owner, permissions, this.messageEmbed.id);
+				this.ticketDB?.addTicketToGuild(channel.guild.id);
 				this.ticketDB?.addTicketToUser(owner);
+				return;
+			} else {
+				this.messageEmbed = await channel.messages.fetch(this.ticketDB.embedMessage);
 			}
 			console.log('Ticket found');
 			console.log(this.ticketDB);
-			this.messageEmbed = await channel.send(this.optionsTicketCommandEmbed(this.isClosed))
 		})();
    	}
 
@@ -47,12 +50,15 @@ export class Ticket {
 	}
 
 	public async addUser(user: User) {
+		
 		await this.channel.permissionOverwrites.edit(user, {
 			SendMessages: true,
 			ViewChannel: true,
 		});
-		
+
+		this.ticketDB?.addTicketToUser(user.id);
 		this.channel.send(`Added ${`<@${user.id}>`} to the ticket!`);
+		
 	}
 
 	public async removeUser(user: User) {
@@ -61,6 +67,7 @@ export class Ticket {
 			ViewChannel: false,
 		});
 
+		this.ticketDB?.removeTicketOfUser(user.id);
 		this.channel.send(`Removed ${`<@${user.id}>`} from the ticket!`);
 	}
 
@@ -76,11 +83,32 @@ export class Ticket {
 		});
 
 		this.isClosed = false;
+		let isChanged = false;
+
+		this.ticketDB?.permissions.find((permission) => {
+			if (permission.id === interaction.guild!.roles.everyone.id) {
+				permission.allow = ['SendMessages']
+				permission.deny = ['ViewChannel']
+				isChanged = true;
+			}
+		});
+
+		if (!isChanged) {
+			this.ticketDB?.permissions.push({
+				id: interaction.guild!.roles.everyone.id,
+				allow: ['SendMessages'],
+				deny: ['ViewChannel']
+			});
+		}
+
 		
 		if (this.messageEmbed) {
 			await this.messageEmbed.delete();
 			this.messageEmbed = await channel.send(this.optionsTicketCommandEmbed(this.isClosed));
+			this.ticketDB!.embedMessage = this.messageEmbed.id;
 		}
+
+		this.ticketDB?.save();
 
 		interaction.reply('Ticket Open!');
 		setTimeout(() => {
@@ -99,12 +127,35 @@ export class Ticket {
 			SendMessages: false,
 		});
 
+		let isChanged = false;
+
+		this.ticketDB?.permissions.find((permission) => {
+			if (permission.id === interaction.guild!.roles.everyone.id) {
+				permission.deny = ['ViewChannel', 'SendMessages']
+				permission.allow = []
+				isChanged = true;
+			}
+		});
+
+		if (!isChanged) {
+			this.ticketDB?.permissions.push({
+				id: interaction.guild!.roles.everyone.id,
+				deny: ['ViewChannel', 'SendMessages'],
+				allow: []
+			});
+		}
+
 		this.isClosed = true;
 
+		console.log(this.messageEmbed)
 		if (this.messageEmbed) {
 			await this.messageEmbed.delete();
 			this.messageEmbed = await channel.send(this.optionsTicketCommandEmbed(this.isClosed));
+			this.ticketDB!.embedMessage = this.messageEmbed.id;
 		}
+
+		this.ticketDB?.save();
+
 
 		interaction.reply('Ticket closed!');
 		setTimeout(() => {
@@ -136,6 +187,7 @@ export class Ticket {
             try {
                 if (this.isDeleted) {
                     await interaction.channel!.delete();
+					this.ticketDB?.delete();
 					clearInterval(interval);
 					return;
                 }
@@ -288,6 +340,7 @@ export class Ticket {
     }
 
 	private optionsTicketCommandEmbed(isClosed: boolean): MessageCreateOptions {
+		console.log(isClosed);
 		const row = new ActionRowBuilder<ButtonBuilder>()
 			.addComponents(
 				new ButtonBuilder()

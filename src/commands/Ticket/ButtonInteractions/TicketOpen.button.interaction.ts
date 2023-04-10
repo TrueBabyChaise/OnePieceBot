@@ -21,7 +21,7 @@ export class TicketOpenButtonInteraction extends BaseInteraction {
     async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
         const ticket = TicketManager.getInstance().getTicket(interaction.channelId)
         if (ticket)
-            await ticket.closeTicket(interaction, client);
+            await ticket.openTicket(interaction, client);
         else
             interaction.reply('Ticket not found');
     }

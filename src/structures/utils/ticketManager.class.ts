@@ -45,12 +45,12 @@ export class TicketManager {
     }
 
     public async setNewTicketFromMessage(message: Message) {
-        if (!this.tickets.get(message.channelId!)) {
-            let ticket = await TicketDB.getTicketById(parseInt(message.channelId!));
-            if (!ticket) { return; }
+        let ticket = await TicketDB.getTicketById(message.channelId!);
+        if (!this.tickets.get(message.channelId!) && ticket) {
             this.tickets.set(message.channelId!, new Ticket(message.channel as TextChannel, ticket?.owner, ticket.permissions)); 
-        } else {
-            this.tickets.set(message.channelId!, new Ticket(message.channel as TextChannel, parseInt(message.author.id),  []));
+        }
+        if (!ticket) {
+            this.tickets.set(message.channelId!, new Ticket(message.channel as TextChannel, message.author.id, []));
         }
     }
 
@@ -102,7 +102,7 @@ export class TicketManager {
             permissionOverwrites: setPermissions,
         });
         
-        this.tickets.set(ticketChannel?.id!, new Ticket(ticketChannel, parseInt(message.author.id), setPermissions));
+        this.tickets.set(ticketChannel?.id!, new Ticket(ticketChannel, message.author.id, setPermissions));
     }
 
     async deleteTicket(interaction: ChatInputCommandInteraction, client: BaseClient) {
@@ -122,6 +122,10 @@ export class TicketManager {
 
     async cancelDeleteTicket(channelId: string) {
         this.tickets.get(channelId)?.setIsBeingDeleted(false);
+    }
+
+    async createTicketFromDB(channel: TextChannel, owner: string, permissions: OverwriteResolvable[]) {
+        this.tickets.set(channel.id, new Ticket(channel, owner, permissions));
     }
 
     /**

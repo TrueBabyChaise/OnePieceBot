@@ -7,11 +7,11 @@ const sequelize = DBConnection.getInstance().sequelize
 export const TicketModel = sequelize.define(
 	"tickets", {
 		id: {
-			type: Sequelize.BIGINT,
+			type: Sequelize.STRING,
 			primaryKey: true,
 		},
         owner: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.STRING,
             references: {
                 model: UserModel,
                 key: "id",
@@ -20,13 +20,16 @@ export const TicketModel = sequelize.define(
         permissions: {
             type: Sequelize.JSON,
         },
+        embedMessage: {
+            type: Sequelize.STRING,
+        },
 	}
 );
 
 export const GuildTicketModel = sequelize.define(
 	"guild_tickets", {
 		fkTicket: {
-			type: Sequelize.BIGINT,
+			type: Sequelize.STRING,
 			references: {
 				model: TicketModel,
 				key: "id",
@@ -35,7 +38,7 @@ export const GuildTicketModel = sequelize.define(
 			primaryKey: true,
 		},
 		fkGuild: {
-			type: Sequelize.BIGINT,
+			type: Sequelize.STRING,
 			references: {
 				model: GuildModel,
 				key: "id",
@@ -52,7 +55,7 @@ export const GuildTicketModel = sequelize.define(
 export const UserTicketModel = sequelize.define(
     "users_tickets", {
         fkTicket: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.STRING,
             references: {
                 model: TicketModel,
                 key: "id",
@@ -60,7 +63,7 @@ export const UserTicketModel = sequelize.define(
             allowNull: false,
         },
         fkUser: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.STRING,
             references: {
                 model: UserModel,
                 key: "id",

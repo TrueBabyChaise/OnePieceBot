@@ -22,7 +22,6 @@ export class HeadTalesCommand extends BaseCommand {
 	 */
 	async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
 		message.channel.send('Head Tales');
-
 		const row = new ActionRowBuilder<ButtonBuilder>()
 			.addComponents(
 				new ButtonBuilder()
