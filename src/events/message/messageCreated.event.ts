@@ -1,5 +1,6 @@
-import { Message } from 'discord.js';
-import { BaseEvent, BaseClient  } from "@src/baseClass";
+import { EmbedBuilder, Message, Events } from 'discord.js';
+import { BaseEvent, BaseClient, BaseModule  } from "@src/structures";
+import { Colors } from 'discord.js';
 
 /**
  * @description MessageCreated event
@@ -9,13 +10,47 @@ import { BaseEvent, BaseClient  } from "@src/baseClass";
  */
 export class MessageCreatedEvent extends BaseEvent {
 	constructor() {
-		super('messageCreate', false);
+		super(Events.MessageCreate, false);
 	}
 
 	async execute(client: BaseClient, message: Message) {
 		
 		// SKIP IF AUTHOR IS BOT
 		if (message.author.bot) return;
+
+
+		if (message.mentions.has(client.user!) && message.author.id !== client.getAuthorId()) {
+			message.reply(`My prefix is \`${client.getPrefix()}\`, don't forget it!`);
+		}
+
+		if (message.mentions.has(client.user!) && message.author.id === client.getAuthorId()) {
+			const info = client.getInfo();
+			const username = client.users.cache.get(client.getAuthorId())?.tag
+
+			const embed = new EmbedBuilder()
+				.setTitle('Bot Info')
+				.setDescription('Here is some information about me')
+				.setColor(Colors.Orange)
+				.setTimestamp()
+				.addFields([
+					{ name: "Prefix", value: info.prefix, inline: true },
+					{ name: "Modules", value: info.modules.size.toString(), inline: true },
+					{ name: "Author", value: username ? username : "Not found", inline: true}
+				])
+
+			for (const [key, value] of info.modules.entries()) {
+				embed.addFields([
+					{ name: "Module", value: value.getName(), inline: true },
+					{ name: "Commands", value: value.getCommands().size.toString(), inline: true},
+					{ name: "Interactions", value: value.getInteractions().size.toString(), inline: true}
+				])
+			}
+			if (message.author.avatarURL()) 
+				embed.setFooter({ text: `Developed by ${username ? username : "No one"}`, iconURL: `${message.author.avatarURL()}`})
+			else 
+				embed.setFooter({ text: `Developed by ${username ? username : "No one"}`})
+			message.channel.send({ content: 'Hello, my master !', embeds: [embed] });
+		}
 
 		// SKIP IF MESSAGE DOES NOT START WITH PREFIX
 		if (message.content.startsWith(client.getPrefix())) {

@@ -1,5 +1,5 @@
-import { BaseEvent } from "@src/baseClass";
-import { Client } from "discord.js";
+import { BaseEvent } from "@src/structures";
+import { BaseClient } from "@src/structures";
 import { readdirSync } from "fs";
 
 /**
@@ -12,7 +12,7 @@ import { readdirSync } from "fs";
  * @memberof module:Events
  * @inner
  */
-export = async (client: Client) => {
+export = async (client: BaseClient) => {
 	const eventFiles = readdirSync('./src/events');
 	for (const file of eventFiles) {
 		const lstat = await (await import(`fs`)).promises.lstat(`./src/events/${file}`);
@@ -28,7 +28,6 @@ export = async (client: Client) => {
 						} else {
 							client.on(event.name, (...args: any) => event.execute(client, ...args));
 						}
-						console.log(`Loaded event ${event.name}`);
 					} catch (error) {
 						console.log("Could not load event " + file + "/" + subFile + "");
 					}

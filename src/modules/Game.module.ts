@@ -1,4 +1,4 @@
-import { BaseModule } from "@src/baseClass/";
+import { BaseModule } from "@src/structures";
 
 export class GameModule extends BaseModule {
 	constructor() {
