@@ -193,8 +193,7 @@ export abstract class BaseModule {
 		}
 
 		console.table("To Register", toRegister)
-
-		/*let data;
+		let data;
 		if (!guildId) {
 			data = await client.getBaseRest().put(
 				Routes.applicationCommands(client.getClientId()),
@@ -207,7 +206,7 @@ export abstract class BaseModule {
 			)
 		}
 
-		console.log(data);*/
+		console.log(data);
 	}
 
 

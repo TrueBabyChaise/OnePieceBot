@@ -8,7 +8,7 @@ import { ChatInputCommandInteraction } from "discord.js";
  */
 export class PongSlashCommand extends BaseSlashCommand {
 	constructor() {
-		super('pong', 'Ping! Pong!', 'Test', 0, true, []);
+		super('pong', 'Ping! Pong!', [], 0, true, []);
 	}
 
 	/**

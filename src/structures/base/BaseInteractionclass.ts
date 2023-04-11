@@ -1,4 +1,4 @@
-import { Interaction, SlashCommandBuilder } from "discord.js";
+import { Interaction, PermissionFlagsBits } from "discord.js";
 import { BaseClient } from "@src/structures";
 
 /**
@@ -11,10 +11,10 @@ export abstract class BaseInteraction  {
 	private options: any;
 	private enabled: boolean;
 	private cooldown: number;
-	private permissions: string[];
+	private permissions: bigint[];
 	private module: string = '';
 
-	constructor(name: string, description: string, options?: any, cooldown?: number, isEnabled?: boolean, permissions?: string[]) {
+	constructor(name: string, description: string, options?: any, cooldown?: number, isEnabled?: boolean, permissions?: bigint[]) {
 		this.name = name;
 		this.description = description;
 		this.options = options || [];

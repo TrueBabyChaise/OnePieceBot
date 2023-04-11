@@ -5,6 +5,7 @@ import { GameModule } from './modules/Game.module';
 import databaseSynchronisation from './structures/database/sync.db';
 import { DBConnection } from './structures/database/dbConnection.db.class';
 import { TicketModule } from './modules/Ticket.module';
+import { ModerationModule } from './modules/Moderation.module';
 
 const config ={
 	intents: [
@@ -44,6 +45,7 @@ async function main() {
 		console.log('Loading modules...');
 		baseClient.addModule(new GameModule());
 		baseClient.addModule(new TicketModule());
+		baseClient.addModule(new ModerationModule());
 		await baseClient.loadModules();
 		// Load events
 		await baseClient.loadEvents();
