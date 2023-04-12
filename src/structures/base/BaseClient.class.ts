@@ -115,19 +115,43 @@ export class BaseClient extends Client {
 	 * client.loadModules();
 	 */
 	async loadModules(): Promise<void> {
-		this.modules.forEach(async (module: BaseModule) => {
-			const restResponse = await this.baseRest.get(
-				`/applications/${this.clientId}/commands`,
-			) as Array<{ name: string }>;
-
-			let addedSlashCommands: string[] = [];
-			for (let i = 0; i < restResponse.length; i++) {
-				addedSlashCommands.push(restResponse[i].name);
+		let restSlashCommands = await this.baseRest.get(
+			`/applications/${this.clientId}/commands`,
+		) as any[];
+		let hasChanged = false;
+		let registeredSlashCommand = [];
+		//console.log(restSlashCommands);
+	
+		for (const module of this.modules.values()) {
+			console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			console.log("Loading", module.getName(), "...");
+			if (hasChanged) {
+				//console.log(restSlashCommands);
+				restSlashCommands = await this.baseRest.get(
+					`/applications/${this.clientId}/commands`,
+				) as any[];
 			}
+
+
 			await module.loadCommands('src/commands' + '/' + module.getName());
 			await module.loadSlashCommands('src/commands' + '/' + module.getName());
-			await module.registerSlashCommands(this, addedSlashCommands);
-		});
+			let result = await module.registerSlashCommands(this, restSlashCommands);
+			for (const slashCommand of result.registered) {
+				registeredSlashCommand.push(slashCommand);
+			}
+			hasChanged = result.hasChanged;
+			console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		}
+
+		for (const slashCommand of restSlashCommands) {
+			if (!registeredSlashCommand.includes(slashCommand.name)) {
+				console.log("Deleting", slashCommand.name, "...");
+				await this.baseRest.delete(
+					`/applications/${this.clientId}/commands/${slashCommand.id}`,
+				);
+			}
+		}
+		
 	}
 
 	/**

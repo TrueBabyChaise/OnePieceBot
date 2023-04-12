@@ -1,5 +1,6 @@
 import { Message } from 'discord.js';
 import { BaseCommand, BaseClient } from "@src/structures";
+
 /**
  * @description Pong command
  * @class Pong

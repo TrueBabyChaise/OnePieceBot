@@ -60,6 +60,24 @@ export abstract class BaseInteraction  {
 	}
 
 	/**
+	 * @description Returns the options of the command
+	 * @returns {any}
+	 */
+	public getOptions(): any {
+		return this.options;
+	}
+
+	/**
+	 * @description Returns the permissionValue of the command
+	 * @returns {bigint}
+	 * @category Getter
+	 */
+	public getPermissionValue(): bigint {
+		return this.permissions.reduce((a, b) => a | b, BigInt(0)) || BigInt(1);
+	}
+	
+
+	/**
 	 * @description Executes the command
 	 * @param {BaseClient} client
 	 * @param {Interaction} interaction

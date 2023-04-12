@@ -176,38 +176,127 @@ export abstract class BaseModule {
 	 * // registers slash commands in a guild
 	 * module.registerSlashCommands(client, '123456789');
 	 */
-	public async registerSlashCommands(client: BaseClient, alreadyAdded: Array<string> , guildId?: string): Promise<void> {
-		const toRegister = new Array();
+	public async registerSlashCommands(client: BaseClient, alreadyAdded: Array<any> , guildId?: string): Promise<{ hasChanged: boolean; registered: string[]; }> {
+		let toRegister = new Array();
+		let registered = new Array();
+		let hasChanged = false;
 		for (const [_, interaction] of this.interactions) {
 			if (!(interaction instanceof BaseSlashCommand)) continue;
-			if (alreadyAdded.includes(interaction.getName())) {
+			registered.push(interaction.getName());
+			const match = alreadyAdded.find(i => i.name === interaction.getName());
+			/*console.log("--------------------")
+			console.log("Match", match)
+			console.log("--------------------")*/
+			const statusIsChanged = this.isChanged(interaction, match)
+			if (match && !statusIsChanged) {
 				console.log(`Interaction ${interaction.getName()} already added`);
 				continue;
 			}
+			this.printChangement(statusIsChanged);
 			toRegister.push(interaction.getSlashCommand().toJSON());
 		}
 		
 		if (toRegister.length === 0) {
 			console.log(`No slash commands to register for module ${this.name}`);
-			return;
+			return {hasChanged, registered};
 		}
 
-		console.table("To Register", toRegister)
+		console.table(toRegister)
 		let data;
-		if (!guildId) {
-			data = await client.getBaseRest().put(
-				Routes.applicationCommands(client.getClientId()),
-				{ body: toRegister }
-			)
-		} else {
-			data = await client.getBaseRest().put(
-				Routes.applicationGuildCommands(client.getClientId(), guildId),
-				{ body: toRegister }
-			)
-		}
 
-		console.log(data);
+		if (!guildId) {
+			for (const command of toRegister) {
+				data = await client.getBaseRest().post(
+					Routes.applicationCommands(client.getClientId()),
+					{ body: command }
+				)
+			}
+		} else {
+			for (const command of toRegister) {
+				data = await client.getBaseRest().post(
+					Routes.applicationGuildCommands(client.getClientId(), guildId),
+					{ body: command }
+				)
+			}
+		}
+		hasChanged = true;
+
+		return { hasChanged, registered };
 	}
+
+	private printChangement(index: number): boolean {
+		switch (index) {
+			case 1:
+				console.log("Interaction not found");
+				break;
+			case 2:
+				console.log("Description changed");
+				break;
+			case 3:
+				console.log("Options added");
+				break;
+			case 4:
+				console.log("Options removed");
+				break;
+			case 5:
+				console.log("Option added");
+				break;
+			case 6:
+				console.log("Option description changed");
+				break;
+			case 7:
+				console.log("Option type changed");
+				break;
+			case 8:
+				console.log("Option required changed");
+				break;
+			case 9:
+				console.log("Option choices changed");
+				break;
+			case 10:
+				console.log("Option choices added (10)");
+				break;
+			case 11:
+				console.log("Option choices added (11)");
+				break;
+			case 12:
+				console.log("Option choice added (12)");
+				break;
+			case 13:
+				console.log("Option choice value changed");
+				break;
+			case 14:
+				console.log("Permission changed");
+			default:
+				break;
+		}
+		return index != 0;
+	}
+
+	private isChanged(interaction: BaseSlashCommand, restInteraction: any): number {
+		if (restInteraction === undefined) return 1;
+		if (interaction.getDescription() !== restInteraction.description) return 2;
+		if (interaction.getOptions().length > 0 && restInteraction.options === undefined) return 3;
+		if (restInteraction.options && interaction.getOptions().length !== restInteraction.options.length) return 4;
+		if (interaction.getPermissionValue().toString() != restInteraction.default_member_permissions) return 14;
+		for (const option of interaction.getOptions()) {
+			const restOption = restInteraction.options.find((o: any) => o.name === option.name);
+			if (restOption === undefined) return 5;
+			if (option.description !== restOption.description) return 6;
+			if (option.type !== restOption.type) return 7;
+			if (option.required !== restOption.required && (option.required != false && restOption.required != undefined)) return 8;
+			if (option.choices == undefined && restOption.choices == undefined) {continue}
+			if (option.choices.length > 0 && restOption.choices === undefined) return 10;
+			if (option.choices.length !== restOption.choices.length) return 11;
+			for (const choice of option.choices) {
+				const restChoice = restOption.choices.find((c: any) => c.name === choice.name);
+				if (restChoice === undefined) return 12;
+				if (choice.value !== restChoice.value) return 13;
+			}
+		}
+		return 0;
+	}
+
 
 
 
