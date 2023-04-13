@@ -1,5 +1,4 @@
 import { BaseCommand, BaseInteraction, BaseClient, BaseSlashCommand } from '@src/structures';
-import { Routes } from 'discord.js';
 
 /**
  * @description Base class for modules
