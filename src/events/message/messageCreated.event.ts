@@ -23,7 +23,7 @@ export class MessageCreatedEvent extends BaseEvent {
 			message.reply(`My prefix is \`${client.getPrefix()}\`, don't forget it!`);
 		}
 
-		if (message.mentions.has(client.user!) && message.author.id === client.getAuthorId()) {
+		if (message.mentions.has(client.user!) && message.author.id === client.getAuthorId() && !message.mentions.everyone) {
 			const info = client.getInfo();
 			const username = client.users.cache.get(client.getAuthorId())?.tag
 
