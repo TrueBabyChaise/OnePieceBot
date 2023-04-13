@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, GuildMember, Role} from "discord.js";
+import { ChatInputCommandInteraction, GuildMember, Role, PermissionFlagsBits} from "discord.js";
 import { BaseCommand, BaseClient, BaseSlashCommand, SlashCommandOptionType } from "@src/structures";
 
 /**
@@ -38,7 +38,7 @@ export class addRoleCommand extends BaseSlashCommand {
                 required: true,
                 type: SlashCommandOptionType.ROLE
             }
-        ], 0, true);
+        ], 0, true, [PermissionFlagsBits.ManageRoles]);
     }
 
     /**
