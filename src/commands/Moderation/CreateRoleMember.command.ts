@@ -1,6 +1,7 @@
 import { Colors, Message } from "discord.js";
 import { BaseCommand, BaseClient } from "@src/structures";
 import { PermissionsBitField } from "discord.js";
+import { GuildHandler } from "@src/structures/database/handler/guild.handler.class";
 
 
 /**
@@ -23,30 +24,68 @@ export class CreateRoleMemberCommand extends BaseCommand {
      */
     async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
         if (args.length == 0) {
-            message.channel.send("Please provide a role name");
+            message.reply("Please provide a role name").then((msg) => {
+                setTimeout(() => {
+                    msg.delete();
+                }, 5000);
+            });
             return;
         }
 
         const roleName = args.join(" ");
         const guild = message.guild;
         if (!guild) {
-            message.channel.send("Guild not found");
+            message.reply("Guild not found").then((msg) => {
+                setTimeout(() => {
+                    msg.delete();
+                }, 5000);
+            });
             return;
         }
         const role = message.guild.roles.cache.find((r) => r.name === roleName);
         if (role) {
-            message.channel.send("Role already exists");
+            message.reply("Role already exists").then((msg) => {
+                setTimeout(() => {
+                    msg.delete();
+                }, 5000);
+            });
             return;
         } else {
             const permissions = new PermissionsBitField();
             permissions.add('SendMessages');
-            guild.roles.create({
+            const role = await guild.roles.create({
                 name: roleName,
                 color: Colors.Blue,
                 mentionable: true,
                 permissions: permissions
             });
-            message.channel.send(`Role ${roleName} created`);
+            if (!role) {
+                message.reply({ content: "Couldn't create role"}).then((msg) => {
+                    setTimeout(() => {
+                        msg.delete();
+                    }, 5000);
+                });
+                return;
+            }
+            const guildDB = await GuildHandler.getGuildById(guild.id);
+            if (!guildDB) {
+                message.reply({ content: "Guild not found but role created, you'll need to delete it"}).then((msg) => {
+                    setTimeout(() => {
+                        msg.delete();
+                    }, 5000);
+                });
+                return;
+            }
+            const status = await guildDB.updateMemberRoleId(role.id);
+            if (!status) {
+                message.reply({ content: "Something went wrong"}).then((msg) => {
+                    setTimeout(() => {
+                        msg.delete();
+                    }, 5000);
+                });
+                return;
+            }
+            message.reply(`Role ${roleName} created`);
         }
     }
 }

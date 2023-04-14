@@ -10,6 +10,7 @@ export abstract class BaseModule {
 	private interactions: Map<string, BaseInteraction> = new Map();
 	private aliases: Map<string, BaseCommand> = new Map();
 	private enabled: boolean;
+	private description: string;
 	// May need to change this to a Collection<string, BaseCommand> if we want to add more properties to the commands same goes the aliases
 	// private commands: Collection<string, BaseCommand> = new Collection();
 	private commands: Map<string, BaseCommand> = new Map(); 
@@ -19,8 +20,9 @@ export abstract class BaseModule {
 	 * @param name 
 	 * @param isEnabled 
 	 */
-	constructor(name: string, isEnabled?: boolean) {
+	constructor(name: string, description?: string, isEnabled?: boolean) {
 		this.name = name;
+		this.description = description || 'No description provided';
 		this.enabled = isEnabled || true;
 	}
 
@@ -43,6 +45,15 @@ export abstract class BaseModule {
 		return this.name;
 	}
 		
+
+	/**
+	 * @description Returns the description of the module
+	 * @returns {string}
+	 */
+	public getDescription(): string {
+		return this.description;
+	}
+
 	/**
 	 * @description Returns the active status of the module
 	 * @returns {boolean}
