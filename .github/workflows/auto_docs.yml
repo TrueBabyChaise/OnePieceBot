@@ -8,7 +8,7 @@ jobs:
   publish:
     - uses: actions/checkout@master
     - run: |
-		npm install -g typedoc 
+        npm install -g typedoc 
         npx typedoc
     - uses: seanmiddleditch/gha-publish-to-git@master
       with:
