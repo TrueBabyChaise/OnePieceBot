@@ -1,7 +1,8 @@
 import { BaseSlashCommand, BaseClient } from "@src/structures";
-import { ChatInputCommandInteraction, GuildMember } from "discord.js";
+import { ChatInputCommandInteraction, Guild, GuildMember } from "discord.js";
 import { SlashCommandOptionType } from "@src/structures";
 import { PermissionFlagsBits } from "discord.js";
+import { GuildHandler } from "@src/structures/database/handler/guild.handler.class";
 
 /**
  * @description Unmute slash command
@@ -34,6 +35,7 @@ export class UnmuteSlashCommand extends BaseSlashCommand {
 	 */
 	async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
         const memberOption = interaction.options.get('member')
+        const guildDB = await GuildHandler.getGuildById(interaction.guild!.id);
 
         if (!memberOption) {
             await interaction.reply('Something went wrong!');
@@ -65,6 +67,10 @@ export class UnmuteSlashCommand extends BaseSlashCommand {
         };
 
         await member.roles.remove(role);
+        if (guildDB?.memberRoleId) {
+            const memberRole = interaction.guild.roles.cache.get(guildDB.memberRoleId);
+            if (memberRole && !member.roles.cache.has(memberRole.id)) await member.roles.add(memberRole);
+        };
         await interaction.reply(`Successfully unmuted ${member}`);
 
 	}

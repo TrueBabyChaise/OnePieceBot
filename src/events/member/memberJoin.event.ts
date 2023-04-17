@@ -31,5 +31,8 @@ export class MemberJoinEvent extends BaseEvent {
 		}
 		if (!guild) { return; }
 		await guild.addUserToGuild(member.id);
+		if (guild.memberRoleId) {
+			await member.roles.add(guild.memberRoleId);
+		}
 	}
 }

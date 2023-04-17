@@ -1,12 +1,14 @@
 import { Interaction, SlashCommandBuilder, ApplicationCommandOptionType, APIApplicationCommandOptionChoice } from "discord.js";
 import { BaseClient, BaseInteraction } from "@src/structures";
+import { BOOLEAN } from "sequelize";
 
 export enum SlashCommandOptionType {
 	USER = ApplicationCommandOptionType.User,
 	CHANNEL = ApplicationCommandOptionType.Channel,
 	ROLE = ApplicationCommandOptionType.Role,
 	STRING = ApplicationCommandOptionType.String,
-	INTEGER = ApplicationCommandOptionType.Integer
+	INTEGER = ApplicationCommandOptionType.Integer,
+	BOOLEAN = ApplicationCommandOptionType.Boolean
 }
 export interface SlashCommandOptions {
 	name: string;
@@ -44,6 +46,8 @@ export abstract class BaseSlashCommand extends BaseInteraction {
 					this.slashCommand.addIntegerOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
 				else if (option.type == SlashCommandOptionType.ROLE)
 					this.slashCommand.addRoleOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
+				else if (option.type == SlashCommandOptionType.BOOLEAN)
+					this.slashCommand.addBooleanOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
 			} else {
 				if (option.type == SlashCommandOptionType.STRING) {
 					for (const choice of option.choices)
@@ -69,6 +73,8 @@ export abstract class BaseSlashCommand extends BaseInteraction {
 						setChoices(...option.choices as APIApplicationCommandOptionChoice<number>[]))
 				} else if (option.type == SlashCommandOptionType.ROLE)
 					throw new Error('Role options cannot have choices!');
+				else if (option.type == SlashCommandOptionType.BOOLEAN)
+					throw new Error('Boolean options cannot have choices!');
 			}
 		}
 	}

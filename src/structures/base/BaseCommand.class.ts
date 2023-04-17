@@ -15,15 +15,17 @@ export abstract class BaseCommand {
 	private usage: string;
 	private cooldown: number;
 	private permissions: string[];
+	private nsfw: boolean = false;
 
-	constructor(name: string, aliases: string[], description?: string, usage?: string, cooldown?: number,isEnabled?: boolean, permissions?: string[]) {
+	constructor(name: string, aliases: string[], description?: string, usage?: string, cooldown?: number,isEnabled?: boolean, permissions?: string[], nsfw?: boolean) {
 		this.name = name;
 		this.aliases = aliases;
 		this.enabled = isEnabled || true;
-		this.description = description || '';
+		this.description = description || 'No description provided';
 		this.usage = usage || '';
 		this.cooldown = cooldown || 0;
 		this.permissions = permissions || [];
+		this.nsfw = nsfw || false;
 	}
 
 	/**
@@ -49,6 +51,54 @@ export abstract class BaseCommand {
 	}
 
 	/**
+	 * @description Returns the description of the command
+	 * @returns {string}
+	 */
+	public getDescription(): string {
+		return this.description;
+	}
+
+	/**
+	 * @description Returns the usage of the command
+	 * @returns {string}
+	 */
+	public getUsage(): string {
+		return this.usage;
+	}
+
+	/**
+	 * @description Returns the cooldown of the command
+	 * @returns {number}
+	 */
+	public getCooldown(): number {
+		return this.cooldown;
+	}
+
+	/**
+	 * @description Returns the permissions of the command
+	 * @returns {string[]}
+	 */
+	public getPermissions(): string[] {
+		return this.permissions;
+	}
+	
+	/**
+	 * @description Returns the module of the command
+	 * @returns {string}
+	 */
+	public getModule(): string {
+		return this.module;
+	}
+	
+	/**
+	 * @description Returns the NSFW status of the command
+	 * @returns {boolean}
+	 */
+	public isNSFW(): boolean {
+		return this.nsfw;
+	}
+
+	/**
 	 * @description Returns the active status of the command
 	 * @returns {boolean}
 	 * @example
@@ -58,7 +108,6 @@ export abstract class BaseCommand {
 	public isEnabled(): boolean {
 		return this.enabled;
 	}
-
 
 	/**
 	 * @description Executes the command

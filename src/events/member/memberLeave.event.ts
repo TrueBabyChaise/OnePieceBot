@@ -19,11 +19,6 @@ export class MemberLeaveEvent extends BaseEvent {
 		if (member.user.bot) { return; }
 		if (!member.id || !member.user.tag) { return; }
 
-		const user = await UserHandler.getUserById(member.id);
-		if (user) {
-			await UserHandler.deleteUser(member.id);
-		}
-
 		if (!member.guild) { return; }
 		let guild = await GuildHandler.getGuildById(member.guild.id);
 		if (guild) {
