@@ -18,9 +18,7 @@ export class HelpCloseButtonInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
     async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
-        await interaction.reply({ content: 'Help menu closed', ephemeral: true });
         await interaction.message.delete();
+        await interaction.deferUpdate();
     }
-
-    
 }

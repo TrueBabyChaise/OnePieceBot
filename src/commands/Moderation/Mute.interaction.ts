@@ -65,32 +65,58 @@ export class MuteSlashCommand extends BaseSlashCommand {
         };
         
         const role = interaction.guild.roles.cache.find(role => role.name === 'Muted');
+        const memberRoleSetup = GuildDB!.memberRoleId;
+        const roleMember = interaction.guild.roles.cache.find(role => role.id === GuildDB!.memberRoleId);
         if (!role) {
-            const permissions = new PermissionsBitField();
-            permissions.remove(PermissionFlagsBits.SendMessages);
-            interaction.guild.roles.create({
-                name: 'Muted',
-                color: Colors.DarkGrey,
-                permissions: []
-            }).then(async role => {
-                await member.roles.remove(GuildDB!.memberRoleId);
+            if (!memberRoleSetup || !roleMember) {
+                const permissions = new PermissionsBitField();
+                permissions.remove(PermissionFlagsBits.SendMessages);
+                interaction.guild.roles.create({
+                    name: 'Muted',
+                    color: Colors.DarkGrey,
+                    permissions: []
+                }).then(async role => {
+                    await member.roles.add(role);
+                    setTimeout(async () => {
+                        if (member.roles.cache.has(role.id))
+                            await member.roles.remove(role);
+                    }, time * 1000);
+                });
+            } else {
+                const permissions = new PermissionsBitField();
+                permissions.remove(PermissionFlagsBits.SendMessages);
+                interaction.guild.roles.create({
+                    name: 'Muted',
+                    color: Colors.DarkGrey,
+                    permissions: []
+                }).then(async role => {
+                    await member.roles.remove(GuildDB!.memberRoleId);
+                    await member.roles.add(role);
+                    setTimeout(async () => {
+                        if (member.roles.cache.has(role.id))
+                            await member.roles.remove(role);
+                        if (!member.roles.cache.has(GuildDB!.memberRoleId))
+                            await member.roles.add(GuildDB!.memberRoleId);
+                    }, time * 1000);
+                });
+            }
+        } else {
+            if (!memberRoleSetup || !roleMember) {
                 await member.roles.add(role);
+                setTimeout(async () => {
+                    if (member.roles.cache.has(role.id))
+                        await member.roles.remove(role);
+                }, time * 1000);
+            } else {
+                await member.roles.add(role);
+                await member.roles.remove(GuildDB!.memberRoleId);
                 setTimeout(async () => {
                     if (member.roles.cache.has(role.id))
                         await member.roles.remove(role);
                     if (!member.roles.cache.has(GuildDB!.memberRoleId))
                         await member.roles.add(GuildDB!.memberRoleId);
                 }, time * 1000);
-            });
-        } else {
-            await member.roles.add(role);
-            await member.roles.remove(GuildDB!.memberRoleId);
-            setTimeout(async () => {
-                if (member.roles.cache.has(role.id))
-                    await member.roles.remove(role);
-                if (!member.roles.cache.has(GuildDB!.memberRoleId))
-                    await member.roles.add(GuildDB!.memberRoleId);
-            }, time * 1000);
+            };
         };
         const everyoneRole = interaction.guild.roles.everyone;
         if (everyoneRole.permissions.has(PermissionFlagsBits.SendMessages)) {

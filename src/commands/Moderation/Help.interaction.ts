@@ -1,5 +1,5 @@
 import { BaseSlashCommand, BaseClient } from "@src/structures";
-import { ChatInputCommandInteraction, Colors, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageCreateOptions } from "discord.js";
+import { ChatInputCommandInteraction, Colors, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageCreateOptions, Base } from "discord.js";
 import { SlashCommandOptionType } from "@src/structures";
 import { MessageOptions } from "child_process";
 
@@ -69,20 +69,38 @@ export class HelpSlashCommand extends BaseSlashCommand {
         interaction.reply({content: `Hope, it'll help ! `, ephemeral: true});
     }
 
-    public static optionsHelpCommandEmbed(client: BaseClient, moduleName: string = '', pageNumber: number = 0, onlyPage: boolean = true): MessageCreateOptions {
+    public static getNextModule(client: BaseClient, moduleName: string): string {
+        const modules = Array.from(client.getModules().keys());
+        const moduleIndex = modules.indexOf(moduleName);
+        if (moduleIndex === modules.length - 1) return modules[0];
+        return modules[moduleIndex + 1];
+    }
+
+    public static getPreviousModule(client: BaseClient, moduleName: string): string {
+        const modules = Array.from(client.getModules().keys());
+        const moduleIndex = modules.indexOf(moduleName);
+        if (moduleIndex === 0) return modules[modules.length - 1];
+        return modules[moduleIndex - 1];
+    }
+
+    public static optionsHelpCommandEmbed(client: BaseClient, moduleName: string = '', pageNumber: number = 0, onlyPage: boolean = false): MessageCreateOptions {
         const module = client.getModules().get(moduleName);
         if (!module) return HelpSlashCommand.optionsHelpCommandEmbed(client, client.getModules().keys().next().value, 1, false);
         const pageMax = Math.ceil(module.getCommands().size / 10);
+        if (pageNumber < 1) return HelpSlashCommand.optionsHelpCommandEmbed(client, moduleName, pageMax, false);
+        if (pageNumber > Math.ceil(module.getCommands().size / 10)) return HelpSlashCommand.optionsHelpCommandEmbed(client, moduleName, 1, false);
+        if (pageMax === 1 && !onlyPage) return HelpSlashCommand.optionsHelpCommandEmbed(client, moduleName, 1, true);
         const moduleIndex = Array.from(client.getModules().keys()).indexOf(moduleName);
         const embed = new EmbedBuilder()
-            .setTitle('Help')
+            .setTitle(module.getName())
             .setColor(Colors.DarkButNotBlack)
-            .setDescription('Here is a list of all the commands you can use with the bot. You can also use the `help <command>` command to get more information about a specific command.')
-            .setFooter({text: `Page ${pageNumber}/${pageMax} of Module ${moduleIndex}/${client.getModules().size} - ${module.getName()}`})
+            .setDescription(module.getDescription())
+            .setFooter({text: `Page ${pageNumber}/${pageMax} of Module ${moduleIndex + 1}/${client.getModules().size} - ${module.getName()}`})
     
-        embed.addFields({name: module.getName(), value: module.getDescription(), inline: false});
-        for (const command of module.getCommands().values()) {
-            embed.addFields({name: command.getName(), value: command.getDescription(), inline: false});
+        const commands = Array.from(module.getCommands().values());
+        const commandsPage = commands.slice((pageNumber - 1) * 10, pageNumber * 10);
+        for (const command of commandsPage) {
+            embed.addFields({name: `${command.getName()} | ${command.getAliases().join(', ')}` , value: command.getDescription(), inline: false});
         }
 
         const row = new ActionRowBuilder<ButtonBuilder>()
@@ -134,7 +152,12 @@ export class HelpSlashCommand extends BaseSlashCommand {
                     name: '⏩'
                 })
 		);
+
+        const mainEmbed = new EmbedBuilder()
+            .setTitle('Help')
+            .setColor(Colors.DarkButNotBlack)
+            .setDescription('Here is a list of all the commands you can use with the bot. You can also use the `help <command>` command to get more information about a specific command.')
         
-	    return { embeds: [embed], components: [row]}
+	    return { embeds: [mainEmbed, embed], components: [row]}
     }
 }
