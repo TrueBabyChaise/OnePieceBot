@@ -1,7 +1,6 @@
 import { BaseSlashCommand, BaseClient } from "@src/structures";
-import { ChatInputCommandInteraction, Colors, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageCreateOptions, Base } from "discord.js";
+import { ChatInputCommandInteraction, Colors, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionReplyOptions } from "discord.js";
 import { SlashCommandOptionType } from "@src/structures";
-import { MessageOptions } from "child_process";
 
 /**
  * @description Help slash command
@@ -35,7 +34,7 @@ export class HelpSlashCommand extends BaseSlashCommand {
         };
 
         if (!commandOption) {
-            await interaction.channel?.send(HelpSlashCommand.optionsHelpCommandEmbed(client));
+            await interaction.reply(HelpSlashCommand.optionsHelpCommandEmbed(client) as any);
         } else {
             let command = null;
 
@@ -64,9 +63,8 @@ export class HelpSlashCommand extends BaseSlashCommand {
                 .addFields({name: 'NSFW', value: `${command.isNSFW() ? 'Yes' : 'No'}`, inline: false})
 
 
-            await interaction.channel?.send({embeds: [embed]});
+            await interaction.reply({embeds: [embed]});
         }
-        interaction.reply({content: `Hope, it'll help ! `, ephemeral: true});
     }
 
     public static getNextModule(client: BaseClient, moduleName: string): string {
@@ -83,7 +81,7 @@ export class HelpSlashCommand extends BaseSlashCommand {
         return modules[moduleIndex - 1];
     }
 
-    public static optionsHelpCommandEmbed(client: BaseClient, moduleName: string = '', pageNumber: number = 0, onlyPage: boolean = false): MessageCreateOptions {
+    public static optionsHelpCommandEmbed(client: BaseClient, moduleName: string = '', pageNumber: number = 0, onlyPage: boolean = false): InteractionReplyOptions {
         const module = client.getModules().get(moduleName);
         if (!module) return HelpSlashCommand.optionsHelpCommandEmbed(client, client.getModules().keys().next().value, 1, false);
         const pageMax = Math.ceil(module.getCommands().size / 10);
@@ -124,14 +122,6 @@ export class HelpSlashCommand extends BaseSlashCommand {
                     }),
             );
         }
-        row.addComponents(  
-            new ButtonBuilder()
-                .setCustomId('helpclose')
-                .setStyle(ButtonStyle.Secondary)
-                .setEmoji({
-                    name: '❌'
-                })
-        );
         if (!onlyPage) {
             row.addComponents(
                 new ButtonBuilder()
@@ -158,6 +148,6 @@ export class HelpSlashCommand extends BaseSlashCommand {
             .setColor(Colors.DarkButNotBlack)
             .setDescription('Here is a list of all the commands you can use with the bot. You can also use the `help <command>` command to get more information about a specific command.')
         
-	    return { embeds: [mainEmbed, embed], components: [row]}
+	    return { embeds: [mainEmbed, embed], components: [row], ephemeral: true}
     }
 }
