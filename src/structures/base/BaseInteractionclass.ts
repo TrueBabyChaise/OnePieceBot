@@ -1,4 +1,4 @@
-import { Interaction, SlashCommandBuilder } from "discord.js";
+import { Interaction, PermissionFlagsBits } from "discord.js";
 import { BaseClient } from "@src/structures";
 
 /**
@@ -11,10 +11,10 @@ export abstract class BaseInteraction  {
 	private options: any;
 	private enabled: boolean;
 	private cooldown: number;
-	private permissions: string[];
+	private permissions: bigint[];
 	private module: string = '';
 
-	constructor(name: string, description: string, options?: any, cooldown?: number, isEnabled?: boolean, permissions?: string[]) {
+	constructor(name: string, description: string, options?: any, cooldown?: number, isEnabled?: boolean, permissions?: bigint[]) {
 		this.name = name;
 		this.description = description;
 		this.options = options || [];
@@ -58,6 +58,24 @@ export abstract class BaseInteraction  {
 			options: this.options,
 		};
 	}
+
+	/**
+	 * @description Returns the options of the command
+	 * @returns {any}
+	 */
+	public getOptions(): any {
+		return this.options;
+	}
+
+	/**
+	 * @description Returns the permissionValue of the command
+	 * @returns {bigint}
+	 * @category Getter
+	 */
+	public getPermissionValue(): bigint {
+		return this.permissions.reduce((a, b) => a | b, BigInt(0)) || BigInt(1);
+	}
+	
 
 	/**
 	 * @description Executes the command

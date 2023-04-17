@@ -48,6 +48,7 @@ export class GuildCreateEvent extends BaseEvent {
 			}
 			if (idAlreadyAdded.find((userId) => userId === member[1].id)) { continue; }
 			await guildDB.addUserToGuild(member[1].id);
+			await member[1].roles.add(guildDB.memberRoleId);
 		}
 	}
 }
