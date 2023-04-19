@@ -1,6 +1,7 @@
 import { Client, REST } from 'discord.js';
 import { BaseModule } from '@src/structures';
 import eventLoader from '@events/loader'
+import process = require('process');
 
 /**
  * @description Base class for client
@@ -22,6 +23,7 @@ export class BaseClient extends Client {
 	private clientId: string;
 	private baseRest: REST;
 	private authorId?: string;
+	private keys: { [key: string]: string | undefined } = {};
 
 	constructor(config: any, prefix: string, clientId: string, rest: REST, authorId?: string) {
 		super(config);
@@ -197,5 +199,28 @@ export class BaseClient extends Client {
 			modules: this.modules,
 			authorId: this.authorId
 		};
+	}
+
+	/**
+	 * @description Returns the keys of the client
+	 * @returns {{ [key: string]: string | undefined }}
+	 * @example
+	 * // returns the keys of the client
+	 * client.getKeys();
+	 * @throws {Error} If the keys are not set
+	 * @throws {Error} If the keys is not an array
+	 */
+	public getKeys(): { [key: string]: string | undefined } {
+		if (!this.keys) throw new Error('The keys are not set');
+		return this.keys;
+	}
+
+	/**
+	 * @description Load the keys of the client
+	 * @param {{ [key: string]: string | undefined }} keys
+	 * @returns {void}
+	 */
+	public loadKeys(keys: { [key: string]: string | undefined }): void {
+		this.keys = keys;
 	}
 }

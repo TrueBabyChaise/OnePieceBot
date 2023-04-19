@@ -47,6 +47,9 @@ async function main() {
 		baseClient.addModule(new TicketModule());
 		baseClient.addModule(new ModerationModule());
 		await baseClient.loadModules();
+		// Load keys
+		console.log('Loading keys for commands...');
+		await baseClient.loadKeys(process.env);
 		// Load events
 		await baseClient.loadEvents();
 		await baseClient.run(process.env.DISCORD_BOT_TOKEN);
