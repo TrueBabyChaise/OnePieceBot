@@ -1,7 +1,6 @@
 import { Client, REST } from 'discord.js';
 import { BaseModule } from '@src/structures';
 import eventLoader from '@events/loader'
-import process = require('process');
 
 /**
  * @description Base class for client
