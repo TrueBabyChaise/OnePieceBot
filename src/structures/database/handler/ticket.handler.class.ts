@@ -7,6 +7,7 @@ export class TicketHandler {
     private _permissions: Array<OverwriteResolvable> = [];
     private _embedMessage: string = '';
     private _users: string[] = [];
+    private _panel: string | null = null;
 
     public get id(): string {
         return this._id;
@@ -32,6 +33,10 @@ export class TicketHandler {
         return this._users;
     }
 
+    public get panel(): string | null {
+        return this._panel;
+    }
+
     public static async getTicketById(id: string): Promise<TicketHandler | null> {
         const ticket = new TicketHandler();
         const ticketDB = await TicketModel.findOne({ where: { id: id } });
@@ -40,17 +45,19 @@ export class TicketHandler {
         ticket._owner = ticketDB.get("owner") as string;
         ticket._permissions = ticketDB.get("permissions") as Array<OverwriteResolvable>;
         ticket._embedMessage = ticketDB.get("embedMessage") as string;
+        ticket._panel = ticketDB.get("panel") as string | null;
         return ticket;
     }
 
-    public static async createTicket(id: string, owner: string, permissions: object, embedMessage: string = ''): Promise<TicketHandler | null> {
+    public static async createTicket(id: string, owner: string, permissions: object, embedMessage: string = '', panelId: string | null = null): Promise<TicketHandler | null> {
         const ticket = new TicketHandler();
-        const ticketDB = await TicketModel.create({ id: id, owner: owner, permissions: permissions, embedMessage: embedMessage });
+        const ticketDB = await TicketModel.create({ id: id, owner: owner, permissions: permissions, embedMessage: embedMessage, fkPanel: panelId });
         if (!ticketDB) { return null; }
         ticket._id = ticketDB.get("id") as string;
         ticket._owner = ticketDB.get("owner") as string;
         ticket._permissions = ticketDB.get("permissions") as Array<OverwriteResolvable>;
         ticket._embedMessage = ticketDB.get("embedMessage") as string;
+        ticket._panel = ticketDB.get("panel") as string | null;
         return ticket;
     }
 

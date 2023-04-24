@@ -1,4 +1,5 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
+import { PanelTicketHandler } from '@src/structures/database/handler/panelTicket.handler.class';
 import { EmbedBuilder } from 'discord.js';
 import { ModalSubmitInteraction } from 'discord.js';
 
@@ -19,7 +20,6 @@ export class TicketOpenButtonInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
     async execute(client: BaseClient, interaction: ModalSubmitInteraction): Promise<void> {
-        console.log('panelnamemodal');
         const message = interaction.message;
         if (!message) {
             await interaction.reply({ content: 'Something went wrong', ephemeral: true });
@@ -39,7 +39,20 @@ export class TicketOpenButtonInteraction extends BaseInteraction {
             .setTitle(secondEmbed.title)
             .setDescription(`\`\`\`${newName}\`\`\``)
             .setColor(secondEmbed.color)
-
+        if (interaction.guildId) {
+            PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guildId).then((panel) => {
+                if (panel) {
+                    // Need to check if name is already taken
+                    const status = panel.updatePanelTicketName(newName);
+                    
+                    // Check if the update was successful
+                    if (!status) {
+                        interaction.reply({ content: 'Something went wrong', ephemeral: true });
+                        return;
+                    }
+                }
+            });
+        }
 
         await interaction.deferUpdate();
         await interaction.editReply({ embeds: [message.embeds[0], newSecondEmbed, message.embeds[2]], components: message.components });

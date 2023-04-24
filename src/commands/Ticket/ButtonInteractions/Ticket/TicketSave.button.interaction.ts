@@ -1,6 +1,7 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
-import { Attachment, ChatInputCommandInteraction, AttachmentBuilder, AttachmentData } from 'discord.js';
+import { Attachment, ChatInputCommandInteraction, AttachmentBuilder, AttachmentData, TextChannel } from 'discord.js';
 import { TicketManager } from '@src/structures/tickets/ticketManager.class';
+import { PanelTicketHandler } from '@src/structures/database/handler/panelTicket.handler.class';
 
 /**
  * @description TicketSave button interaction
@@ -43,7 +44,15 @@ export class TicketSaveButtonInteraction extends BaseInteraction {
         const attachment = new AttachmentBuilder(bufferResolvable, {
             name: 'transcript.html',
         });
-
+        if (ticket.getTicketPanelId() != '') {
+            const panelTicket = await PanelTicketHandler.getPanelTicketById(ticket.getTicketPanelId());
+            if (panelTicket) {
+                const transcriptChannel = await client.channels.fetch(panelTicket.transcriptChannel) as TextChannel;
+                if (transcriptChannel) {
+                    await transcriptChannel.send({ files: [attachment] });
+                }
+            }
+        }
         await interaction.reply({ files: [attachment] });
     }
 }

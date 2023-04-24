@@ -1,8 +1,10 @@
-import { Message, EmbedBuilder, TextChannel, ChannelType, ColorResolvable, Colors, CategoryChannelResolvable, MessageCreateOptions, GuildChannel, Channel, Interaction, Collection, OverwriteResolvable } from 'discord.js';
+import { Message, EmbedBuilder, TextChannel, ChannelType, ColorResolvable, Colors, CategoryChannelResolvable, MessageCreateOptions, GuildChannel, Channel, Interaction, Collection, OverwriteResolvable, ButtonInteraction } from 'discord.js';
 import { BaseClient } from '@src/structures';
 import { ChatInputCommandInteraction } from 'discord.js';
 import { Ticket } from './ticket.class'
 import { TicketHandler } from '@src/structures/database/handler/ticket.handler.class';
+import { PanelTicketModel } from '../database/models/panelTicket.db.model';
+import { PanelTicketHandler } from '../database/handler/panelTicket.handler.class';
 
 interface EmbebError {
     title: string;
@@ -50,6 +52,64 @@ export class TicketManager {
         if (!ticket) {
             this.tickets.set(message.channelId!, new Ticket(message.channel as TextChannel, message.author.id, []));
         }
+    }
+
+
+
+    async createTicketFromPanel(interaction: ButtonInteraction, client: BaseClient) {
+        const message = interaction.message;
+        const panelTicket = await PanelTicketHandler.getPanelTicketById(message.embeds[0].footer?.text!);
+        if (!panelTicket) {
+            const embedError = this.buildEmbedError(message, client, {
+                title: 'Error',
+                description: 'The panel does not exist',
+                color: Colors.Red,
+            });
+            interaction.reply({ embeds: [embedError], ephemeral: true });
+            return;
+        }
+        const category = message.guild?.channels.cache.find(channel => channel.id === panelTicket.category) as CategoryChannelResolvable;
+        if (!category) {
+            const embedError = this.buildEmbedError(message, client, {
+                title: 'Error',
+                description: 'The category does not exist',
+                color: Colors.Red,
+            });
+            interaction.reply({ embeds: [embedError], ephemeral: true });
+            return;
+        }
+        if (!message.guild) {
+            const embedError = this.buildEmbedError(message, client, {
+                title: 'Error',
+                description: 'The guild does not exist',
+                color: Colors.Red,
+            });
+            interaction.reply({ embeds: [embedError], ephemeral: true });
+            return;
+        }
+        const setPermissions = new Array<OverwriteResolvable>();
+        setPermissions.push({
+            id: message.guild?.roles.everyone,
+            deny: ['ViewChannel'],
+        });
+        setPermissions.push({
+            id: interaction.user.id,
+            allow: ['ViewChannel'],
+        });
+        panelTicket.roles.forEach(role => {
+            setPermissions.push({
+                id: role,
+                allow: ['ViewChannel'],
+            });
+        });
+        const ticketChannel = await message.guild?.channels.create({
+            name: `ticket-${interaction.user.username}`,
+            type: ChannelType.GuildText,
+            parent: category,
+            permissionOverwrites: setPermissions,
+        });
+        this.tickets.set(ticketChannel?.id!, new Ticket(ticketChannel, interaction.user.id, setPermissions, panelTicket.id));
+        interaction.reply({ content: 'Ticket created', ephemeral: true });
     }
 
     /**

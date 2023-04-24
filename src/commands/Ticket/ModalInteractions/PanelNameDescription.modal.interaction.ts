@@ -1,6 +1,7 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
 import { EmbedBuilder } from 'discord.js';
 import { ModalSubmitInteraction } from 'discord.js';
+import { PanelTicketHandler } from '@src/structures/database/handler/panelTicket.handler.class';
 
 /**
  * @description TicketOpen button interaction
@@ -39,7 +40,17 @@ export class TicketOpenButtonInteraction extends BaseInteraction {
             .setTitle(thirdEmbed.title)
             .setDescription(`\`\`\`${newDescription}\`\`\``)
             .setColor(thirdEmbed.color)
-
+        if (interaction.guildId) {
+            PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guildId).then((panel) => {
+                if (panel) {
+                    const status = panel.updatePanelTicketDescription(newDescription);
+                    if (!status) {
+                        interaction.reply({ content: 'Something went wrong', ephemeral: true });
+                        return;
+                    }
+                }
+            });
+        }
 
         await interaction.deferUpdate();
         await interaction.editReply({ embeds: [message.embeds[0], message.embeds[1], newThirdEmbed], components: message.components });

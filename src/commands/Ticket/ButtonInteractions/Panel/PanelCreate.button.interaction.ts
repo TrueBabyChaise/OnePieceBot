@@ -1,12 +1,13 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
-import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle } from 'discord.js';
+import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle, Interaction } from 'discord.js';
+import { PanelTicketEnum, PanelTicketHandler } from '@src/structures/database/handler/panelTicket.handler.class';
 
 /**
  * @description TicketOpen button interaction
  * @class TicketOpenButtonInteraction
  * @extends BaseInteraction
  */
-export class TicketOpenButtonInteraction extends BaseInteraction {
+export class PanelCreateInteraction extends BaseInteraction {
     constructor() {
         super('ticketpanelcreate', 'Create a ticket panel');
     }
@@ -18,11 +19,17 @@ export class TicketOpenButtonInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
     async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
-        await interaction.deferUpdate();
-        await interaction.editReply(TicketOpenButtonInteraction.getMessageFormat());
-    }
+        if (!await PanelCreateInteraction.dbUpdate(interaction)) {
+            await interaction.reply({content: 'An error occurred while creating your panel ticket', ephemeral: true});
+            return;
+        }
+        
+        let panel = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild!.id);
+        if (!panel) {  
+            await interaction.reply({content: 'An error occurred while creating your panel ticket', ephemeral: true});
+            return;
+        }
 
-    public static getMessageFormat(): any {
         const embed = new EmbedBuilder()
             .setTitle('Step 1/5 - Set your panel name and description')
             .setDescription('Click the button below to setup a ticket panel')
@@ -31,11 +38,12 @@ export class TicketOpenButtonInteraction extends BaseInteraction {
             
         const embed2 = new EmbedBuilder()
             .setTitle('Panel Name')
-            .setDescription('```Panel Name 1```')
+            .setDescription(panel.name ? panel.name : '```Panel Name 1```')
 
+        
         const embed3 = new EmbedBuilder()
             .setTitle('Panel Description')
-            .setDescription('```Panel Description 1```')
+            .setDescription(panel.description ? panel.description : '```Panel Description 1```')
             
 
         const row = new ActionRowBuilder<ButtonBuilder>()
@@ -53,15 +61,28 @@ export class TicketOpenButtonInteraction extends BaseInteraction {
         const row2 = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
-                    .setCustomId('panelback')
+                    .setCustomId('ticketsetup')
                     .setLabel('Back')
                     .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
-                    .setCustomId('panelnext')
+                    .setCustomId('ticketpanelrole')
                     .setLabel('Save & Next')
                     .setStyle(ButtonStyle.Primary),
             );
-            
-        return {embeds: [embed, embed2, embed3], components: [row, row2]};
+
+        await interaction.deferUpdate();
+        await interaction.editReply({embeds: [embed, embed2, embed3], components: [row, row2]});
+    }
+
+    public static async dbUpdate(interaction: ButtonInteraction): Promise<boolean> {
+        const userId = interaction.user.id;
+        if (!interaction.guild) return false;
+        const guildId = interaction.guild.id;
+        let panelTicket = await PanelTicketHandler.getPanelTicketByUserAndGuild(userId, guildId);
+        if (!panelTicket || panelTicket.status !== PanelTicketEnum.EDIT) {
+            let newPanelTicket = await PanelTicketHandler.createPanelTicket(userId, guildId);
+            if (!newPanelTicket) return false;
+        }
+        return true;
     }
 }

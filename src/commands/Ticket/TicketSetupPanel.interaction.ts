@@ -1,5 +1,6 @@
 import { BaseSlashCommand, BaseClient } from "@src/structures";
-import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, embedLength } from "discord.js";
+import { PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
+import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, embedLength, ButtonInteraction } from "discord.js";
 
 /**
  * @description Ticket setup slash command
@@ -17,33 +18,47 @@ export class TicketSetupPanelCommand extends BaseSlashCommand {
 	 * @param {ChatInputCommandInteraction} interaction
 	 * @returns {Promise<void>}
 	 */
-	async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
-        await interaction.reply(TicketSetupPanelCommand.getMessageFormat());
-	}
-
-    public static getMessageFormat(): any {
+	async execute(client: BaseClient, interaction: ChatInputCommandInteraction | ButtonInteraction): Promise<void> {
+        let panelTickets: PanelTicketHandler[] | null = null;
+        if (interaction.guild) {
+            panelTickets = await PanelTicketHandler.getAllPanelTicketByUserAndGuild(interaction.user.id, interaction.guild!.id);
+        }
+        
         const row = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
                     .setCustomId('ticketpanelcreate')
                     .setLabel('Create a Panel')
                     .setStyle(ButtonStyle.Primary),
+            );
+
+        if (panelTickets && panelTickets.length > 0) {
+            row.addComponents(
                 new ButtonBuilder()
                     .setCustomId('ticketpaneledit')
                     .setLabel('Edit a panel')
                     .setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder()
-                    .setCustomId('ticketpaneldelete')
-                    .setLabel('Delete a panel')
-                    .setStyle(ButtonStyle.Danger)
             );
+        }
+
+        row.addComponents(
+            new ButtonBuilder()
+                .setCustomId('ticketpaneldelete')
+                .setLabel('Delete a panel')
+                .setStyle(ButtonStyle.Danger),
+        );
 
         const embed = new EmbedBuilder()
             .setTitle('Ticket Panel')
             .setDescription('Click the button below to setup a ticket panel')
             .setColor(Colors.DarkButNotBlack)
             .setTimestamp();
-
-        return {embeds: [embed], components: [row], ephemeral: true};
-    }
+            
+        if (interaction.isButton()) {
+            await interaction.deferUpdate();
+            await interaction.editReply({embeds: [embed], components: [row]});
+        } else {
+            await interaction.reply({embeds: [embed], components: [row], ephemeral: true});
+        }
+	}
 }
