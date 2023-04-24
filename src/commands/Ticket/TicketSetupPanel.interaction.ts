@@ -18,6 +18,10 @@ export class TicketSetupPanelCommand extends BaseSlashCommand {
 	 * @returns {Promise<void>}
 	 */
 	async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
+        await interaction.reply(TicketSetupPanelCommand.getMessageFormat());
+	}
+
+    public static getMessageFormat(): any {
         const row = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
@@ -40,6 +44,6 @@ export class TicketSetupPanelCommand extends BaseSlashCommand {
             .setColor(Colors.DarkButNotBlack)
             .setTimestamp();
 
-        await interaction.reply({embeds: [embed], components: [row], ephemeral: true});
-	}
+        return {embeds: [embed], components: [row], ephemeral: true};
+    }
 }

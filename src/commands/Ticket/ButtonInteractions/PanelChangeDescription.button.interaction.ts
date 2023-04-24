@@ -2,13 +2,13 @@ import { BaseClient, BaseInteraction } from '@src/structures';
 import { ButtonInteraction, TextInputStyle, TextInputBuilder, ModalActionRowComponentBuilder, ActionRowBuilder, ModalBuilder } from 'discord.js';
 
 /**
- * @description PanelChangeName button interaction
- * @class PanelChangeNameInteraction
+ * @description PanelChangeDescription button interaction
+ * @class PanelChangeDescriptionInteraction
  * @extends BaseInteraction
  */
-export class PanelChangeNameInteraction extends BaseInteraction {
+export class PanelChangeDescriptionInteraction extends BaseInteraction {
     constructor() {
-        super('panelchangename', 'Create a ticket panel');
+        super('panelchangedescription', 'Create a ticket panel');
     }
 
     /**
@@ -23,34 +23,32 @@ export class PanelChangeNameInteraction extends BaseInteraction {
             await interaction.reply({ content: 'Something went wrong', ephemeral: true });
             return;
         }
-
-        const secondEmbed = message.embeds[1];
-        if (!secondEmbed || !secondEmbed.description) {
+        
+        const thirdEmbed = message.embeds[2];
+        if (!thirdEmbed || !thirdEmbed.description) {
             await interaction.reply({ content: 'Something went wrong', ephemeral: true });
             return;
         }
 
-        const name = secondEmbed.description.replace(/`/g, '');
-
+        const description = thirdEmbed.description.replace(/`/g, '');
+        
         const modal = new ModalBuilder()
-            .setTitle('Change the name of the panel')
-            .setCustomId('panelnamemodal')
+            .setTitle('Change the description of the panel')
+            .setCustomId('paneldescriptionmodal')
 
+        const descriptionText = new TextInputBuilder()
+            .setCustomId('paneldescription')
+            .setLabel('Panel Description')
+            .setStyle(TextInputStyle.Paragraph)
+            .setPlaceholder('Panel Description')
+            .setMaxLength(1000)
 
-        const nameText = new TextInputBuilder()
-            .setCustomId('panelname')
-            .setLabel('Panel Name')
-            .setStyle(TextInputStyle.Short)
-            .setPlaceholder('Panel Name')
-            .setMaxLength(100)
-
-        if (name) {
-            nameText.setValue(name);
+        if (description) {
+            descriptionText.setValue(description);
         }
-
         const row = new ActionRowBuilder<ModalActionRowComponentBuilder>()
             .addComponents(
-                nameText,
+                descriptionText,
             ); 
 
         modal.addComponents(row);

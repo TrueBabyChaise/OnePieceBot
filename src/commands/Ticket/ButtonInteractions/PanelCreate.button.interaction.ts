@@ -1,5 +1,5 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
-import { ButtonInteraction, EmbedBuilder, Colors, TextInputBuilder, ModalActionRowComponentBuilder, ActionRowBuilder, ModalBuilder, TextInputStyle, RoleSelectMenuBuilder } from 'discord.js';
+import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle } from 'discord.js';
 
 /**
  * @description TicketOpen button interaction
@@ -18,29 +18,50 @@ export class TicketOpenButtonInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
     async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
+        await interaction.deferUpdate();
+        await interaction.editReply(TicketOpenButtonInteraction.getMessageFormat());
+    }
+
+    public static getMessageFormat(): any {
         const embed = new EmbedBuilder()
-            .setTitle('Ticket Panel Setup - Step 1/3')
+            .setTitle('Step 1/5 - Set your panel name and description')
             .setDescription('Click the button below to setup a ticket panel')
             .setColor(Colors.DarkButNotBlack)
-            .setTimestamp();
+            .setTimestamp()
+            
+        const embed2 = new EmbedBuilder()
+            .setTitle('Panel Name')
+            .setDescription('```Panel Name 1```')
 
-        const modal = new ModalBuilder()
-            .setTitle('Change the name of the panel')
-            .setCustomId('panelnamechange')
+        const embed3 = new EmbedBuilder()
+            .setTitle('Panel Description')
+            .setDescription('```Panel Description 1```')
+            
 
-        const row = new ActionRowBuilder<ModalActionRowComponentBuilder>()
+        const row = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
-                new TextInputBuilder()
-                    .setCustomId('ticketpanelcreate')
-                    .setPlaceholder('Enter the name of the panel')
-                    .setMinLength(1)
-                    .setMaxLength(100)
-                    .setLabel('Panel Name')
-                    .setStyle(TextInputStyle.Short),
+                new ButtonBuilder()
+                    .setCustomId('panelchangename')
+                    .setLabel('Edit Name')
+                    .setStyle(ButtonStyle.Secondary),
+                new ButtonBuilder()
+                    .setCustomId('panelchangedescription')
+                    .setLabel('Edit Description')
+                    .setStyle(ButtonStyle.Secondary),
             );
-
-        modal.addComponents(row);
         
-        await interaction.showModal(modal);
+        const row2 = new ActionRowBuilder<ButtonBuilder>()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('panelback')
+                    .setLabel('Back')
+                    .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
+                    .setCustomId('panelnext')
+                    .setLabel('Save & Next')
+                    .setStyle(ButtonStyle.Primary),
+            );
+            
+        return {embeds: [embed, embed2, embed3], components: [row, row2]};
     }
 }

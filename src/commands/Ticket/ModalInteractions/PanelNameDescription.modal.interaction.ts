@@ -9,7 +9,7 @@ import { ModalSubmitInteraction } from 'discord.js';
  */
 export class TicketOpenButtonInteraction extends BaseInteraction {
     constructor() {
-        super('panelnamemodal', 'Change panel name');
+        super('paneldescriptionmodal', 'Change panel name');
     }
 
     /**
@@ -19,29 +19,29 @@ export class TicketOpenButtonInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
     async execute(client: BaseClient, interaction: ModalSubmitInteraction): Promise<void> {
-        console.log('panelnamemodal');
+        console.log('paneldescriptionmodal');
         const message = interaction.message;
         if (!message) {
             await interaction.reply({ content: 'Something went wrong', ephemeral: true });
             return;
         }
-        const newName = interaction.fields.getTextInputValue('panelname');
-        if (!newName) {
+        const newDescription = interaction.fields.getTextInputValue('paneldescription');
+        if (!newDescription) {
             await interaction.reply({ content: 'Something went wrong', ephemeral: true });
             return;
         }
-        const secondEmbed = message.embeds[1];
-        if (!secondEmbed || !secondEmbed.title) {
+        const thirdEmbed = message.embeds[2];
+        if (!thirdEmbed || !thirdEmbed.title) {
             await interaction.reply({ content: 'Something went wrong', ephemeral: true });
             return;
         }
-        const newSecondEmbed = new EmbedBuilder()
-            .setTitle(secondEmbed.title)
-            .setDescription(`\`\`\`${newName}\`\`\``)
-            .setColor(secondEmbed.color)
+        const newThirdEmbed = new EmbedBuilder()
+            .setTitle(thirdEmbed.title)
+            .setDescription(`\`\`\`${newDescription}\`\`\``)
+            .setColor(thirdEmbed.color)
 
 
         await interaction.deferUpdate();
-        await interaction.editReply({ embeds: [message.embeds[0], newSecondEmbed, message.embeds[2]], components: message.components });
+        await interaction.editReply({ embeds: [message.embeds[0], message.embeds[1], newThirdEmbed], components: message.components });
     }
 }
