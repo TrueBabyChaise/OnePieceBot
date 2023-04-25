@@ -1,4 +1,4 @@
-import { Message } from 'discord.js';
+import { Message } from "discord.js";
 import { BaseCommand, BaseClient } from "@src/structures";
 
 /**
@@ -9,7 +9,7 @@ import { BaseCommand, BaseClient } from "@src/structures";
  */
 export class PongCommand extends BaseCommand {
 	constructor() {
-		super('pong', ['ping'], 'Ping! Pong!', 'Test', 0, true, []);
+		super("pong", ["ping"], "Ping! Pong!", "Test", 0, true, []);
 	}
 
 	/**
@@ -20,14 +20,14 @@ export class PongCommand extends BaseCommand {
 	 */
 	async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
 		if (args.length == 0) {
-			message.channel.send('Ping!');
+			message.channel.send("Ping!");
 			return;
 		}
 	
-		if (message.content.includes('ping')) {
-			message.channel.send('Pong!');
+		if (message.content.includes("ping")) {
+			message.channel.send("Pong!");
 		} else {
-			message.channel.send('Ping!');
+			message.channel.send("Ping!");
 		}
 	}
 }

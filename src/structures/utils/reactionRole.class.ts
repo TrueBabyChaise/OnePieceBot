@@ -8,11 +8,11 @@ export class ReactionRole {
 
 	constructor() {
 		if (ReactionRole.instance) {
-			throw new Error('Error: Instantiation failed: Use ReactionRole.getInstance() instead of new.');
+			throw new Error("Error: Instantiation failed: Use ReactionRole.getInstance() instead of new.");
 		}
 		ReactionRole.instance = this;
 		// LOAD ROLES HERE WITH DB
-		this.roleMatch.set('👍', 'Test');
+		this.roleMatch.set("👍", "Test");
 	}
 
 	public static getInstance(): ReactionRole {
@@ -24,21 +24,22 @@ export class ReactionRole {
 		if (reaction.message.partial) {
 			await reaction.message.fetch();
 		}
-		let { id } = reaction.message;
+		const { id } = reaction.message;
 		try {
 			if (!reaction.emoji.name) return;
 			if (this.roleMatch.has(reaction.emoji.name)) {
 				this.addMemberRole(reaction, user);
 			}
 		} catch (error) {
-			console.error('Something went wrong when adding a role: ', error);
+			console.error("Something went wrong when adding a role: ", error);
 		}
 	}
 
- 	async addMemberRole(reaction: MessageReaction, user: User) {
-		const member = reaction.message.guild?.members.cache.get(user.id);
+	async addMemberRole(reaction: MessageReaction, user: User) {
+		if (!reaction.message.guild) return;
+		const member = reaction.message.guild.members.cache.get(user.id);
 		if (member) {
-			const role = reaction.message.guild?.roles.cache.find(role => role.name === this.roleMatch.get(reaction.emoji.name!));
+			const role = reaction.message.guild.roles.cache.find(role => role.name === this.roleMatch.get(reaction.emoji.name ? reaction.emoji.name : ""));
 			if (role && !member.roles.cache.has(role.id)) {
 				await member.roles.add(role);
 			}
@@ -49,21 +50,22 @@ export class ReactionRole {
 		if (reaction.message.partial) {
 			await reaction.message.fetch();
 		}
-		let { id } = reaction.message;
+		const { id } = reaction.message;
 		try {
 			if (!reaction.emoji.name) return;
 			if (this.roleMatch.has(reaction.emoji.name)) {
 				this.removeMemberRole(reaction, user);
 			}
 		} catch (error) {
-			console.error('Something went wrong when adding a role: ', error);
+			console.error("Something went wrong when adding a role: ", error);
 		}
 	}
 
 	async removeMemberRole(reaction: MessageReaction, user: User) {
-		const member = reaction.message.guild?.members.cache.get(user.id);
+		if (!reaction.message.guild) return;
+		const member = reaction.message.guild.members.cache.get(user.id);
 		if (member) {
-			const role = reaction.message.guild?.roles.cache.find(role => role.name === this.roleMatch.get(reaction.emoji.name!));
+			const role = reaction.message.guild.roles.cache.find(role => role.name === this.roleMatch.get(reaction.emoji.name ? reaction.emoji.name : ""));
 			if (role && member.roles.cache.has(role.id)) {
 				await member.roles.remove(role);
 			}

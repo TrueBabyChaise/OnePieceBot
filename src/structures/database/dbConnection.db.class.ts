@@ -1,5 +1,5 @@
 import { Sequelize, ConnectionError, ConnectionTimedOutError, TimeoutError } from "sequelize";
-require('dotenv').config(); // LOAD CONFIG (.env)
+require("dotenv").config(); // LOAD CONFIG (.env)
 
 export class DBConnection {
 	private static instance: DBConnection;
@@ -21,7 +21,7 @@ export class DBConnection {
 						ConnectionTimedOutError,
 						TimeoutError,
 						/Deadlock/i,
-						'SQLITE_BUSY',
+						"SQLITE_BUSY",
 					]
 				},
 			}

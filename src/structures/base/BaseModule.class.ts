@@ -1,5 +1,5 @@
-import { BaseCommand, BaseInteraction, BaseClient, BaseSlashCommand } from '@src/structures';
-import { Routes } from 'discord.js';
+import { BaseCommand, BaseInteraction, BaseClient, BaseSlashCommand } from "@src/structures";
+import { Routes } from "discord.js";
 
 /**
  * @description Base class for modules
@@ -22,7 +22,7 @@ export abstract class BaseModule {
 	 */
 	constructor(name: string, description?: string, isEnabled?: boolean) {
 		this.name = name;
-		this.description = description || 'No description provided';
+		this.description = description || "No description provided";
 		this.enabled = isEnabled || true;
 	}
 
@@ -122,14 +122,14 @@ export abstract class BaseModule {
 	 * @example
 	 */
 	async loadCommands(path: string) {
-		let commandFiles = await require('fs').promises.readdir(path);
+		const commandFiles = await require("fs").promises.readdir(path);
 		for (const file of commandFiles) {
-			const lstat = await require('fs').promises.lstat(`${path}/${file}`);
+			const lstat = await require("fs").promises.lstat(`${path}/${file}`);
 			if (lstat.isDirectory()) {
 				this.loadCommands(`${path}/${file}`);
 				continue;
 			}
-			if (!file.endsWith('command.ts')) continue;
+			if (!file.endsWith("command.ts")) continue;
 			const Command = (await import(`${path}/${file}`));
 			for (const kVal in Object.keys(Command)) {
 				const value = Object.values(Command)[kVal];
@@ -144,7 +144,7 @@ export abstract class BaseModule {
 					console.error(error);
 					console.log(`Could not load command ${path}/${file}`);
 				}
-			};
+			}
 		}
 	}
 
@@ -154,14 +154,14 @@ export abstract class BaseModule {
 	 * @param path 
 	 */
 	async loadSlashCommands(path: string): Promise<void> {
-		let commandFiles = await require('fs').promises.readdir(path);
+		const commandFiles = await require("fs").promises.readdir(path);
 		for (const file of commandFiles) {
-			const lstat = await require('fs').promises.lstat(`${path}/${file}`);
+			const lstat = await require("fs").promises.lstat(`${path}/${file}`);
 			if (lstat.isDirectory()) {
 				await this.loadSlashCommands(`${path}/${file}`);
 				continue;
 			}
-			if (!file.endsWith('interaction.ts')) continue;
+			if (!file.endsWith("interaction.ts")) continue;
 			const Interaction = (await import(`${path}/${file}`));
 			for (const kVal in Object.keys(Interaction)) {
 				const value = Object.values(Interaction)[kVal];
@@ -172,7 +172,7 @@ export abstract class BaseModule {
 					console.error(error);
 					console.log(`Could not load interaction ${path}/${file}`);
 				}
-			};
+			}
 		}
 	}
 
@@ -188,8 +188,8 @@ export abstract class BaseModule {
 	 * module.registerSlashCommands(client, '123456789');
 	 */
 	public async registerSlashCommands(client: BaseClient, alreadyAdded: Array<any> , guildId?: string): Promise<{ hasChanged: boolean; registered: string[]; }> {
-		let toRegister = new Array();
-		let registered = new Array();
+		const toRegister = [];
+		const registered = [];
 		let hasChanged = false;
 		for (const [_, interaction] of this.interactions) {
 			if (!(interaction instanceof BaseSlashCommand)) continue;
@@ -237,49 +237,49 @@ export abstract class BaseModule {
 
 	private printChangement(index: number): boolean {
 		switch (index) {
-			case 1:
-				console.log("Interaction not found");
-				break;
-			case 2:
-				console.log("Description changed");
-				break;
-			case 3:
-				console.log("Options added");
-				break;
-			case 4:
-				console.log("Options removed");
-				break;
-			case 5:
-				console.log("Option added");
-				break;
-			case 6:
-				console.log("Option description changed");
-				break;
-			case 7:
-				console.log("Option type changed");
-				break;
-			case 8:
-				console.log("Option required changed");
-				break;
-			case 9:
-				console.log("Option choices changed");
-				break;
-			case 10:
-				console.log("Option choices added (10)");
-				break;
-			case 11:
-				console.log("Option choices added (11)");
-				break;
-			case 12:
-				console.log("Option choice added (12)");
-				break;
-			case 13:
-				console.log("Option choice value changed");
-				break;
-			case 14:
-				console.log("Permission changed");
-			default:
-				break;
+		case 1:
+			console.log("Interaction not found");
+			break;
+		case 2:
+			console.log("Description changed");
+			break;
+		case 3:
+			console.log("Options added");
+			break;
+		case 4:
+			console.log("Options removed");
+			break;
+		case 5:
+			console.log("Option added");
+			break;
+		case 6:
+			console.log("Option description changed");
+			break;
+		case 7:
+			console.log("Option type changed");
+			break;
+		case 8:
+			console.log("Option required changed");
+			break;
+		case 9:
+			console.log("Option choices changed");
+			break;
+		case 10:
+			console.log("Option choices added (10)");
+			break;
+		case 11:
+			console.log("Option choices added (11)");
+			break;
+		case 12:
+			console.log("Option choice added (12)");
+			break;
+		case 13:
+			console.log("Option choice value changed");
+			break;
+		case 14:
+			console.log("Permission changed");
+		default:
+			break;
 		}
 		return index != 0;
 	}
@@ -332,7 +332,7 @@ export abstract class BaseModule {
 			command.execute(client, message, args);
 		} catch (error) {
 			console.error(error);
-			message.reply('there was an error trying to execute that command!');
+			message.reply("there was an error trying to execute that command!");
 		}
 	}
 
