@@ -2,11 +2,12 @@ import { OverwriteResolvable } from "discord.js";
 import { TicketModel, GuildTicketModel, UserTicketModel } from "../models/ticket.db.model";
 
 export class TicketHandler {
-	private _id = "";
-	private _owner = "";
-	private _permissions: Array<OverwriteResolvable> = [];
-	private _embedMessage = "";
-	private _users: string[] = [];
+    private _id: string = '';
+    private _owner: string = '';
+    private _permissions: Array<OverwriteResolvable> = [];
+    private _embedMessage: string = '';
+    private _users: string[] = [];
+    private _panel: string | null = null;
 
 	public get id(): string {
 		return this._id;
@@ -32,35 +33,47 @@ export class TicketHandler {
 		return this._users;
 	}
 
-	public static async getTicketById(id: string): Promise<TicketHandler | null> {
-		const ticket = new TicketHandler();
-		const ticketDB = await TicketModel.findOne({ where: { id: id } });
-		if (!ticketDB) { return null; }
-		ticket._id = ticketDB.get("id") as string;
-		ticket._owner = ticketDB.get("owner") as string;
-		ticket._permissions = ticketDB.get("permissions") as Array<OverwriteResolvable>;
-		ticket._embedMessage = ticketDB.get("embedMessage") as string;
-		return ticket;
-	}
+    public get panel(): string | null {
+        return this._panel;
+    }
 
-	public static async createTicket(id: string, owner: string, permissions: object, embedMessage = ""): Promise<TicketHandler | null> {
-		const ticket = new TicketHandler();
-		const ticketDB = await TicketModel.create({ id: id, owner: owner, permissions: permissions, embedMessage: embedMessage });
-		if (!ticketDB) { return null; }
-		ticket._id = ticketDB.get("id") as string;
-		ticket._owner = ticketDB.get("owner") as string;
-		ticket._permissions = ticketDB.get("permissions") as Array<OverwriteResolvable>;
-		ticket._embedMessage = ticketDB.get("embedMessage") as string;
-		return ticket;
-	}
+    public static async getTicketById(id: string): Promise<TicketHandler | null> {
+        const ticket = new TicketHandler();
+        const ticketDB = await TicketModel.findOne({ where: { id: id } });
+        if (!ticketDB) { return null; }
+        ticket._id = ticketDB.get("id") as string;
+        ticket._owner = ticketDB.get("owner") as string;
+        ticket._permissions = ticketDB.get("permissions") as Array<OverwriteResolvable>;
+        ticket._embedMessage = ticketDB.get("embedMessage") as string;
+        ticket._panel = ticketDB.get("panel") as string | null;
+        return ticket;
+    }
 
-	public async delete(): Promise<boolean> {
-		const ticketDB2 = await UserTicketModel.destroy({ where: { fkTicket: this._id } });
-		const ticketDB3 = await GuildTicketModel.destroy({ where: { fkTicket: this._id } });
-		const ticketDB = await TicketModel.destroy({ where: { id: this._id } });
-		if (!ticketDB) { return false; }
-		return true;
-	}
+    public static async createTicket(id: string, owner: string, permissions: object, embedMessage: string = '', panelId: string | null = null): Promise<TicketHandler | null> {
+        const ticket = new TicketHandler();
+        if (panelId === '') { panelId = null; }
+        const ticketDB = await TicketModel.create({ id: id, owner: owner, permissions: permissions, embedMessage: embedMessage, fkPanel: panelId });
+        if (!ticketDB) { return null; }
+        ticket._id = ticketDB.get("id") as string;
+        ticket._owner = ticketDB.get("owner") as string;
+        ticket._permissions = ticketDB.get("permissions") as Array<OverwriteResolvable>;
+        ticket._embedMessage = ticketDB.get("embedMessage") as string;
+        ticket._panel = ticketDB.get("panel") as string | null;
+        return ticket;
+    }
+
+    public static async getTicketCountByPanel(panelId: string): Promise<number> {
+        const ticketDB = await TicketModel.count({ where: { fkPanel: panelId } });
+        return ticketDB;
+    }
+
+    public async delete(): Promise<boolean> {
+        const ticketDB2 = await UserTicketModel.destroy({ where: { fkTicket: this._id } });
+        const ticketDB3 = await GuildTicketModel.destroy({ where: { fkTicket: this._id } });
+        const ticketDB = await TicketModel.destroy({ where: { id: this._id } });
+        if (!ticketDB) { return false; }
+        return true;
+    }
 
 	public static async deleteTicket(id: string): Promise<boolean> {
 		const ticketDB2 = await UserTicketModel.destroy({ where: { fkTicket: id } });

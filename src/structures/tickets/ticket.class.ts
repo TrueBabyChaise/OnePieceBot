@@ -17,29 +17,33 @@ export class Ticket {
 	private messageEmbed: Message<boolean> | null = null;
 	private permissions: Array<OverwriteResolvable>;
 	private TicketHandler: TicketHandler | null = null;
+	private ticketPanelId: string;
 
-	constructor(channel: TextChannel, owner: string, permissions: Array<OverwriteResolvable>) {
+	constructor(channel: TextChannel, owner: string, permissions: Array<OverwriteResolvable>, ticketPanelId: string = '') {
 		this.id = channel.id;
 		this.channel = channel;
 		this.messageEmbed = null;
 		this.owner = owner;
 		this.permissions = permissions;
+		this.ticketPanelId = ticketPanelId;
 
 		(async () => {
 			this.TicketHandler = await TicketHandler.getTicketById(channel.id);
 			if (!this.TicketHandler) {
 				console.log("Ticket not found, creating new ticket");
 				this.messageEmbed = await channel.send(this.optionsTicketCommandEmbed(this.isClosed))
-				this.TicketHandler = await TicketHandler.createTicket(channel.id, owner, permissions, this.messageEmbed.id);
+				this.TicketHandler = await TicketHandler.createTicket(channel.id, owner, permissions, this.messageEmbed.id, ticketPanelId);
 				this.TicketHandler?.addTicketToGuild(channel.guild.id);
 				this.TicketHandler?.addTicketToUser(owner);
 				return;
 			} else {
 				this.messageEmbed = await channel.messages.fetch(this.TicketHandler.embedMessage);
 			}
-			console.log("Ticket found");
-			console.log(this.TicketHandler);
 		})();
+	}
+
+	public getTicketPanelId(): string {
+		return this.ticketPanelId;
 	}
 
 	public setIsBeingDeleted(isBeingDeleted: boolean) {

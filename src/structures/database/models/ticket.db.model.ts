@@ -2,6 +2,8 @@ import Sequelize from "sequelize";
 import { DBConnection } from "../dbConnection.db.class"
 import { UserModel } from "./user.db.model";
 import { GuildModel } from "./guild.db.model";
+import { PanelTicketModel } from "./panelTicket.db.model";
+
 const sequelize = DBConnection.getInstance().sequelize
 
 export const TicketModel = sequelize.define(
@@ -10,19 +12,27 @@ export const TicketModel = sequelize.define(
 			type: Sequelize.STRING,
 			primaryKey: true,
 		},
-		owner: {
-			type: Sequelize.STRING,
-			references: {
-				model: UserModel,
-				key: "id",
-			},
-		},
-		permissions: {
-			type: Sequelize.JSON,
-		},
-		embedMessage: {
-			type: Sequelize.STRING,
-		},
+        owner: {
+            type: Sequelize.STRING,
+            references: {
+                model: UserModel,
+                key: "id",
+            },
+        },
+        permissions: {
+            type: Sequelize.JSON,
+        },
+        embedMessage: {
+            type: Sequelize.STRING,
+        },
+        fkPanel: {
+            type: Sequelize.UUID,
+            references: {
+                model: PanelTicketModel,
+                key: "id",
+            },
+            allowNull: true,
+        },
 	}
 );
 
