@@ -38,12 +38,12 @@ export class PanelCreateInteraction extends BaseInteraction {
             
         const embed2 = new EmbedBuilder()
             .setTitle('Panel Name')
-            .setDescription(panel.name ? panel.name : '```Panel Name 1```')
+            .setDescription(panel.name ? panel.name : '```...```')
 
         
         const embed3 = new EmbedBuilder()
             .setTitle('Panel Description')
-            .setDescription(panel.description ? panel.description : '```Panel Description 1```')
+            .setDescription(panel.description ? panel.description : '```...```')
             
 
         const row = new ActionRowBuilder<ButtonBuilder>()
@@ -79,8 +79,8 @@ export class PanelCreateInteraction extends BaseInteraction {
         if (!interaction.guild) return false;
         const guildId = interaction.guild.id;
         let panelTicket = await PanelTicketHandler.getPanelTicketByUserAndGuild(userId, guildId);
-        if (!panelTicket || panelTicket.status !== PanelTicketEnum.EDIT) {
-            let newPanelTicket = await PanelTicketHandler.createPanelTicket(userId, guildId);
+        if (!panelTicket || panelTicket.status !== PanelTicketEnum.DRAFT) {
+            let newPanelTicket = await PanelTicketHandler.createPanelTicket(userId, guildId, `New Panel`);
             if (!newPanelTicket) return false;
         }
         return true;

@@ -51,6 +51,7 @@ export class TicketHandler {
 
     public static async createTicket(id: string, owner: string, permissions: object, embedMessage: string = '', panelId: string | null = null): Promise<TicketHandler | null> {
         const ticket = new TicketHandler();
+        if (panelId === '') { panelId = null; }
         const ticketDB = await TicketModel.create({ id: id, owner: owner, permissions: permissions, embedMessage: embedMessage, fkPanel: panelId });
         if (!ticketDB) { return null; }
         ticket._id = ticketDB.get("id") as string;
@@ -59,6 +60,11 @@ export class TicketHandler {
         ticket._embedMessage = ticketDB.get("embedMessage") as string;
         ticket._panel = ticketDB.get("panel") as string | null;
         return ticket;
+    }
+
+    public static async getTicketCountByPanel(panelId: string): Promise<number> {
+        const ticketDB = await TicketModel.count({ where: { fkPanel: panelId } });
+        return ticketDB;
     }
 
     public async delete(): Promise<boolean> {

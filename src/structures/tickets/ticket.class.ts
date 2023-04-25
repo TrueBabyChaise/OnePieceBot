@@ -30,7 +30,6 @@ export class Ticket {
 		(async () => {
 			this.TicketHandler = await TicketHandler.getTicketById(channel.id);
 			if (!this.TicketHandler) {
-				console.log('Ticket not found, creating new ticket');
 				this.messageEmbed = await channel.send(this.optionsTicketCommandEmbed(this.isClosed))
 				this.TicketHandler = await TicketHandler.createTicket(channel.id, owner, permissions, this.messageEmbed.id, ticketPanelId);
 				this.TicketHandler?.addTicketToGuild(channel.guild.id);
@@ -39,8 +38,6 @@ export class Ticket {
 			} else {
 				this.messageEmbed = await channel.messages.fetch(this.TicketHandler.embedMessage);
 			}
-			console.log('Ticket found');
-			console.log(this.TicketHandler);
 		})();
 	}
 

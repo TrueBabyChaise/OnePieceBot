@@ -34,6 +34,7 @@ export class PanelEditInteraction extends BaseInteraction {
             .setPlaceholder('Select a panel to edit')
             .addOptions(
                 ticketPanels.map((panel) => {
+                    console.log(panel.status, PanelTicketEnum.EDIT, panel.status === PanelTicketEnum.EDIT)
                     return {
                         label: panel.name ? panel.name : 'No name',
                         value: panel.id,
@@ -49,14 +50,10 @@ export class PanelEditInteraction extends BaseInteraction {
             new ButtonBuilder()
                 .setCustomId('ticketsetup')
                 .setLabel('Back')
-                .setStyle(ButtonStyle.Primary),
-            new ButtonBuilder()
-                .setCustomId('ticketpanelcreate')
-                .setLabel('Edit')
                 .setStyle(ButtonStyle.Primary)
         );
 
         await interaction.deferUpdate();
-        await interaction.editReply({content: 'Select a panel to edit', components: [row, row2]});
+        await interaction.editReply({content: 'Select a panel to edit', embeds: [], components: [row, row2]});
     }
 }

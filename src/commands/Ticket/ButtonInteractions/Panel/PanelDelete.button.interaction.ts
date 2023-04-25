@@ -1,6 +1,8 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
 import { ButtonInteraction, StringSelectMenuBuilder, ActionRowBuilder, ButtonBuilder, Colors, ButtonStyle } from 'discord.js';
 import { PanelTicketEnum, PanelTicketHandler } from '@src/structures/database/handler/panelTicket.handler.class';
+import { PanelCreateInteraction } from './PanelCreate.button.interaction';
+import { TicketSetupPanelCommand } from '../../TicketSetupPanel.interaction';
 
 /**
  * @description TicketOpen button interaction
@@ -22,6 +24,11 @@ export class PanelDeleteInteraction extends BaseInteraction {
         const ticketPanels = await PanelTicketHandler.getAllPanelTicketByUserAndGuild(interaction.user.id, interaction.guild!.id);
         if (!ticketPanels) {
             await interaction.reply({content: 'An error occurred while getting your panel ticket', ephemeral: true});
+            return;
+        }
+
+        if (ticketPanels.length === 0) {
+            await new TicketSetupPanelCommand().execute(client, interaction)
             return;
         }
 

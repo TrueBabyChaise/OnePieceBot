@@ -30,7 +30,7 @@ export const PanelTicketModel = sequelize.define(
             type: Sequelize.STRING,
         },
         status: {
-            type: Sequelize.ENUM("edit", "finish", "to_delete"),
+            type: Sequelize.ENUM("edit", "finish", "to_delete", "draft"),
             defaultValue: "edit",
         },
         fkGuild: {

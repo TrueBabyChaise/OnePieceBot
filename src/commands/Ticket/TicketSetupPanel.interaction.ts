@@ -1,5 +1,5 @@
 import { BaseSlashCommand, BaseClient } from "@src/structures";
-import { PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
+import { PanelTicketEnum, PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
 import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, embedLength, ButtonInteraction } from "discord.js";
 
 /**
@@ -22,6 +22,13 @@ export class TicketSetupPanelCommand extends BaseSlashCommand {
         let panelTickets: PanelTicketHandler[] | null = null;
         if (interaction.guild) {
             panelTickets = await PanelTicketHandler.getAllPanelTicketByUserAndGuild(interaction.user.id, interaction.guild!.id);
+            if (panelTickets && panelTickets.length > 0) {
+                for (let i = 0; i < panelTickets.length; i++) {
+                    if (panelTickets[i].status == PanelTicketEnum.EDIT) {
+                        panelTickets[i].updatePanelTicketStatus(PanelTicketEnum.FINISHED);
+                    }
+                }
+            }
         }
         
         const row = new ActionRowBuilder<ButtonBuilder>()

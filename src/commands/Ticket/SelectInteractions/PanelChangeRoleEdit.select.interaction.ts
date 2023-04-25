@@ -1,5 +1,5 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
-import { PanelTicketHandler } from '@src/structures/database/handler/panelTicket.handler.class';
+import { PanelTicketEnum, PanelTicketHandler } from '@src/structures/database/handler/panelTicket.handler.class';
 import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, RoleSelectMenuInteraction} from 'discord.js';
 
 /**
@@ -9,7 +9,7 @@ import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuild
  */
 export class PanelChangeRoleInteraction extends BaseInteraction {
     constructor() {
-        super('panelrole', 'Change the role for the ticket panel');
+        super('panelroleedit', 'Change the role for the ticket panel');
     }
 
     /**
@@ -41,7 +41,7 @@ export class PanelChangeRoleInteraction extends BaseInteraction {
                 await interaction.reply({ content: 'Something went wrong', ephemeral: true });
                 return;
             }
-            PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id).then((panelTicket) => {
+            PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id, PanelTicketEnum.EDIT).then((panelTicket) => {
                 if (panelTicket) {
                     if (!panelTicket.updatePanelTicketRoles(newRoles)) {
                         interaction.reply({ content: 'Something went wrong', ephemeral: true });

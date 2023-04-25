@@ -102,6 +102,7 @@ export class TicketManager {
                 allow: ['ViewChannel'],
             });
         });
+        const ticketPanelCount = await TicketHandler.getTicketCountByPanel(panelTicket.id) + 1;
         const ticketChannel = await message.guild?.channels.create({
             name: `ticket-${interaction.user.username}`,
             type: ChannelType.GuildText,

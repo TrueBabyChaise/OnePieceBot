@@ -1,15 +1,14 @@
 import { BaseClient, BaseInteraction } from '@src/structures';
-import { PanelTicketHandler } from '@src/structures/database/handler/panelTicket.handler.class';
-import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, RoleSelectMenuInteraction} from 'discord.js';
-
+import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, RoleSelectMenuInteraction, ChannelSelectMenuInteraction} from 'discord.js';
+import { PanelTicketEnum, PanelTicketHandler } from '@src/structures/database/handler/panelTicket.handler.class';
 /**
  * @description TicketOpen button interaction
  * @class TicketOpenButtonInteraction
  * @extends BaseInteraction
  */
-export class PanelChangeRoleInteraction extends BaseInteraction {
+export class PanelChangeTranscriptInteraction extends BaseInteraction {
     constructor() {
-        super('panelrole', 'Change the role for the ticket panel');
+        super('paneltranscriptedit', 'Change the role for the ticket panel');
     }
 
     /**
@@ -18,7 +17,7 @@ export class PanelChangeRoleInteraction extends BaseInteraction {
      * @param {ChatInputCommandInteraction} interaction
      * @returns {Promise<void>}
      */
-    async execute(client: BaseClient, interaction: RoleSelectMenuInteraction): Promise<void> {
+    async execute(client: BaseClient, interaction: ChannelSelectMenuInteraction): Promise<void> {
         const message = interaction.message;
 
         if (!message) {
@@ -26,7 +25,8 @@ export class PanelChangeRoleInteraction extends BaseInteraction {
             return;
         }
 
-        const newRoles = interaction.values;
+        const newChannel = interaction.values;
+       
 
         const secondEmbed = message.embeds[1];
         if (!secondEmbed || !secondEmbed.title) {
@@ -34,18 +34,19 @@ export class PanelChangeRoleInteraction extends BaseInteraction {
             return;
         }
 
-        let stringListRoles = 'No role(s) selected';
-        if (newRoles && newRoles.length >= 1) {
-            stringListRoles = newRoles.map((role) => `<@&${role}>\n`).join(' ');
+        let stringChannel = 'None selected...';
+        if (newChannel && newChannel.length >= 1) {
+            stringChannel = newChannel.map((channel) => `<#${channel}>\n`).join(' ');
             if (!interaction.guild) {
                 await interaction.reply({ content: 'Something went wrong', ephemeral: true });
                 return;
             }
-            PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id).then((panelTicket) => {
+            PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id, PanelTicketEnum.EDIT).then((panelTicket) => {
+                const setChannel = newChannel[0]; 
                 if (panelTicket) {
-                    if (!panelTicket.updatePanelTicketRoles(newRoles)) {
+                    if (!panelTicket.updatePanelTicketTranscriptChannel(setChannel)) {
                         interaction.reply({ content: 'Something went wrong', ephemeral: true });
-                        return;
+                        return; 
                     }
                 }
             });
@@ -53,7 +54,7 @@ export class PanelChangeRoleInteraction extends BaseInteraction {
 
         const newSecondEmbed = new EmbedBuilder()
             .setTitle(secondEmbed.title)
-            .setDescription(`${stringListRoles}`)
+            .setDescription(`${stringChannel}`)
             .setColor(secondEmbed.color)
 
         await interaction.deferUpdate();

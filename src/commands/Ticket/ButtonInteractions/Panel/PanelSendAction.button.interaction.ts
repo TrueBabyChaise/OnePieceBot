@@ -9,7 +9,7 @@ import { TicketSetupPanelCommand } from '../../TicketSetupPanel.interaction';
  */
 export class PanelChangeDescriptionInteraction extends BaseInteraction {
     constructor() {
-        super('ticketpanelfinish', 'Create a ticket panel');
+        super('panelsendactionedit', 'Send a ticket panel');
     }
 
     /**
@@ -24,19 +24,12 @@ export class PanelChangeDescriptionInteraction extends BaseInteraction {
             return;
         } 
         
-        const panelTicket = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guildId);
+        const panelTicket = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guildId, PanelTicketEnum.EDIT);
         if (!panelTicket) {
             await interaction.reply({ content: 'Something went wrong', ephemeral: true });
             return;
         }
         
-        const status = await panelTicket.updatePanelTicketStatus(PanelTicketEnum.FINISHED)
-
-        if (!status) {
-            await interaction.reply({ content: 'Something went wrong', ephemeral: true });
-            return;
-        }
-
         const channelSend = client.channels.cache.get(panelTicket.sendChannel) as TextChannel;
         if (!channelSend) {
             await interaction.reply({ content: 'Something went wrong', ephemeral: true });
@@ -66,7 +59,7 @@ export class PanelChangeDescriptionInteraction extends BaseInteraction {
                     .setCustomId('ticketrefreshpanel')
             );
         
-        await new TicketSetupPanelCommand().execute(client, interaction);
         await channelSend.send({ embeds: [embed], components: [row] });
+        await interaction.reply({ content: 'Panel sent', ephemeral: true });
     }
 }
