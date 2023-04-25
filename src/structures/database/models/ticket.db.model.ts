@@ -12,27 +12,27 @@ export const TicketModel = sequelize.define(
 			type: Sequelize.STRING,
 			primaryKey: true,
 		},
-        owner: {
-            type: Sequelize.STRING,
-            references: {
-                model: UserModel,
-                key: "id",
-            },
-        },
-        permissions: {
-            type: Sequelize.JSON,
-        },
-        embedMessage: {
-            type: Sequelize.STRING,
-        },
-        fkPanel: {
-            type: Sequelize.UUID,
-            references: {
-                model: PanelTicketModel,
-                key: "id",
-            },
-            allowNull: true,
-        },
+		owner: {
+			type: Sequelize.STRING,
+			references: {
+				model: UserModel,
+				key: "id",
+			},
+		},
+		permissions: {
+			type: Sequelize.JSON,
+		},
+		embedMessage: {
+			type: Sequelize.STRING,
+		},
+		fkPanel: {
+			type: Sequelize.UUID,
+			references: {
+				model: PanelTicketModel,
+				key: "id",
+			},
+			allowNull: true,
+		},
 	}
 );
 

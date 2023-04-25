@@ -49,9 +49,9 @@ export abstract class BaseInteraction  {
 
 	/**
 	 * @description Returns JSON data for the command
-	 * @returns {Object}
+	 * @returns {object}
 	 */
-	public getJSON(): Object {
+	public getJSON(): object {
 		return {
 			name: this.name,
 			description: this.description,

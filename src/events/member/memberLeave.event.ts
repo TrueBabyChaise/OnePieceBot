@@ -11,7 +11,7 @@ import { GuildHandler } from "@src/structures/database/handler/guild.handler.cla
 export class MemberLeaveEvent extends BaseEvent {
 	constructor() {
 		super(Events.GuildMemberRemove);
-  	}
+	}
 
 	public async execute(client: BaseClient, member: GuildMember) {
 		console.log(`Member ${member.user.tag} has leaved the guild ${member.guild.name}`);

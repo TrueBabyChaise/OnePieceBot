@@ -5,51 +5,51 @@ import { UserModel } from "./user.db.model";
 const sequelize = DBConnection.getInstance().sequelize
 
 export const PanelTicketModel = sequelize.define(
-    "panel_tickets", {
-        id: {
-            type: Sequelize.UUID,
-            defaultValue: Sequelize.UUIDV4,
-            primaryKey: true,
-        },
-        name: {
-            type: Sequelize.STRING,
-        },
-        description: {
-            type: Sequelize.STRING,
-        },
-        roles: {
-            type: Sequelize.JSON,
-        },
-        category: {
-            type: Sequelize.STRING,
-        },
-        transcript_channel: {
-            type: Sequelize.STRING,
-        },
-        send_channel: {
-            type: Sequelize.STRING,
-        },
-        status: {
-            type: Sequelize.ENUM("edit", "finish", "to_delete", "draft"),
-            defaultValue: "edit",
-        },
-        fkGuild: {
-            type: Sequelize.STRING,
-            references: {
-                model: GuildModel,
-                key: "id",
-            },
-            allowNull: false,
-            primaryKey: true,
-        },
-        fkUser: {
-            type: Sequelize.STRING,
-            references: {
-                model: UserModel,
-                key: "id",
-            },
-            allowNull: false,
-            primaryKey: true,
-        },
-    }
+	"panel_tickets", {
+		id: {
+			type: Sequelize.UUID,
+			defaultValue: Sequelize.UUIDV4,
+			primaryKey: true,
+		},
+		name: {
+			type: Sequelize.STRING,
+		},
+		description: {
+			type: Sequelize.STRING,
+		},
+		roles: {
+			type: Sequelize.JSON,
+		},
+		category: {
+			type: Sequelize.STRING,
+		},
+		transcript_channel: {
+			type: Sequelize.STRING,
+		},
+		send_channel: {
+			type: Sequelize.STRING,
+		},
+		status: {
+			type: Sequelize.ENUM("edit", "finish", "to_delete", "draft"),
+			defaultValue: "edit",
+		},
+		fkGuild: {
+			type: Sequelize.STRING,
+			references: {
+				model: GuildModel,
+				key: "id",
+			},
+			allowNull: false,
+			primaryKey: true,
+		},
+		fkUser: {
+			type: Sequelize.STRING,
+			references: {
+				model: UserModel,
+				key: "id",
+			},
+			allowNull: false,
+			primaryKey: true,
+		},
+	}
 );

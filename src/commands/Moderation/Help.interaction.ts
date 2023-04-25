@@ -147,7 +147,7 @@ export class HelpSlashCommand extends BaseSlashCommand {
 			.setTitle("Help")
 			.setColor(Colors.DarkButNotBlack)
 			.setDescription("Here is a list of all the commands you can use with the bot. You can also use the `help <command>` command to get more information about a specific command.")
-        
-	    return { embeds: [mainEmbed, embed], components: [row], ephemeral: true}
+
+		return { embeds: [mainEmbed, embed], components: [row], ephemeral: true}
 	}
 }

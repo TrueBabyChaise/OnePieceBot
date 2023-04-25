@@ -1,5 +1,6 @@
 import { BaseCommand, BaseInteraction, BaseClient, BaseSlashCommand } from "@src/structures";
 import { Routes } from "discord.js";
+import fs from "fs";
 
 /**
  * @description Base class for modules
@@ -122,9 +123,9 @@ export abstract class BaseModule {
 	 * @example
 	 */
 	async loadCommands(path: string) {
-		const commandFiles = await require("fs").promises.readdir(path);
+		const commandFiles = await fs.promises.readdir(path);
 		for (const file of commandFiles) {
-			const lstat = await require("fs").promises.lstat(`${path}/${file}`);
+			const lstat = await fs.promises.lstat(`${path}/${file}`);
 			if (lstat.isDirectory()) {
 				this.loadCommands(`${path}/${file}`);
 				continue;
@@ -154,9 +155,9 @@ export abstract class BaseModule {
 	 * @param path 
 	 */
 	async loadSlashCommands(path: string): Promise<void> {
-		const commandFiles = await require("fs").promises.readdir(path);
+		const commandFiles = await fs.promises.readdir(path);
 		for (const file of commandFiles) {
-			const lstat = await require("fs").promises.lstat(`${path}/${file}`);
+			const lstat = await fs.promises.lstat(`${path}/${file}`);
 			if (lstat.isDirectory()) {
 				await this.loadSlashCommands(`${path}/${file}`);
 				continue;
@@ -278,8 +279,6 @@ export abstract class BaseModule {
 			break;
 		case 14:
 			console.log("Permission changed");
-		default:
-			break;
 		}
 		return index != 0;
 	}
