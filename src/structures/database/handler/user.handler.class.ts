@@ -1,8 +1,8 @@
 import { UserModel } from "../models/user.db.model";
 
 export class UserHandler {
-	private _id: string = '';
-	private _username: string = "";
+	private _id = "";
+	private _username = "";
 	
 	public get id(): string {
 		return this._id;

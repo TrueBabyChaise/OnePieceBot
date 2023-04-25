@@ -1,7 +1,7 @@
-import { BaseClient, BaseEvent } from '@src/structures';
-import { GuildMember, Events } from 'discord.js';
-import { UserHandler } from '@src/structures/database/handler/user.handler.class';
-import { GuildHandler } from '@src/structures/database/handler/guild.handler.class';
+import { BaseClient, BaseEvent } from "@src/structures";
+import { GuildMember, Events } from "discord.js";
+import { UserHandler } from "@src/structures/database/handler/user.handler.class";
+import { GuildHandler } from "@src/structures/database/handler/guild.handler.class";
 
 /**
  * @description Event for when a member leave a guild
@@ -20,7 +20,7 @@ export class MemberLeaveEvent extends BaseEvent {
 		if (!member.id || !member.user.tag) { return; }
 
 		if (!member.guild) { return; }
-		let guild = await GuildHandler.getGuildById(member.guild.id);
+		const guild = await GuildHandler.getGuildById(member.guild.id);
 		if (guild) {
 			await guild.removeUserFromGuild(member.id);
 		}

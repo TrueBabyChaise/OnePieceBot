@@ -12,7 +12,7 @@ export abstract class BaseInteraction  {
 	private enabled: boolean;
 	private cooldown: number;
 	private permissions: bigint[];
-	private module: string = '';
+	private module = "";
 
 	constructor(name: string, description: string, options?: any, cooldown?: number, isEnabled?: boolean, permissions?: bigint[]) {
 		this.name = name;

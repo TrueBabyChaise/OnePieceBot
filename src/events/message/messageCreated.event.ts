@@ -1,6 +1,6 @@
-import { EmbedBuilder, Message, Events } from 'discord.js';
+import { EmbedBuilder, Message, Events } from "discord.js";
 import { BaseEvent, BaseClient, BaseModule  } from "@src/structures";
-import { Colors } from 'discord.js';
+import { Colors } from "discord.js";
 
 /**
  * @description MessageCreated event
@@ -28,8 +28,8 @@ export class MessageCreatedEvent extends BaseEvent {
 			const username = client.users.cache.get(client.getAuthorId())?.tag
 
 			const embed = new EmbedBuilder()
-				.setTitle('Bot Info')
-				.setDescription('Here is some information about me')
+				.setTitle("Bot Info")
+				.setDescription("Here is some information about me")
 				.setColor(Colors.Orange)
 				.setTimestamp()
 				.addFields([
@@ -49,7 +49,7 @@ export class MessageCreatedEvent extends BaseEvent {
 				embed.setFooter({ text: `Developed by ${username ? username : "No one"}`, iconURL: `${message.author.avatarURL()}`})
 			else 
 				embed.setFooter({ text: `Developed by ${username ? username : "No one"}`})
-			message.channel.send({ content: 'Hello, my master !', embeds: [embed] });
+			message.channel.send({ content: "Hello, my master !", embeds: [embed] });
 		}
 
 		// SKIP IF MESSAGE DOES NOT START WITH PREFIX
@@ -65,7 +65,7 @@ export class MessageCreatedEvent extends BaseEvent {
 						await command.execute(client, message, args);
 					} catch (error) {
 						console.error(error);
-						message.reply('Call the developer, something went wrong!');
+						message.reply("Call the developer, something went wrong!");
 					}
 				}
 			}

@@ -8,7 +8,7 @@ import { ChatInputCommandInteraction } from "discord.js";
  */
 export class PongSlashCommand extends BaseSlashCommand {
 	constructor() {
-		super('pong', 'Ping! Pong!', [], 0, true, []);
+		super("pong", "Ping! Pong!", [], 0, true, []);
 	}
 
 	/**
@@ -18,6 +18,6 @@ export class PongSlashCommand extends BaseSlashCommand {
 	 * @returns {Promise<void>}
 	 */
 	async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
-		await interaction.reply('Ping!');
+		await interaction.reply("Ping!");
 	}
 }

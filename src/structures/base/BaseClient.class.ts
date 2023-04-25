@@ -1,6 +1,6 @@
-import { Client, REST } from 'discord.js';
-import { BaseModule } from '@src/structures';
-import eventLoader from '@events/loader'
+import { Client, REST } from "discord.js";
+import { BaseModule } from "@src/structures";
+import eventLoader from "@events/loader"
 
 /**
  * @description Base class for client
@@ -52,7 +52,7 @@ export class BaseClient extends Client {
 	 * @throws {Error} If the author id is not set
 	 */
 	public getAuthorId(): string {
-		if (!this.authorId) throw new Error('The author id is not set');
+		if (!this.authorId) throw new Error("The author id is not set");
 		return this.authorId;
 	}
 
@@ -120,7 +120,7 @@ export class BaseClient extends Client {
 			`/applications/${this.clientId}/commands`,
 		) as any[];
 		let hasChanged = false;
-		let registeredSlashCommand = [];
+		const registeredSlashCommand = [];
 		//console.log(restSlashCommands);
 	
 		for (const module of this.modules.values()) {
@@ -134,9 +134,9 @@ export class BaseClient extends Client {
 			}
 
 
-			await module.loadCommands('src/commands' + '/' + module.getName());
-			await module.loadSlashCommands('src/commands' + '/' + module.getName());
-			let result = await module.registerSlashCommands(this, restSlashCommands);
+			await module.loadCommands("src/commands" + "/" + module.getName());
+			await module.loadSlashCommands("src/commands" + "/" + module.getName());
+			const result = await module.registerSlashCommands(this, restSlashCommands);
 			for (const slashCommand of result.registered) {
 				registeredSlashCommand.push(slashCommand);
 			}
@@ -176,7 +176,7 @@ export class BaseClient extends Client {
 	 */
 	async run(token: string): Promise<void> {
 		await this.login(token);
-		console.log(`Bot started`);
+		console.log("Bot started");
 	}
 
 	/**
@@ -210,7 +210,7 @@ export class BaseClient extends Client {
 	 * @throws {Error} If the keys is not an array
 	 */
 	public getKeys(): { [key: string]: string | undefined } {
-		if (!this.keys) throw new Error('The keys are not set');
+		if (!this.keys) throw new Error("The keys are not set");
 		return this.keys;
 	}
 
