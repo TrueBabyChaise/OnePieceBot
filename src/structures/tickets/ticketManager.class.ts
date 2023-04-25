@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Message, EmbedBuilder, TextChannel, ChannelType, ColorResolvable, Colors, CategoryChannelResolvable, MessageCreateOptions, GuildChannel, Channel, Interaction, Collection, OverwriteResolvable, ButtonInteraction } from 'discord.js';
 import { BaseClient } from '@src/structures';
 import { ChatInputCommandInteraction } from 'discord.js';
@@ -6,13 +5,6 @@ import { Ticket } from './ticket.class'
 import { TicketHandler } from '@src/structures/database/handler/ticket.handler.class';
 import { PanelTicketModel } from '../database/models/panelTicket.db.model';
 import { PanelTicketHandler } from '../database/handler/panelTicket.handler.class';
-=======
-import { Message, EmbedBuilder, TextChannel, ChannelType, ColorResolvable, Colors, CategoryChannelResolvable, OverwriteResolvable } from "discord.js";
-import { BaseClient } from "@src/structures";
-import { ChatInputCommandInteraction } from "discord.js";
-import { Ticket } from "./ticket.class"
-import { TicketHandler } from "@src/structures/database/handler/ticket.handler.class";
->>>>>>> dev
 
 interface EmbebError {
     title: string;
@@ -62,7 +54,6 @@ export class TicketManager {
 		}
 	}
 
-<<<<<<< HEAD
 
 
     async createTicketFromPanel(interaction: ButtonInteraction, client: BaseClient) {
@@ -123,9 +114,6 @@ export class TicketManager {
     }
 
     /**
-=======
-	/**
->>>>>>> dev
      * @description Create a ticket
      * @param {Message} message
      * @param {BaseClient} client

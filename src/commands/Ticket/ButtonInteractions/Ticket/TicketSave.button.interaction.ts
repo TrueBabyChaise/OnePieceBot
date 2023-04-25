@@ -1,13 +1,7 @@
-<<<<<<< HEAD:src/commands/Ticket/ButtonInteractions/Ticket/TicketSave.button.interaction.ts
 import { BaseClient, BaseInteraction } from '@src/structures';
 import { Attachment, ChatInputCommandInteraction, AttachmentBuilder, AttachmentData, TextChannel } from 'discord.js';
 import { TicketManager } from '@src/structures/tickets/ticketManager.class';
 import { PanelTicketHandler } from '@src/structures/database/handler/panelTicket.handler.class';
-=======
-import { BaseClient, BaseInteraction } from "@src/structures";
-import { Attachment, ChatInputCommandInteraction, AttachmentBuilder, AttachmentData } from "discord.js";
-import { TicketManager } from "@src/structures/tickets/ticketManager.class";
->>>>>>> dev:src/commands/Ticket/ButtonInteractions/TicketSave.button.interaction.ts
 
 /**
  * @description TicketSave button interaction
@@ -35,7 +29,6 @@ export class TicketSaveButtonInteraction extends BaseInteraction {
 			return;
 		}
 
-<<<<<<< HEAD:src/commands/Ticket/ButtonInteractions/Ticket/TicketSave.button.interaction.ts
         // Create Attachment
         const ticket = TicketManager.getInstance().getTicket(interaction.channelId);
         if (!ticket) {
@@ -62,24 +55,4 @@ export class TicketSaveButtonInteraction extends BaseInteraction {
         }
         await interaction.reply({ files: [attachment] });
     }
-=======
-		// Create Attachment
-		const ticket = TicketManager.getInstance().getTicket(interaction.channelId);
-		if (!ticket) {
-			await interaction.reply("This command can only be used in a ticket");
-			return;
-		}
-		const transcript = await ticket.buildTranscript(interaction.guildId!, client);
-		if (!transcript) {
-			await interaction.reply("An error occurred while building the transcript");
-			return;
-		}
-		const bufferResolvable = Buffer.from(transcript);
-		const attachment = new AttachmentBuilder(bufferResolvable, {
-			name: "transcript.html",
-		});
-
-		await interaction.reply({ files: [attachment] });
-	}
->>>>>>> dev:src/commands/Ticket/ButtonInteractions/TicketSave.button.interaction.ts
 }

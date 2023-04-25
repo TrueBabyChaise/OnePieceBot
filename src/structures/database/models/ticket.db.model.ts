@@ -12,7 +12,6 @@ export const TicketModel = sequelize.define(
 			type: Sequelize.STRING,
 			primaryKey: true,
 		},
-<<<<<<< HEAD
         owner: {
             type: Sequelize.STRING,
             references: {
@@ -34,21 +33,6 @@ export const TicketModel = sequelize.define(
             },
             allowNull: true,
         },
-=======
-		owner: {
-			type: Sequelize.STRING,
-			references: {
-				model: UserModel,
-				key: "id",
-			},
-		},
-		permissions: {
-			type: Sequelize.JSON,
-		},
-		embedMessage: {
-			type: Sequelize.STRING,
-		},
->>>>>>> dev
 	}
 );
 
