@@ -19,7 +19,7 @@ export class Ticket {
 	private TicketHandler: TicketHandler | null = null;
 	private ticketPanelId: string;
 
-	constructor(channel: TextChannel, owner: string, permissions: Array<OverwriteResolvable>, ticketPanelId: string = '') {
+	constructor(channel: TextChannel, owner: string, permissions: Array<OverwriteResolvable>, ticketPanelId = "") {
 		this.id = channel.id;
 		this.channel = channel;
 		this.messageEmbed = null;

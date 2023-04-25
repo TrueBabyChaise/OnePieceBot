@@ -11,7 +11,7 @@ import { GuildHandler } from "@src/structures/database/handler/guild.handler.cla
 export class MemberJoinEvent extends BaseEvent {
 	constructor() {
 		super(Events.GuildMemberAdd);
-  	}
+	}
 
 	public async execute(client: BaseClient, member: GuildMember) {
 		console.log(`Member ${member.user.tag} has joined the guild ${member.guild.name}`);

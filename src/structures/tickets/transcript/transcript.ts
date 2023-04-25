@@ -3,7 +3,7 @@ import fs from "fs";
 import { BaseClient } from "@src/structures/";
 
 async function loadStyles() {
-	const css = fs.readFileSync('./src/structures/tickets/transcript/css/transcript.css', 'utf8');
+	const css = fs.readFileSync("./src/structures/tickets/transcript/css/transcript.css", "utf8");
 	return css;
 }
 
