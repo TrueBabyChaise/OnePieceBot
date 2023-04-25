@@ -10,19 +10,19 @@ export const TicketModel = sequelize.define(
 			type: Sequelize.STRING,
 			primaryKey: true,
 		},
-        owner: {
-            type: Sequelize.STRING,
-            references: {
-                model: UserModel,
-                key: "id",
-            },
-        },
-        permissions: {
-            type: Sequelize.JSON,
-        },
-        embedMessage: {
-            type: Sequelize.STRING,
-        },
+		owner: {
+			type: Sequelize.STRING,
+			references: {
+				model: UserModel,
+				key: "id",
+			},
+		},
+		permissions: {
+			type: Sequelize.JSON,
+		},
+		embedMessage: {
+			type: Sequelize.STRING,
+		},
 	}
 );
 
@@ -53,26 +53,26 @@ export const GuildTicketModel = sequelize.define(
 );
 
 export const UserTicketModel = sequelize.define(
-    "users_tickets", {
-        fkTicket: {
-            type: Sequelize.STRING,
-            references: {
-                model: TicketModel,
-                key: "id",
-            },
-            allowNull: false,
-        },
-        fkUser: {
-            type: Sequelize.STRING,
-            references: {
-                model: UserModel,
-                key: "id",
-            },
-            allowNull: false,
-        }
-    }, {
-        timestamps: false,
-        createdAt: false,
-        updatedAt: false,
-    }
+	"users_tickets", {
+		fkTicket: {
+			type: Sequelize.STRING,
+			references: {
+				model: TicketModel,
+				key: "id",
+			},
+			allowNull: false,
+		},
+		fkUser: {
+			type: Sequelize.STRING,
+			references: {
+				model: UserModel,
+				key: "id",
+			},
+			allowNull: false,
+		}
+	}, {
+		timestamps: false,
+		createdAt: false,
+		updatedAt: false,
+	}
 );

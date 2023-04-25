@@ -1,7 +1,7 @@
-import { Message } from 'discord.js';
+import { Message } from "discord.js";
 import { BaseCommand, BaseClient } from "@src/structures";
-import { ButtonBuilder, ActionRowBuilder } from '@discordjs/builders';
-import { ButtonStyle } from 'discord.js';
+import { ButtonBuilder, ActionRowBuilder } from "@discordjs/builders";
+import { ButtonStyle } from "discord.js";
 
 /**
  * @description HeadTales command
@@ -10,7 +10,7 @@ import { ButtonStyle } from 'discord.js';
  */
 export class HeadTalesCommand extends BaseCommand {
 	constructor() {
-		super('headtales', ['ht'], 'Head Tales', 'Game', 0, true, []);
+		super("headtales", ["ht"], "Head Tales", "Game", 0, true, []);
 	}
 
 	/**
@@ -20,21 +20,21 @@ export class HeadTalesCommand extends BaseCommand {
 	 * @param {string[]} args
 	 * @returns {Promise<void>}
 	 */
-	async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
-		message.channel.send('Head Tales');
+	async execute(client: BaseClient, message: Message): Promise<void> {
+		message.channel.send("Head Tales");
 		const row = new ActionRowBuilder<ButtonBuilder>()
 			.addComponents(
 				new ButtonBuilder()
-					.setCustomId('head')
-					.setLabel('Head')
+					.setCustomId("head")
+					.setLabel("Head")
 					.setStyle(ButtonStyle.Primary),
 				new ButtonBuilder()
-					.setCustomId('tails')
-					.setLabel('Tails')
+					.setCustomId("tails")
+					.setLabel("Tails")
 					.setStyle(ButtonStyle.Primary),
 			);
-		const msg = await message.channel.send({ content: 'Choose Head or Tails', components: [row] });
-		msg.react('👍');
+		const msg = await message.channel.send({ content: "Choose Head or Tails", components: [row] });
+		msg.react("👍");
 
 
 	}

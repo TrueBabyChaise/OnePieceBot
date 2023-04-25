@@ -1,9 +1,9 @@
 import { GuildModel, GuildUserModel } from "../models/guild.db.model";
 
 export class GuildHandler {
-	private _id: string = '';
-	private _name: string = "";
-	private _memberRoleId: string = "";
+	private _id = "";
+	private _name = "";
+	private _memberRoleId = "";
 
 	public get id(): string {
 		return this._id;

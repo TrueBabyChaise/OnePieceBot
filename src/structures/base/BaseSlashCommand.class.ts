@@ -51,30 +51,30 @@ export abstract class BaseSlashCommand extends BaseInteraction {
 			} else {
 				if (option.type == SlashCommandOptionType.STRING) {
 					for (const choice of option.choices)
-						if (typeof choice.value != 'string')
-							throw new Error('Choices must be of type string or number!');
+						if (typeof choice.value != "string")
+							throw new Error("Choices must be of type string or number!");
 					this.slashCommand.addStringOption(opt => 
 						opt.setName(option.name).
-						setDescription(option.description).
-						setRequired(option.required || false).
-						setChoices(...option.choices as APIApplicationCommandOptionChoice<string>[]))
+							setDescription(option.description).
+							setRequired(option.required || false).
+							setChoices(...option.choices as APIApplicationCommandOptionChoice<string>[]))
 				} else if (option.type == SlashCommandOptionType.USER)
-					throw new Error('User options cannot have choices!');
+					throw new Error("User options cannot have choices!");
 				else if (option.type == SlashCommandOptionType.CHANNEL)
-					throw new Error('Channel options cannot have choices!');
+					throw new Error("Channel options cannot have choices!");
 				else if (option.type == SlashCommandOptionType.INTEGER) {
 					for (const choice of option.choices)
-						if (typeof choice.value != 'number')
-							throw new Error('Choices must be of type string or number!');
+						if (typeof choice.value != "number")
+							throw new Error("Choices must be of type string or number!");
 					this.slashCommand.addNumberOption(opt => 
 						opt.setName(option.name).
-						setDescription(option.description).
-						setRequired(option.required || false).
-						setChoices(...option.choices as APIApplicationCommandOptionChoice<number>[]))
+							setDescription(option.description).
+							setRequired(option.required || false).
+							setChoices(...option.choices as APIApplicationCommandOptionChoice<number>[]))
 				} else if (option.type == SlashCommandOptionType.ROLE)
-					throw new Error('Role options cannot have choices!');
+					throw new Error("Role options cannot have choices!");
 				else if (option.type == SlashCommandOptionType.BOOLEAN)
-					throw new Error('Boolean options cannot have choices!');
+					throw new Error("Boolean options cannot have choices!");
 			}
 		}
 	}

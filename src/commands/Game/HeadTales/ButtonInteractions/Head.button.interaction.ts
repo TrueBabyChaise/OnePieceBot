@@ -9,7 +9,7 @@ import { ButtonInteraction } from "discord.js";
  */
 export class HeadButtonInteraction extends BaseInteraction {
 	constructor() {
-		super('head', 'Head button interaction', 'Test', 0, true, []);
+		super("head", "Head button interaction", "Test", 0, true, []);
 	}
 
 	/**
@@ -20,7 +20,7 @@ export class HeadButtonInteraction extends BaseInteraction {
 	 */
 
 	async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
-		console.log('Head button interaction');
-		await interaction.reply('Head');
+		console.log("Head button interaction");
+		await interaction.reply("Head");
 	}
 }

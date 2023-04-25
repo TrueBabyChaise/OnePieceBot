@@ -8,11 +8,11 @@ import { Message } from "discord.js";
  * @extends BaseCommand
  */
 export class TicketCreateCommand extends BaseCommand {
-    constructor() {
-        super('ticketset', ['ts'], 'Set a channel as ticket', 'Tickets', 0, true, []);
-    }
+	constructor() {
+		super("ticketset", ["ts"], "Set a channel as ticket", "Tickets", 0, true, []);
+	}
 
-    /**
+	/**
      * @description Executes the command
      * @param {BaseClient} client
      * @param {Message} message
@@ -20,9 +20,9 @@ export class TicketCreateCommand extends BaseCommand {
      * @returns {Promise<void>}
      */
 
-    async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
+	async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
        	TicketManager.getInstance().setNewTicketFromMessage(message);
 		console.log(TicketManager.getInstance().getTicket(message.channel.id));
-    }
+	}
 
 }

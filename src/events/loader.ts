@@ -13,11 +13,11 @@ import { readdirSync } from "fs";
  * @inner
  */
 export = async (client: BaseClient) => {
-	const eventFiles = readdirSync('./src/events');
+	const eventFiles = readdirSync("./src/events");
 	for (const file of eventFiles) {
-		const lstat = await (await import(`fs`)).promises.lstat(`./src/events/${file}`);
+		const lstat = await (await import("fs")).promises.lstat(`./src/events/${file}`);
 		if (lstat.isDirectory()) {
-			const subEventFiles = readdirSync(`./src/events/${file}`).filter((file: string) => file.endsWith('event.ts'));
+			const subEventFiles = readdirSync(`./src/events/${file}`).filter((file: string) => file.endsWith("event.ts"));
 			for (const subFile of subEventFiles) {
 				const Event = (await import(`../events/${file}/${subFile}`));
 				Object.entries(Event).forEach(([key, value]) => {
