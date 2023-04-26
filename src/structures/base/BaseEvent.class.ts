@@ -9,7 +9,7 @@ export abstract class BaseEvent {
 	name: string;
 	once: boolean;
 	
-	constructor(name: string, once: boolean = false) {
+	constructor(name: string, once = false) {
 		this.name = name;
 		this.once = once;
 	}

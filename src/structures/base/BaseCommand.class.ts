@@ -1,5 +1,5 @@
-import { Message } from 'discord.js';
-import { BaseClient } from './BaseClient.class';
+import { Message } from "discord.js";
+import { BaseClient } from "./BaseClient.class";
 
 
 /**
@@ -10,19 +10,19 @@ export abstract class BaseCommand {
 	private name: string;
 	private aliases: string[];
 	private enabled: boolean;
-	private module: string = '';
+	private module = "";
 	private description: string;
 	private usage: string;
 	private cooldown: number;
 	private permissions: string[];
-	private nsfw: boolean = false;
+	private nsfw = false;
 
 	constructor(name: string, aliases: string[], description?: string, usage?: string, cooldown?: number,isEnabled?: boolean, permissions?: string[], nsfw?: boolean) {
 		this.name = name;
 		this.aliases = aliases;
 		this.enabled = isEnabled || true;
-		this.description = description || 'No description provided';
-		this.usage = usage || '';
+		this.description = description || "No description provided";
+		this.usage = usage || "";
 		this.cooldown = cooldown || 0;
 		this.permissions = permissions || [];
 		this.nsfw = nsfw || false;

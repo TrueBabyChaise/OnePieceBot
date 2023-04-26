@@ -1,7 +1,7 @@
-import { BaseClient, BaseEvent } from '@src/structures';
-import { GuildMember, Events } from 'discord.js';
-import { UserHandler } from '@src/structures/database/handler/user.handler.class';
-import { GuildHandler } from '@src/structures/database/handler/guild.handler.class';
+import { BaseClient, BaseEvent } from "@src/structures";
+import { GuildMember, Events } from "discord.js";
+import { UserHandler } from "@src/structures/database/handler/user.handler.class";
+import { GuildHandler } from "@src/structures/database/handler/guild.handler.class";
 
 /**
  * @description Event for when a member joins a guild
@@ -11,7 +11,7 @@ import { GuildHandler } from '@src/structures/database/handler/guild.handler.cla
 export class MemberJoinEvent extends BaseEvent {
 	constructor() {
 		super(Events.GuildMemberAdd);
-  	}
+	}
 
 	public async execute(client: BaseClient, member: GuildMember) {
 		console.log(`Member ${member.user.tag} has joined the guild ${member.guild.name}`);

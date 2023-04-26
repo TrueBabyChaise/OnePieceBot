@@ -23,16 +23,16 @@ export class ReadyEvent extends BaseEvent {
 	async execute(client: BaseClient): Promise<void> {
 		console.log(`Logged in as ${client.user?.tag}`);
 
-		var statusIndex = 0;
+		let statusIndex = 0;
 		setInterval(() => {
-			const status = ['NeedName v0.1', `Developped by Serena Satella`, `NeedName Beta`]; // You can change the status here
+			const status = ["NeedName v0.1", "Developped by Serena Satella", "NeedName Beta"]; // You can change the status here
 			const activity = { 
 				type: ActivityType.Streaming, 
 				name: status[statusIndex],
 			} as ActivitiesOptions;
 			client.user?.setPresence({
 				activities: [activity],
-				status: 'online'
+				status: "online"
 			})
 			if (statusIndex < status.length - 1) statusIndex++; else statusIndex = 0;
 		}, 10000);
