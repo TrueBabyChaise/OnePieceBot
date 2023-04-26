@@ -1,4 +1,4 @@
-import { Message,Events } from 'discord.js';
+import { Message,Events } from "discord.js";
 import { BaseEvent, BaseClient  } from "@src/structures";
 
 /**

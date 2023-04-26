@@ -1,6 +1,6 @@
-import { BaseClient, BaseEvent } from '@src/structures';
-import { MessageReaction, User, Events } from 'discord.js';
-import { ReactionRole } from '@src/structures/utils/reactionRole.class';
+import { BaseClient, BaseEvent } from "@src/structures";
+import { MessageReaction, User, Events } from "discord.js";
+import { ReactionRole } from "@src/structures/utils/reactionRole.class";
 
 export class MessageReactionAddEvent extends BaseEvent {
 

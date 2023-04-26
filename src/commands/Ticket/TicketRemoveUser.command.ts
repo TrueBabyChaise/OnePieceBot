@@ -8,11 +8,11 @@ import { Message } from "discord.js";
  * @extends BaseCommand
  */
 export class TicketRemoveUserCommand extends BaseCommand {
-    constructor() {
-        super('ticketremoveuser', ['tru'], 'Remove user from ticket', 'Tickets', 0, true, []);
-    }
+	constructor() {
+		super("ticketremoveuser", ["tru"], "Remove user from ticket", "Tickets", 0, true, []);
+	}
 
-    /**
+	/**
      * @description Executes the command
      * @param {BaseClient} client
      * @param {Message} message
@@ -20,7 +20,7 @@ export class TicketRemoveUserCommand extends BaseCommand {
      * @returns {Promise<void>}
      */
 
-    async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
+	async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
 		if (args.length == 0) {
 			message.reply("Please specify a user");
 			return;
@@ -36,6 +36,6 @@ export class TicketRemoveUserCommand extends BaseCommand {
 			return;
 		}
 		ticket.removeUser(user);
-    }
+	}
 
 }
