@@ -13,6 +13,9 @@ jobs:
       - name: git-checkout
         uses: actions/checkout@v2
 
+      - name: Install all dependencies
+        run: npm install
+
       - name: Install and Run Typedoc
         run: npm install -g typedoc && npx typedoc
     
