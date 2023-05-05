@@ -76,6 +76,11 @@ export class MuteSlashCommand extends BaseSlashCommand {
 			return;
 		}
 
+		if (!member.bannable) {
+			await interaction.reply({content: `I am missing permissions to ban ${member} !`, ephemeral: true});
+			return;
+		}
+
 		const reason = reasonOption?.value as string;
 		const deleteMessages = deleteMessagesOption?.value as boolean;
 		const daysOfMessages = daysOfMessagesOption?.value as number;

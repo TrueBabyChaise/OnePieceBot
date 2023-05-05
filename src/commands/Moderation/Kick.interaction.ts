@@ -40,25 +40,33 @@ export class MuteSlashCommand extends BaseSlashCommand {
 		const GuildDB = await GuildHandler.getGuildById(interaction.guild!.id);
 
 		if (!memberOption) {
-			await interaction.reply("Something went wrong!");
+			await interaction.reply({content: "Something went wrong!", ephemeral: true});
 			return;
 		}
         
 		const member = memberOption.member;
 
 		if (!member || !interaction.guild) {
-			await interaction.reply("Something went wrong!");
+			await interaction.reply({content: "Something went wrong!", ephemeral: true});
 			return;
 		}
 
 		if (!(member instanceof GuildMember)) {
-			await interaction.reply("Something went wrong!");
+			await interaction.reply({content: "Something went wrong!", ephemeral: true});
 			return;
 		}
 
 		const reason = reasonOption?.value as string;
+		if (member.id == client.user?.id) {
+			await interaction.reply({content: "I won't kick myself! BLEH !", ephemeral: true});
+			return;
+		}
+		if (!member.kickable) {
+			await interaction.reply({content: `I can't kick ${member}! (Maybe he has a higher role than me ?)`, ephemeral: true});
+			return;
+		}
 		await interaction.reply({embeds: [this.createEmbed(author, member, reason)]});
-		await member.kick(reason);
+		//await member.kick(reason);
 		GuildDB?.removeUserFromGuild(member.id);
 	}
 
