@@ -20,7 +20,7 @@ export class TicketCreateCommand extends BaseCommand {
      * @returns {Promise<void>}
      */
 
-	async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
+	async execute(client: BaseClient, message: Message): Promise<void> {
 		await TicketManager.getInstance().createTicket(message, client);
 
 		if (message.guild)

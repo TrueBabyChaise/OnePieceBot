@@ -1,6 +1,6 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
 import { TicketManager } from "@src/structures/tickets/ticketManager.class";
-import { ButtonInteraction, ChatInputCommandInteraction } from "discord.js";
+import { ButtonInteraction } from "discord.js";
 
 /**
  * @description TicketClose button interaction
@@ -19,7 +19,6 @@ export class TicketCloseButtonInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
 	async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
-		const message = interaction.message;
 		await TicketManager.getInstance().createTicketFromPanel(interaction, client);
 		if (interaction.guild)
 			console.log(TicketManager.getInstance().getTicket(interaction.guild.id));

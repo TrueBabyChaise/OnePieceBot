@@ -1,5 +1,5 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
-import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, RoleSelectMenuInteraction, ChannelSelectMenuInteraction} from "discord.js";
+import { ChannelSelectMenuInteraction} from "discord.js";
 import { PanelTicketEnum, PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
 /**
  * @description TicketOpen button interaction
@@ -19,7 +19,6 @@ export class PanelSendChannelInteraction extends BaseInteraction {
      */
 	async execute(client: BaseClient, interaction: ChannelSelectMenuInteraction): Promise<void> {
 		const message = interaction.message;
-		const components = message.components;
 		const newChannel = interaction.values;
 
 		console.log(newChannel);
@@ -48,16 +47,6 @@ export class PanelSendChannelInteraction extends BaseInteraction {
 			}
 		}
 
-		const row = new ActionRowBuilder<ChannelSelectMenuBuilder>()
-			.addComponents(
-				new ChannelSelectMenuBuilder()
-					.setChannelTypes([ChannelType.GuildText])
-					.setCustomId("panelsendchannel")
-					.setPlaceholder("Select a channel")
-					.setMaxValues(1)
-			);
-
-        
 		await interaction.deferUpdate();
 		await interaction.editReply({ embeds: message.embeds, components: message.components });
 	}

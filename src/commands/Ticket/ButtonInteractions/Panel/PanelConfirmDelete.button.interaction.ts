@@ -1,5 +1,5 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
-import { ButtonInteraction, StringSelectMenuBuilder, ActionRowBuilder, ButtonBuilder, Colors, ButtonStyle } from "discord.js";
+import { ButtonInteraction } from "discord.js";
 import { PanelTicketEnum, PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
 import { PanelDeleteInteraction } from "./PanelDelete.button.interaction";
 
@@ -20,7 +20,11 @@ export class PanelConfirmDeleteInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
 	async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
-		const ticketPanel = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild!.id, PanelTicketEnum.TO_DELETE);
+		if (!interaction.guild) {
+			await interaction.reply({ content: "Something went wrong", ephemeral: true });
+			return;
+		}
+		const ticketPanel = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id, PanelTicketEnum.TO_DELETE);
 		if (ticketPanel) {
 			await ticketPanel.deletePanelTicket()
 		}

@@ -1,6 +1,5 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
 import { PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
-import { PanelTicketModel } from "@src/structures/database/models/panelTicket.db.model";
 import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType} from "discord.js";
 
 /**

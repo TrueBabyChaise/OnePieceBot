@@ -156,6 +156,16 @@ export class TicketHandler {
 		return ticket;
 	}
 
+	public static async getTicketOfPanel(id: string): Promise<string[] | null> {
+		const ticket = new Array<string>();
+		const ticketDB = await TicketModel.findAll({ where: { fkPanel: id } });
+		if (!ticketDB) { return null; }
+		for (let i = 0; i < ticketDB.length; i++) {
+			ticket[i] = ticketDB[i].get("id") as string;
+		}
+		return ticket;
+	}
+
 	public async addTicketToGuild(guild: string): Promise<boolean> {
 		const ticketDB = await GuildTicketModel.create({ fkTicket: this._id, fkGuild: guild });
 		if (!ticketDB) { return false; }

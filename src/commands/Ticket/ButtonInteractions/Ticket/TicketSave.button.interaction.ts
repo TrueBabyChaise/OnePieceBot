@@ -1,5 +1,5 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
-import { Attachment, ChatInputCommandInteraction, AttachmentBuilder, AttachmentData, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, AttachmentBuilder, TextChannel } from "discord.js";
 import { TicketManager } from "@src/structures/tickets/ticketManager.class";
 import { PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
 
@@ -35,7 +35,7 @@ export class TicketSaveButtonInteraction extends BaseInteraction {
 			await interaction.reply("This command can only be used in a ticket");
 			return;
 		}
-		const transcript = await ticket.buildTranscript(interaction.guildId!, client);
+		const transcript = await ticket.buildTranscript(interaction.guildId, client);
 		if (!transcript) {
 			await interaction.reply("An error occurred while building the transcript");
 			return;
