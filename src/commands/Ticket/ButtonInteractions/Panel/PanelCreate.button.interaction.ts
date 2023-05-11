@@ -1,5 +1,5 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
-import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle, Interaction } from "discord.js";
+import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle } from "discord.js";
 import { PanelTicketEnum, PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
 
 /**
@@ -24,7 +24,11 @@ export class PanelCreateInteraction extends BaseInteraction {
 			return;
 		}
         
-		const panel = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild!.id);
+		if (!interaction.guild) {
+			await interaction.reply({content: "An error occurred while creating your panel ticket", ephemeral: true});
+			return;
+		}
+		const panel = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id);
 		if (!panel) {  
 			await interaction.reply({content: "An error occurred while creating your panel ticket", ephemeral: true});
 			return;
@@ -38,12 +42,12 @@ export class PanelCreateInteraction extends BaseInteraction {
             
 		const embed2 = new EmbedBuilder()
 			.setTitle("Panel Name")
-			.setDescription(panel.name ? panel.name : "```...```")
+			.setDescription(panel.name ? `\`\`\`${panel.name}\`\`\`` : "```...```")
 
         
 		const embed3 = new EmbedBuilder()
 			.setTitle("Panel Description")
-			.setDescription(panel.description ? panel.description : "```...```")
+			.setDescription(panel.description ? `\`\`\`${panel.description}\`\`\`` : "```...```")
             
 
 		const row = new ActionRowBuilder<ButtonBuilder>()

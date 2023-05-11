@@ -1,6 +1,6 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
 import { PanelTicketEnum, PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
-import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, RoleSelectMenuInteraction} from "discord.js";
+import { EmbedBuilder, RoleSelectMenuInteraction} from "discord.js";
 
 /**
  * @description TicketOpen button interaction

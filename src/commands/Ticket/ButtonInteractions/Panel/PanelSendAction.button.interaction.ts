@@ -1,7 +1,6 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
 import { ButtonBuilder, ButtonInteraction, Colors, EmbedBuilder, TextChannel, ActionRowBuilder, ButtonStyle} from "discord.js";
 import { PanelTicketHandler, PanelTicketEnum } from "@src/structures/database/handler/panelTicket.handler.class";
-import { TicketSetupPanelCommand } from "../../TicketSetupPanel.interaction";
 /**
  * @description PanelChangeDescription button interaction
  * @class PanelChangeDescriptionInteraction

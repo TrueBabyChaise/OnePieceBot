@@ -20,7 +20,7 @@ export class TicketCreateCommand extends BaseCommand {
      * @returns {Promise<void>}
      */
 
-	async execute(client: BaseClient, message: Message, args: string[]): Promise<void> {
+	async execute(client: BaseClient, message: Message): Promise<void> {
 		TicketManager.getInstance().setNewTicketFromMessage(message);
 		console.log(TicketManager.getInstance().getTicket(message.channel.id));
 	}
