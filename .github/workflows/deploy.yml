@@ -1,0 +1,48 @@
+# Deployment of Kikku on SSH server
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Deploy to SSH server
+    steps:
+      - name: git-checkout
+        uses: actions/checkout@v3
+
+      - name: Install all dependencies
+        run: npm install
+
+      - name: Cache build
+        uses: actions/cache@v2
+        with:
+          path: .
+          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      - name: Build docker image
+        run: docker build -t ghcr.io/truebabychaise/kikku .
+
+  restart:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: VPS deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASS }}
+          script: |
+            echo $CR_PAT | docker login ghcr.io -u TrueBabyChaise --password-stdin
+            cd prod.env
+            docker-compose down
+            docker image rm ghcr.io/truebabychaise/kikku:latest
+            docker pull ghcr.io/truebabychaise/kikku:latest
+            docker-compose up -d
