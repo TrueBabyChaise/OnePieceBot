@@ -1,5 +1,5 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
-import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, RoleSelectMenuInteraction, ChannelSelectMenuInteraction, StringSelectMenuInteraction, StringSelectMenuBuilder} from "discord.js";
+import { ActionRowBuilder , ButtonBuilder, ButtonStyle, StringSelectMenuInteraction, StringSelectMenuBuilder} from "discord.js";
 import { PanelTicketEnum, PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
 import { TicketHandler } from "@src/structures/database/handler/ticket.handler.class";
 /**
@@ -43,7 +43,7 @@ export class PanelChangeDeleteSelectInteraction extends BaseInteraction {
 		const ticketCount = await TicketHandler.getTicketCountByPanel(toChangePanel.id)
 		await interaction.deferUpdate();
 		if (ticketCount > 0) {
-			const ticketPanels = await PanelTicketHandler.getAllPanelTicketByUserAndGuild(interaction.user.id, interaction.guild!.id);
+			const ticketPanels = await PanelTicketHandler.getAllPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id);
 			const row = new ActionRowBuilder<StringSelectMenuBuilder>()
 			const row2  = new ActionRowBuilder<ButtonBuilder>()
 			const selectMenu = new StringSelectMenuBuilder()
@@ -61,7 +61,7 @@ export class PanelChangeDeleteSelectInteraction extends BaseInteraction {
 							default: panel.status === PanelTicketEnum.TO_DELETE
 						}
 					}
-				));
+					));
 					
 			row.addComponents(selectMenu);
 			row2.addComponents(

@@ -1,8 +1,7 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
-import { ButtonInteraction, StringSelectMenuBuilder, ActionRowBuilder, ButtonBuilder, Colors, ButtonStyle } from "discord.js";
+import { ButtonInteraction } from "discord.js";
 import { PanelTicketEnum, PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
 import { PanelDeleteInteraction } from "./PanelDelete.button.interaction";
-import { Ticket } from "@src/structures/tickets/ticket.class";
 import { TicketHandler } from "@src/structures/database/handler/ticket.handler.class";
 
 /**
@@ -22,30 +21,34 @@ export class PanelDeleteTicketsInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
 	async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
-        const panel = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild!.id, PanelTicketEnum.TO_DELETE);
-        if (!panel) {
-            await interaction.reply({ content: "Something went wrong", ephemeral: true });
-            return;
-        }
-        const tickets = await TicketHandler.getTicketOfPanel(panel.id);
-        if (!tickets) {
-            await interaction.reply({ content: "Something went wrong", ephemeral: true });
-            return;
-        }
+		if (!interaction.guild) {
+			await interaction.reply({ content: "Something went wrong", ephemeral: true });
+			return;
+		}
+		const panel = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id, PanelTicketEnum.TO_DELETE);
+		if (!panel) {
+			await interaction.reply({ content: "Something went wrong", ephemeral: true });
+			return;
+		}
+		const tickets = await TicketHandler.getTicketOfPanel(panel.id);
+		if (!tickets) {
+			await interaction.reply({ content: "Something went wrong", ephemeral: true });
+			return;
+		}
 		for (const ticketId of tickets) {
-            const ticket = await TicketHandler.getTicketById(ticketId);
-            if (!ticket) {
-                continue;
-            }
-            if (await ticket.delete()) {
-                const ticketChannel = await client.channels.fetch(ticket.id);
-                if (ticketChannel) {
-                    await ticketChannel.delete();
-                }
-            }
-        }
-        await panel.deletePanelTicket();
+			const ticket = await TicketHandler.getTicketById(ticketId);
+			if (!ticket) {
+				continue;
+			}
+			if (await ticket.delete()) {
+				const ticketChannel = await client.channels.fetch(ticket.id);
+				if (ticketChannel) {
+					await ticketChannel.delete();
+				}
+			}
+		}
+		await panel.deletePanelTicket();
         
-        await new PanelDeleteInteraction().execute(client, interaction)
+		await new PanelDeleteInteraction().execute(client, interaction)
 	}
 }

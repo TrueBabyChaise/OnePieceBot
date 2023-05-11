@@ -1,5 +1,5 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
-import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, RoleSelectMenuInteraction, ChannelSelectMenuInteraction} from "discord.js";
+import { ActionRowBuilder , ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, ChannelSelectMenuInteraction} from "discord.js";
 import { PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
 /**
  * @description TicketOpen button interaction
@@ -19,7 +19,6 @@ export class PanelSendChannelInteraction extends BaseInteraction {
      */
 	async execute(client: BaseClient, interaction: ChannelSelectMenuInteraction): Promise<void> {
 		const message = interaction.message;
-		const components = message.components;
 		const newChannel = interaction.values;
 
 		if (!message) {
