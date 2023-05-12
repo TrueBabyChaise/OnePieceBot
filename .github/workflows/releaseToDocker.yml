@@ -2,14 +2,13 @@
 name: Deploy
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Deploy to SSH server
+    name: Create a Release for Docker
     steps:
       - name: git-checkout
         uses: actions/checkout@v3
@@ -32,23 +31,4 @@ jobs:
         run: docker build -t ghcr.io/truebabychaise/kikku .
 
       - name: Push the client image to GitHub Container Registry
-        run: docker push ghcr.io/truebabychaise/virtual-bookshelf-client:latest
-
-  restart:
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    steps:
-      - name: VPS deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_IP }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASS }}
-          script: |
-            echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u TrueBabyChaise --password-stdin
-            cd prod.env
-            docker compose down
-            docker image rm ghcr.io/truebabychaise/kikku:latest
-            docker pull ghcr.io/truebabychaise/kikku:latest
-            docker compose up -d
+        run: docker push ghcr.io/truebabychaise/virtual-bookshelf-client:${{ github.release.tag_name }}
