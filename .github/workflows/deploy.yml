@@ -47,7 +47,6 @@ jobs:
           password: ${{ secrets.SSH_PASS }}
           script: |
             echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u TrueBabyChaise --password-stdin
-            cd prod.env
             docker compose down
             docker image rm ghcr.io/truebabychaise/kikku:latest
             docker pull ghcr.io/truebabychaise/kikku:latest
