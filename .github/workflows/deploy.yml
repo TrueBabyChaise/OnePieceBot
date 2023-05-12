@@ -25,6 +25,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-
 
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u TrueBabyChaise --password-stdin
+
       - name: Build docker image
         run: docker build -t ghcr.io/truebabychaise/kikku .
 
@@ -40,7 +43,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASS }}
           script: |
-            echo $CR_PAT | docker login ghcr.io -u TrueBabyChaise --password-stdin
+            echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u TrueBabyChaise --password-stdin
             cd prod.env
             docker compose down
             docker image rm ghcr.io/truebabychaise/kikku:latest
