@@ -1,5 +1,5 @@
 # Deployment of Kikku on SSH server
-name: Deploy
+name: Deploy release to VPS
 
 on:
   push:
