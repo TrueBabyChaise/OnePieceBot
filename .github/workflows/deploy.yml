@@ -42,7 +42,7 @@ jobs:
           script: |
             echo $CR_PAT | docker login ghcr.io -u TrueBabyChaise --password-stdin
             cd prod.env
-            docker-compose down
+            docker compose down
             docker image rm ghcr.io/truebabychaise/kikku:latest
             docker pull ghcr.io/truebabychaise/kikku:latest
-            docker-compose up -d
+            docker compose up -d
