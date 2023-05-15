@@ -1,6 +1,7 @@
 import { BaseEvent } from "@src/structures";
 import { BaseClient } from "@src/structures";
 import { readdirSync } from "fs";
+import { Exception } from "@src/structures/exception/exception.class";
 
 /**
  * @description Loads the events of the client&
@@ -24,12 +25,21 @@ export = async (client: BaseClient) => {
 					try {
 						const event = new (value as any)();
 						if (event.once) {
-							client.once(event.name, (...args: any) => event.execute(client, ...args));
+							try {
+								client.once(event.name, (...args: any) => event.execute(client, ...args));
+							} catch (error: any) {
+								Exception.logToFile(error, true);
+							}
 						} else {
-							client.on(event.name, (...args: any) => event.execute(client, ...args));
+							try {
+								client.on(event.name, (...args: any) => event.execute(client, ...args));
+							} catch (error: any) {
+								Exception.logToFile(error, true);
+							}
 						}
-					} catch (error) {
-						console.log("Could not load event " + file + "/" + subFile + "");
+					} catch (error: any) {
+						Exception.logToFile(error, true);
+						throw new Error(`Error loading event ${file}/${subFile}`);
 					}
 				});
 			}

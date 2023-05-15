@@ -37,23 +37,26 @@ export class MuteSlashCommand extends BaseSlashCommand {
 		const memberOption = interaction.options.get("member")
 		const reasonOption = interaction.options.get("reason")
 		const author = interaction.member as GuildMember;
+
+		if (!interaction.guild) {
+			throw new Error("Guild is null");
+		}
+
+
 		const GuildDB = await GuildHandler.getGuildById(interaction.guild!.id);
 
 		if (!memberOption) {
-			await interaction.reply({content: "Something went wrong!", ephemeral: true});
-			return;
+			throw new Error("Member option is null");
 		}
         
 		const member = memberOption.member;
 
-		if (!member || !interaction.guild) {
-			await interaction.reply({content: "Something went wrong!", ephemeral: true});
-			return;
+		if (!member) {
+			throw new Error("Member is null");
 		}
 
 		if (!(member instanceof GuildMember)) {
-			await interaction.reply({content: "Something went wrong!", ephemeral: true});
-			return;
+			throw new Error("Member is not a GuildMember");
 		}
 
 		const reason = reasonOption?.value as string;

@@ -1,6 +1,7 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
 import { ButtonInteraction, MessageEditOptions } from "discord.js";
 import { HelpSlashCommand } from "../Help.interaction";
+import { Logger, LoggerEnum } from "@src/structures/logger/logger.class";
 
 /**
  * @description HelpNextModule button interaction
@@ -30,7 +31,7 @@ export class HelpNextModuleButtonInteraction extends BaseInteraction {
 			await interaction.deferUpdate();
 			await interaction.editReply(HelpSlashCommand.optionsHelpCommandEmbed(client, newModuleName, newPageIndex) as MessageEditOptions);
 		} else {
-			await interaction.reply({ content: "There was an error while executing this command!", ephemeral: true })
+			throw new Error(`There was an error while executing the helpnextmodule button interaction!`);
 		}
 	}
 

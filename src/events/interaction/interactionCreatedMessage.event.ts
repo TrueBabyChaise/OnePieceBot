@@ -1,4 +1,5 @@
 import { BaseInteraction, BaseEvent, BaseClient } from "@src/structures";
+import { Exception } from "@src/structures/exception/exception.class";
 import { Base, Events, Interaction } from "discord.js"
 
 /**
@@ -27,9 +28,11 @@ export class InteractionCreatedEvent extends BaseEvent {
 			if (!command) continue;
 			try {
 				await command.execute(client, interaction);
-			} catch (error) {
-				console.error(error);
-				await interaction.reply({ content: "There was an error while executing this command!", ephemeral: true });
+			} catch (error: any) {
+				Exception.logToFile(error, true);
+				if (!interaction) return;
+				if (interaction.replied) return;
+				if (interaction.deferred) await interaction.editReply({ content: "There was an error while executing this command!"});
 			}
 		}
 	}
