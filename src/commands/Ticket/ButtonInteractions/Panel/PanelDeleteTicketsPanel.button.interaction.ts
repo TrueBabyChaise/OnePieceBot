@@ -46,8 +46,10 @@ export class PanelDeleteTicketsInteraction extends BaseInteraction {
 				}
 			}
 			await panel.deletePanelTicket();
-		} catch (error: any) {
-			throw new Error(error);
+		} catch (error: unknown) {
+			if (error instanceof Error)
+				throw new Error(error.message);
+			throw new Error("Couldn't delete the ticket panel!");
 		}
 	
 		await new PanelDeleteInteraction().execute(client, interaction)

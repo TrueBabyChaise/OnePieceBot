@@ -79,9 +79,11 @@ export class BonkSlashCommand extends BaseSlashCommand {
 		let gif = "";
 		try {
 			gif = json.results[index].media_formats.gif.url
-		} catch (error: any) {
-			Exception.logToFile(error, true, {name: interaction.user.username, id: interaction.user.id});
-			throw new Error("No gif found");
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				Exception.logToFile(error, true, {name: interaction.user.username, id: interaction.user.id});
+				throw new Error("No gif found");
+			}
 		}
 		
 		try {
@@ -91,9 +93,11 @@ export class BonkSlashCommand extends BaseSlashCommand {
 				//content: `${userOption} got bonked by ${interaction.user}!\n${gif}`,
 				files: [gif]
 			});
-		} catch (error: any) {
-			Exception.logToFile(error, true, {name: interaction.user.username, id: interaction.user.id});
-			throw new Error("Failed to reply to interaction with gif");
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				Exception.logToFile(error, true, {name: interaction.user.username, id: interaction.user.id});
+				throw new Error("Failed to reply to interaction with gif");
+			}
 		}
 	}
 }

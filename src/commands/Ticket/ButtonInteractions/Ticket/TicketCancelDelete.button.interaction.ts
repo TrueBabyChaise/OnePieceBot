@@ -25,8 +25,10 @@ export class TicketCancelDeleteButtonInteraction extends BaseInteraction {
 		}
 		try {
 			await TicketManager.getInstance().cancelDeleteTicket(interaction.channelId);
-		} catch (error: any) {
-			throw new Exception(error);
+		} catch (error: unknown) {
+			if (error instanceof Error)
+				throw new Exception(error.message);
+			throw new Exception("Couldn't cancel the ticket deletion!");
 		}
 		await interaction.reply("Ticket deletion cancelled");
 		await interaction.deleteReply();

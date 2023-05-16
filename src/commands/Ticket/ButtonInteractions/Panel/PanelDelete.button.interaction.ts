@@ -32,8 +32,10 @@ export class PanelDeleteInteraction extends BaseInteraction {
 		if (ticketPanels.length === 0) {
 			try {
 				await new TicketSetupPanelCommand().execute(client, interaction)
-			} catch (error: any) {
-				throw new Exception(error);
+			} catch (error: unknown) {
+				if (error instanceof Error)
+					throw new Exception(error.message);
+				throw new Exception("Couldn't open the ticket setup panel!");
 			}
 		}
 

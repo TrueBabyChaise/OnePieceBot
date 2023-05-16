@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, GuildMember, Role, PermissionFlagsBits} from "discord.js";
-import { BaseCommand, BaseClient, BaseSlashCommand, SlashCommandOptionType } from "@src/structures";
+import { BaseClient, BaseSlashCommand, SlashCommandOptionType } from "@src/structures";
 
 /**
  * @description SetRole command

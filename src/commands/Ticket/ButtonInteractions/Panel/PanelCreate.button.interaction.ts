@@ -88,8 +88,10 @@ export class PanelCreateInteraction extends BaseInteraction {
 				const newPanelTicket = await PanelTicketHandler.createPanelTicket(userId, guildId, "New Panel");
 				if (!newPanelTicket) return false;
 			}
-		} catch (error: any) {
-			throw new Exception(error);
+		} catch (error: unknown) {
+			if (error instanceof Error)
+				throw new Exception(error.message);
+			throw new Exception("Couldn't create the panel ticket!");
 		}
 		
 		return true;

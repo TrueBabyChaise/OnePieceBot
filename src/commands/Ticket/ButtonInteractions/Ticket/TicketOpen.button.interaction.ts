@@ -26,8 +26,10 @@ export class TicketOpenButtonInteraction extends BaseInteraction {
 				await ticket.openTicket(interaction, client);
 			else
 				interaction.reply("Ticket not found");
-		} catch	(error: any) {
-			throw new Exception(error);
+		} catch	(error: unknown) {
+			if (error instanceof Error)
+				Exception.logToFile(error, true);
+			throw new Error("There was an error while executing this command!");
 		}
 	}
 }

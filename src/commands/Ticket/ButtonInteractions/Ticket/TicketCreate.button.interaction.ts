@@ -21,11 +21,13 @@ export class TicketCloseButtonInteraction extends BaseInteraction {
      */
 	async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
 		try {
-			await TicketManager.getInstance().createTicketFromPanel(interaction, client);
+			await TicketManager.getInstance().createTicketFromPanel(interaction);
 			if (interaction.guild)
 				console.log(TicketManager.getInstance().getTicket(interaction.guild.id));
-		} catch (error: any) {
-			throw new Exception(error);
+		} catch (error: unknown) {
+			if (error instanceof Error)
+				throw new Exception(error.message);
+			throw new Exception("Couldn't create the ticket!");
 		}
 	}
 }

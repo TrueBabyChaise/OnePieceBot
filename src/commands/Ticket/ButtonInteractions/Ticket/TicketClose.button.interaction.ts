@@ -26,8 +26,10 @@ export class TicketCloseButtonInteraction extends BaseInteraction {
 				await ticket.closeTicket(interaction, client);
 			else
 				interaction.reply("Ticket not found");
-		} catch (error: any) {
-			throw new Exception(error);
+		} catch (error: unknown) {
+			if (error instanceof Error)
+				throw new Exception(error.message);
+			throw new Exception("Couldn't close the ticket!");
 		}
 	}
 

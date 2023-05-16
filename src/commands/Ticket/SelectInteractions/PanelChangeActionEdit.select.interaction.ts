@@ -32,21 +32,21 @@ export class PanelChangeActionEditSelectInteraction extends BaseInteraction {
 		}
 
 		switch (interaction.values[0]) {
-			case "name_description":
-				await this.formatChangeNameAndDescription(client, interaction, panel);
-				break;
-			case "role":
-				await this.formatChangeRole(client, interaction, panel);
-				break;
-			case "category":
-				await this.formatChangeCategory(client, interaction, panel);
-				break;
-			case "transcript":
-				await this.formatChangeTranscript(client, interaction, panel);
-				break;
-			case "send":
-				await this.formatChangeSend(client, interaction);
-				break;
+		case "name_description":
+			await this.formatChangeNameAndDescription(client, interaction, panel);
+			break;
+		case "role":
+			await this.formatChangeRole(client, interaction, panel);
+			break;
+		case "category":
+			await this.formatChangeCategory(client, interaction, panel);
+			break;
+		case "transcript":
+			await this.formatChangeTranscript(client, interaction, panel);
+			break;
+		case "send":
+			await this.formatChangeSend(client, interaction);
+			break;
 		}
 
 		if (interaction.replied) {

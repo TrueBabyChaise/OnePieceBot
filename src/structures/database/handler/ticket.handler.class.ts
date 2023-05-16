@@ -68,16 +68,16 @@ export class TicketHandler {
 	}
 
 	public async delete(): Promise<boolean> {
-		const ticketDB2 = await UserTicketModel.destroy({ where: { fkTicket: this._id } });
-		const ticketDB3 = await GuildTicketModel.destroy({ where: { fkTicket: this._id } });
+		await UserTicketModel.destroy({ where: { fkTicket: this._id } });
+		await GuildTicketModel.destroy({ where: { fkTicket: this._id } });
 		const ticketDB = await TicketModel.destroy({ where: { id: this._id } });
 		if (!ticketDB) { return false; }
 		return true;
 	}
 
 	public static async deleteTicket(id: string): Promise<boolean> {
-		const ticketDB2 = await UserTicketModel.destroy({ where: { fkTicket: id } });
-		const ticketDB3 = await GuildTicketModel.destroy({ where: { fkTicket: id } });
+		await UserTicketModel.destroy({ where: { fkTicket: id } });
+		await GuildTicketModel.destroy({ where: { fkTicket: id } });
 		const ticketDB = await TicketModel.destroy({ where: { id: id } });
 		if (!ticketDB) { return false; }
 		return true;

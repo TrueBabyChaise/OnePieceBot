@@ -96,8 +96,8 @@ export class MuteSlashCommand extends BaseSlashCommand {
 			}
 			await interaction.reply({embeds: [this.createEmbed(author, member, reason)]});
 			GuildDB?.removeUserFromGuild(member.id);
-		} catch (error: any) {
-			if (error.rawError.message.includes("Missing Permissions")) {
+		} catch (error: unknown) { // Discord API error
+			if ((error as { rawError: { message: string; }; }).rawError.message.includes("Missing Permissions")) {
 				await interaction.reply({content: "I am missing permissions to ban this member!", ephemeral: true});
 				return;
 			}

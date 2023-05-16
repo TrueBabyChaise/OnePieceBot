@@ -29,7 +29,7 @@ export class HelpPreviousPageButtonInteraction extends BaseInteraction {
 			await interaction.deferUpdate();
 			await interaction.editReply(HelpSlashCommand.optionsHelpCommandEmbed(client, moduleName, newPageIndex) as MessageEditOptions);
 		} else {
-			throw new Error(`There was an error while executing the helppreviouspage button interaction!`);
+			throw new Error("There was an error while executing the helppreviouspage button interaction!");
 		}
 	}
 }

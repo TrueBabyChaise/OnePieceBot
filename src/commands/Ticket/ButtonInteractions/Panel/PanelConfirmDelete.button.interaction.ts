@@ -30,8 +30,10 @@ export class PanelConfirmDeleteInteraction extends BaseInteraction {
 			if (ticketPanel) {
 				await ticketPanel.deletePanelTicket()
 			}
-		} catch (error: any) {
-			throw new Exception(error);
+		} catch (error: unknown) {
+			if (error instanceof Error)
+				throw new Exception(error.message);
+			throw new Exception("Couldn't confirm delete the ticket panel!");
 		}
 
 		await new PanelDeleteInteraction().execute(client, interaction)

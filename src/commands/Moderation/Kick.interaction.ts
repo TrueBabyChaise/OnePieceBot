@@ -1,5 +1,5 @@
 import { BaseSlashCommand, BaseClient } from "@src/structures";
-import { ChatInputCommandInteraction, Colors, GuildMember, PermissionsBitField, EmbedBuilder, Guild } from "discord.js";
+import { ChatInputCommandInteraction, Colors, GuildMember, EmbedBuilder } from "discord.js";
 import { SlashCommandOptionType } from "@src/structures";
 import { PermissionFlagsBits } from "discord.js";
 import { GuildHandler } from "@src/structures/database/handler/guild.handler.class";
@@ -43,7 +43,7 @@ export class MuteSlashCommand extends BaseSlashCommand {
 		}
 
 
-		const GuildDB = await GuildHandler.getGuildById(interaction.guild!.id);
+		const GuildDB = await GuildHandler.getGuildById(interaction.guild.id);
 
 		if (!memberOption) {
 			throw new Error("Member option is null");

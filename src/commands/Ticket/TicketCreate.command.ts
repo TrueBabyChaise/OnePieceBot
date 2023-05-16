@@ -22,10 +22,9 @@ export class TicketCreateCommand extends BaseCommand {
      */
 
 	async execute(client: BaseClient, message: Message): Promise<void> {
-		await TicketManager.getInstance().createTicket(message, client);
+		await TicketManager.getInstance().createTicket(message);
 
 		if (message.guild)
 			Logger.log(`Ticket created in ${message.guild.name} by ${message.author.tag}`);
 	}
-
 }
