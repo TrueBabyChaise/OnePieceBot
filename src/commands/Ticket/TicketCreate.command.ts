@@ -1,6 +1,7 @@
 import { TicketManager } from "@src/structures/tickets/ticketManager.class";
 import { BaseCommand, BaseClient} from "@src/structures";
 import { Message } from "discord.js";
+import { Logger } from "@src/structures/logger/logger.class";
 
 /**
  * @description TicketCreate command
