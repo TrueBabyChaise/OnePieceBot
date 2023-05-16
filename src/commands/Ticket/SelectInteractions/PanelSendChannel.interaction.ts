@@ -22,26 +22,22 @@ export class PanelSendChannelInteraction extends BaseInteraction {
 		const newChannel = interaction.values;
 
 		if (!message) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Message is null");
 		}
 
 		if (!interaction.guild) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Guild is null");
 		}
 
 		const panelTicket = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id);
 		if (!panelTicket) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Panel ticket is null");
 		}
 
 		if (newChannel && newChannel.length >= 1) {
 			const setChannel = newChannel[0];
 			if (!panelTicket.updatePanelTicketSendChannel(setChannel)) {
-				await interaction.reply({ content: "Something went wrong", ephemeral: true });
-				return;
+				throw new Error("An error occurred while updating your panel ticket");
 			}
 		}
 

@@ -22,13 +22,11 @@ export class PanelRefreshInteraction extends BaseInteraction {
 		const message = interaction.message;
 
 		if (interaction.message.embeds.length == 0) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Embed is invalid, Can't refresh it");
 		}
 
 		if (interaction.message.embeds[0].footer == null || interaction.message.embeds[0].footer.text == undefined) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Embed is invalid, Can't refresh it");
 		}
 		const panelTicket = await PanelTicketHandler.getPanelTicketById(interaction.message.embeds[0].footer.text);
 		if (!panelTicket) {
@@ -38,8 +36,7 @@ export class PanelRefreshInteraction extends BaseInteraction {
 		}
 
 		if (client.user == null) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Client user is null");
 		}
 
 		const botUrl = client.user.avatarURL() || "";

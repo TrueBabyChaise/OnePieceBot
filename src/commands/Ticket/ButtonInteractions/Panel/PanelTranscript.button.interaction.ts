@@ -21,14 +21,12 @@ export class PanelTranscriptInteraction extends BaseInteraction {
 	async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
 
 		if (!interaction.guild) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Guild is null");
 		}
         
 		const panelTicket = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id);
 		if (!panelTicket) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Panel is null");
 		}
         
 		let transcript = "None selected...";

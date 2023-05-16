@@ -1,4 +1,5 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
+import { Exception } from "@src/structures/exception/exception.class";
 import { TicketManager } from "@src/structures/tickets/ticketManager.class";
 import { ButtonInteraction } from "discord.js";
 
@@ -19,8 +20,14 @@ export class TicketCloseButtonInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
 	async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
-		await TicketManager.getInstance().createTicketFromPanel(interaction, client);
-		if (interaction.guild)
-			console.log(TicketManager.getInstance().getTicket(interaction.guild.id));
+		try {
+			await TicketManager.getInstance().createTicketFromPanel(interaction);
+			if (interaction.guild)
+				console.log(TicketManager.getInstance().getTicket(interaction.guild.id));
+		} catch (error: unknown) {
+			if (error instanceof Error)
+				throw new Exception(error.message);
+			throw new Exception("Couldn't create the ticket!");
+		}
 	}
 }
