@@ -28,13 +28,19 @@ export = async (client: BaseClient) => {
 							try {
 								client.once(event.name, (...args: any) => event.execute(client, ...args));
 							} catch (error: any) {
-								Exception.logToFile(error, true);
+								if (event.name !== "ready") 
+									Exception.logToFile(error, true);
+								else 
+									throw new Error(`Error loading event ${file}/${subFile}`);
 							}
 						} else {
 							try {
 								client.on(event.name, (...args: any) => event.execute(client, ...args));
 							} catch (error: any) {
-								Exception.logToFile(error, true);
+								if (event.name !== "ready") 
+									Exception.logToFile(error, true);
+								else 
+									throw new Error(`Error loading event ${file}/${subFile}`);
 							}
 						}
 					} catch (error: any) {
