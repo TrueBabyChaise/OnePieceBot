@@ -19,7 +19,7 @@ export class Exception extends Error {
 		this.user = user;
 	}
     
-	public toString(message?: string): string {
+	public messageToString(message?: string): string {
 		const date  = new Date();
 		const dateString = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 		const stackSplit = this.stack?.split("\n");
@@ -30,7 +30,7 @@ export class Exception extends Error {
 		return `${dateString} ${this.name} in file ${firstStack}: ${message ? message : this.message}`;
 	}
 
-	public toJSON(): object {
+	public messageToJSON(): object {
 		return {
 			name: this.name,
 			message: this.message,
@@ -59,7 +59,7 @@ export class Exception extends Error {
 	}
 
 	public logToConsoleAndThrowExceptionWithMessage(message: string): void {
-		Logger.log(this.toString(message), LoggerEnum.ERROR);
+		Logger.log(this.messageToString(message), LoggerEnum.ERROR);
 		throw new Exception(message);
 	}
 
@@ -71,7 +71,7 @@ export class Exception extends Error {
 			fs.mkdirSync(dir);
 		}
 
-		fs.appendFile(filePath, this.toString() + "\n", (err: NodeJS.ErrnoException | null) => {
+		fs.appendFile(filePath, this.messageToString() + "\n", (err: NodeJS.ErrnoException | null) => {
 			if (err) throw err;
 		});
 	}
@@ -81,7 +81,7 @@ export class Exception extends Error {
 		const exception = new Exception(error.message, user.name === "" ? null : user);
 
 		if (consolePrint) {
-			Logger.log(this.toString(), LoggerEnum.ERROR);
+			Logger.log(error.message, LoggerEnum.ERROR);
 		}
 		exception.logToFile(Exception.errorFile);
 	}
