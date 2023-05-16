@@ -37,9 +37,13 @@ export class DBConnection {
 
 	public static getInstance(): DBConnection {
 		if (!DBConnection.instance) {
-			DBConnection.instance = new DBConnection();
+			try {
+				DBConnection.instance = new DBConnection();
+			} catch (err) {
+				console.error(err);
+				process.exit(0);
+			}
 		}
-
 		return DBConnection.instance;
 	}
 
