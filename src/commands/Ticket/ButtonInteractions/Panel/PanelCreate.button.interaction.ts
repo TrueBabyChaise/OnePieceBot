@@ -1,6 +1,7 @@
 import { BaseClient, BaseInteraction } from "@src/structures";
 import { ButtonInteraction, EmbedBuilder, Colors, ActionRowBuilder , ButtonBuilder, ButtonStyle } from "discord.js";
 import { PanelTicketEnum, PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
+import { Exception } from "@src/structures/exception/exception.class";
 
 /**
  * @description TicketOpen button interaction
@@ -20,18 +21,16 @@ export class PanelCreateInteraction extends BaseInteraction {
      */
 	async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
 		if (!await PanelCreateInteraction.dbUpdate(interaction)) {
-			await interaction.reply({content: "An error occurred while creating your panel ticket", ephemeral: true});
-			return;
+			throw new Exception("An error occurred while creating your panel ticket");
 		}
         
 		if (!interaction.guild) {
-			await interaction.reply({content: "An error occurred while creating your panel ticket", ephemeral: true});
+			throw new Error("Guild is null");
 			return;
 		}
 		const panel = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id);
 		if (!panel) {  
-			await interaction.reply({content: "An error occurred while creating your panel ticket", ephemeral: true});
-			return;
+			throw new Exception("An error occurred while creating your panel ticket");
 		}
 
 		const embed = new EmbedBuilder()
@@ -82,11 +81,17 @@ export class PanelCreateInteraction extends BaseInteraction {
 		const userId = interaction.user.id;
 		if (!interaction.guild) return false;
 		const guildId = interaction.guild.id;
-		const panelTicket = await PanelTicketHandler.getPanelTicketByUserAndGuild(userId, guildId);
-		if (!panelTicket || panelTicket.status !== PanelTicketEnum.DRAFT) {
-			const newPanelTicket = await PanelTicketHandler.createPanelTicket(userId, guildId, "New Panel");
-			if (!newPanelTicket) return false;
+
+		try {
+			const panelTicket = await PanelTicketHandler.getPanelTicketByUserAndGuild(userId, guildId);
+			if (!panelTicket || panelTicket.status !== PanelTicketEnum.DRAFT) {
+				const newPanelTicket = await PanelTicketHandler.createPanelTicket(userId, guildId, "New Panel");
+				if (!newPanelTicket) return false;
+			}
+		} catch (error: any) {
+			throw new Exception(error);
 		}
+		
 		return true;
 	}
 }

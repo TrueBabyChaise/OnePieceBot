@@ -20,12 +20,11 @@ export class PanelChangeDeleteSelectInteraction extends BaseInteraction {
      */
 	async execute(client: BaseClient, interaction: StringSelectMenuInteraction): Promise<void> {
 		if (interaction.values.length != 1) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
+			throw new Error("Interaction values length is not 1");
 		}
 
 		if (!interaction.guild) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Guild is null");
 		}
 
 		const data = interaction.values[0]
@@ -36,8 +35,7 @@ export class PanelChangeDeleteSelectInteraction extends BaseInteraction {
 		const toChangePanel = await PanelTicketHandler.getPanelTicketById(data) 
 
 		if (!toChangePanel) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Panel is null");
 		}
 		toChangePanel.updatePanelTicketStatus(PanelTicketEnum.TO_DELETE)
 		const ticketCount = await TicketHandler.getTicketCountByPanel(toChangePanel.id)

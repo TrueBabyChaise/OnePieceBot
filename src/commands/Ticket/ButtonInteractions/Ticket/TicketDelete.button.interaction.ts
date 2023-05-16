@@ -19,8 +19,10 @@ export class TicketDeleteButtonInteraction extends BaseInteraction {
      * @returns {Promise<void>}
      */
 	async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
-		TicketManager.getInstance().deleteTicket(interaction, client);
+		try {
+			TicketManager.getInstance().deleteTicket(interaction, client);
+		} catch (error: any) {
+			throw new Error(error);
+		}
 	}
-
-    
 }

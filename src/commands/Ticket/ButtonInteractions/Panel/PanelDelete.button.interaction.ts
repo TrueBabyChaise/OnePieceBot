@@ -2,6 +2,7 @@ import { BaseClient, BaseInteraction } from "@src/structures";
 import { ButtonInteraction, StringSelectMenuBuilder, ActionRowBuilder, ButtonBuilder, Colors, ButtonStyle, EmbedBuilder } from "discord.js";
 import { PanelTicketHandler } from "@src/structures/database/handler/panelTicket.handler.class";
 import { TicketSetupPanelCommand } from "../../TicketSetupPanel.interaction";
+import { Exception } from "@src/structures/exception/exception.class";
 
 /**
  * @description TicketOpen button interaction
@@ -21,18 +22,19 @@ export class PanelDeleteInteraction extends BaseInteraction {
      */
 	async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
 		if (!interaction.guild) {
-			await interaction.reply({content: "Something went wrong", ephemeral: true});
-			return;
+			throw new Error("Guild is null");
 		}
 		const ticketPanels = await PanelTicketHandler.getAllPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id);
 		if (!ticketPanels) {
-			await interaction.reply({content: "An error occurred while getting your panel ticket", ephemeral: true});
-			return;
+			throw new Error("Ticket panels is null");
 		}
 
 		if (ticketPanels.length === 0) {
-			await new TicketSetupPanelCommand().execute(client, interaction)
-			return;
+			try {
+				await new TicketSetupPanelCommand().execute(client, interaction)
+			} catch (error: any) {
+				throw new Exception(error);
+			}
 		}
 
 		const embed = new EmbedBuilder()

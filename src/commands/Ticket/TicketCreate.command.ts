@@ -24,7 +24,7 @@ export class TicketCreateCommand extends BaseCommand {
 		await TicketManager.getInstance().createTicket(message, client);
 
 		if (message.guild)
-			console.log(TicketManager.getInstance().getTicket(message.guild.id));
+			Logger.log(`Ticket created in ${message.guild.name} by ${message.author.tag}`);
 	}
 
 }

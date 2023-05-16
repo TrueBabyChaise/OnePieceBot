@@ -19,20 +19,17 @@ export class PanelChangeDescriptionInteraction extends BaseInteraction {
      */
 	async execute(client: BaseClient, interaction: ButtonInteraction): Promise<void> {
 		if (!interaction.guildId) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Guild is null");
 		} 
         
 		const panelTicket = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guildId, PanelTicketEnum.EDIT);
 		if (!panelTicket) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Panel is null");
 		}
         
 		const channelSend = client.channels.cache.get(panelTicket.sendChannel) as TextChannel;
 		if (!channelSend) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Channel is null");
 		}
 
 		let botUrl = undefined;

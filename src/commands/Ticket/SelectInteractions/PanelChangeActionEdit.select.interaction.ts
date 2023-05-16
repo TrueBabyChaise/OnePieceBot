@@ -19,43 +19,41 @@ export class PanelChangeActionEditSelectInteraction extends BaseInteraction {
      */
 	async execute(client: BaseClient, interaction: StringSelectMenuInteraction): Promise<void> {
 		if (interaction.values.length != 1) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
+			throw new Error("Interaction values length is not 1");
 		}
 
 		if (!interaction.guild) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Guild is null");
 		}
 
 		const panel = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id, PanelTicketEnum.EDIT);
 		if (!panel) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Panel is null");
 		}
 
 		switch (interaction.values[0]) {
-		case "name_description":
-			await this.formatChangeNameAndDescription(client, interaction, panel);
-			break;
-		case "role":
-			await this.formatChangeRole(client, interaction, panel);
-			break;
-		case "category":
-			await this.formatChangeCategory(client, interaction, panel);
-			break;
-		case "transcript":
-			await this.formatChangeTranscript(client, interaction, panel);
-			break;
-		case "send":
-			await this.formatChangeSend(client, interaction);
-			break;
+			case "name_description":
+				await this.formatChangeNameAndDescription(client, interaction, panel);
+				break;
+			case "role":
+				await this.formatChangeRole(client, interaction, panel);
+				break;
+			case "category":
+				await this.formatChangeCategory(client, interaction, panel);
+				break;
+			case "transcript":
+				await this.formatChangeTranscript(client, interaction, panel);
+				break;
+			case "send":
+				await this.formatChangeSend(client, interaction);
+				break;
 		}
 
 		if (interaction.replied) {
 			return;
 		}
 
-		await interaction.reply({ content: "Something went wrong", ephemeral: true });
+		throw new Error("Interaction not replied");
 	}
 
 	async formatChangeNameAndDescription(client: BaseClient, interaction: StringSelectMenuInteraction, panel: PanelTicketHandler) {
