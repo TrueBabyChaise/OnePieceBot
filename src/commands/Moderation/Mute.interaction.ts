@@ -44,24 +44,30 @@ export class MuteSlashCommand extends BaseSlashCommand {
 		const timeOption = interaction.options.get("time")
 		const reasonOption = interaction.options.get("reason")
 		const author = interaction.member as GuildMember;
-		const GuildDB = await GuildHandler.getGuildById(interaction.guild!.id);
 
-		if (!memberOption || !timeOption) {
-			await interaction.reply("Something went wrong!");
-			return;
+		if (!interaction.guild) {
+			throw new Error("Guild is null");
+		}
+
+		const GuildDB = await GuildHandler.getGuildById(interaction.guild.id);
+
+		if (!timeOption) {
+			throw new Error("Time option is null");
+		}
+
+		if (!memberOption) {
+			throw new Error("Member option is null");
 		}
         
 		const member = memberOption.member;
 		const time = timeOption.value as number;
 
-		if (!member || !time || !interaction.guild) {
-			await interaction.reply("Something went wrong!");
-			return;
+		if (!member || !time) {
+			throw new Error(`Member or time is null, member: ${member}, time: ${time}`);
 		}
 
 		if (!(member instanceof GuildMember)) {
-			await interaction.reply("Something went wrong!");
-			return;
+			throw new Error("Member is not a GuildMember");
 		}
         
 		const role = interaction.guild.roles.cache.find(role => role.name === "Muted");

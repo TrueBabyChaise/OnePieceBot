@@ -35,29 +35,31 @@ export class UnmuteSlashCommand extends BaseSlashCommand {
 	 */
 	async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
 		const memberOption = interaction.options.get("member")
+
+		if (!interaction.guild) {
+			throw new Error("Guild is null");
+		}
+
 		const guildDB = await GuildHandler.getGuildById(interaction.guild!.id);
 
 		if (!memberOption) {
-			await interaction.reply("Something went wrong!");
-			return;
+			throw new Error("Member option is null");
 		}
         
 		const member = memberOption.member;
 
-		if (!member || !interaction.guild) {
-			await interaction.reply("Something went wrong!");
-			return;
+		if (!member) {
+			throw new Error("Member is null");
 		}
 
 		if (!(member instanceof GuildMember)) {
-			await interaction.reply("Something went wrong!");
-			return;
+			throw new Error("Member is not a GuildMember");
 		}
 
 		const role = interaction.guild.roles.cache.find(r => r.name === "Muted");
 
 		if (!role) {
-			await interaction.reply("Something went wrong!");
+			await interaction.reply("This server does not have a muted role!");
 			return;
 		}
 
