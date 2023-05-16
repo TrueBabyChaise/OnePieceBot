@@ -19,18 +19,16 @@ export class PanelChangeActionEditSelectInteraction extends BaseInteraction {
      */
 	async execute(client: BaseClient, interaction: StringSelectMenuInteraction): Promise<void> {
 		if (interaction.values.length != 1) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
+			throw new Error("Interaction values length is not 1");
 		}
 
 		if (!interaction.guild) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Guild is null");
 		}
 
 		const panel = await PanelTicketHandler.getPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id, PanelTicketEnum.EDIT);
 		if (!panel) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Panel is null");
 		}
 
 		switch (interaction.values[0]) {
@@ -55,7 +53,7 @@ export class PanelChangeActionEditSelectInteraction extends BaseInteraction {
 			return;
 		}
 
-		await interaction.reply({ content: "Something went wrong", ephemeral: true });
+		throw new Error("Interaction not replied");
 	}
 
 	async formatChangeNameAndDescription(client: BaseClient, interaction: StringSelectMenuInteraction, panel: PanelTicketHandler) {

@@ -19,8 +19,7 @@ export class PanelChangeEditSelectInteraction extends BaseInteraction {
      */
 	async execute(client: BaseClient, interaction: StringSelectMenuInteraction): Promise<void> {
 		if (!interaction.guild) {
-			await interaction.reply({ content: "Something went wrong", ephemeral: true });
-			return;
+			throw new Error("Guild is null");
 		}
 		if (interaction.values && interaction.values.length >= 1) {
 			const data = interaction.values[0]
@@ -31,16 +30,14 @@ export class PanelChangeEditSelectInteraction extends BaseInteraction {
 			const toChangePanel = await PanelTicketHandler.getPanelTicketById(data) 
 
 			if (!toChangePanel) {
-				await interaction.reply({ content: "Something went wrong", ephemeral: true });
-				return;
+				throw new Error("Panel is null");
 			}
 			await toChangePanel.updatePanelTicketStatus(PanelTicketEnum.EDIT)
 		}
 
 		const ticketPanels = await PanelTicketHandler.getAllPanelTicketByUserAndGuild(interaction.user.id, interaction.guild.id);
 		if (!ticketPanels) {
-			await interaction.reply({content: "An error occurred while getting your panel ticket", ephemeral: true});
-			return;
+			throw new Error("Ticket panels are null");
 		}
 
 		const rowPanel = new ActionRowBuilder<StringSelectMenuBuilder>()

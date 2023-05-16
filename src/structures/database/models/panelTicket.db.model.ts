@@ -2,8 +2,6 @@ import Sequelize from "sequelize";
 import { DBConnection } from "../dbConnection.db.class"
 import { GuildModel } from "./guild.db.model";
 import { UserModel } from "./user.db.model";
-import { before } from "node:test";
-import { createHook } from "node:async_hooks";
 import { TicketModel } from "./ticket.db.model";
 const sequelize = DBConnection.getInstance().sequelize
 
