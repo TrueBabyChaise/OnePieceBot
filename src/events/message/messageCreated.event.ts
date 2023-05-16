@@ -20,7 +20,7 @@ export class MessageCreatedEvent extends BaseEvent {
 
 		if (!client.user) throw new Error("Client user is null");
 
-		if (message.mentions.has(client.user) && message.author.id !== client.getAuthorId()) {
+		if (message.mentions.has(client.user) && message.author.id !== client.getAuthorId() && !message.mentions.everyone) {
 			message.reply(`My prefix is \`${client.getPrefix()}\`, don't forget it!`);
 		}
 
