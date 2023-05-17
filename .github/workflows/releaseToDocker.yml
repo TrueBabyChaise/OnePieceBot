@@ -31,4 +31,4 @@ jobs:
         run: docker build -t ghcr.io/truebabychaise/kikku .
 
       - name: Push the client image to GitHub Container Registry
-        run: docker push ghcr.io/truebabychaise/virtual-bookshelf-client:${{ github.release.tag_name }}
+        run: docker push ghcr.io/truebabychaise/kikku:${{ github.event.release.tag_name }}
