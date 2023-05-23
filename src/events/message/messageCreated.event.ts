@@ -62,7 +62,6 @@ export class MessageCreatedEvent extends BaseEvent {
 				const command = module.getCommand(commandName);
 				if (!command || !command.isEnabled()) continue;
 				if (command) {
-					console.log(`Command ${commandName} found`);
 					try {
 						console.log(`Command ${commandName} executed by ${message.author.tag}`);
 						await command.execute(client, message, args);
