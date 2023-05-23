@@ -24,10 +24,11 @@ export class ReadyEvent extends BaseEvent {
 		console.log(`Logged in as ${client.user?.tag}`);
 
 		let statusIndex = 0;
+		let { VERSION } = client.getKeys();
 		setInterval(() => {
-			const status = ["NeedName v0.1", "Developped by Serena Satella", "NeedName Beta"]; // You can change the status here
+			const status = [`NeedName v${VERSION ? VERSION : '?'}}`, "Developped by Serena Satella"]; // You can change the status here
 			const activity = { 
-				type: ActivityType.Streaming, 
+				type: ActivityType.Playing, 
 				name: status[statusIndex],
 			} as ActivitiesOptions;
 			client.user?.setPresence({
