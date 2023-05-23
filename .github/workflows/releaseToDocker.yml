@@ -28,7 +28,7 @@ jobs:
         run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u TrueBabyChaise --password-stdin
 
       - name: Build docker image
-        run: docker build -t ghcr.io/truebabychaise/kikku .
+        run: docker build -t ghcr.io/truebabychaise/kikku:${{ github.event.release.tag_name }} .
 
       - name: Push the client image to GitHub Container Registry
-        run: docker push ghcr.io/truebabychaise/virtual-bookshelf-client:${{ github.release.tag_name }}
+        run: docker push ghcr.io/truebabychaise/kikku:${{ github.event.release.tag_name }}
