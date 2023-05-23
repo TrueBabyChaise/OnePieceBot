@@ -24,9 +24,9 @@ export class ReadyEvent extends BaseEvent {
 		console.log(`Logged in as ${client.user?.tag}`);
 
 		let statusIndex = 0;
-		let { VERSION } = client.getKeys();
+		const { VERSION, BOT_NAME } = client.getKeys();
 		setInterval(() => {
-			const status = [`NeedName v${VERSION ? VERSION : '?'}}`, "Developped by Serena Satella"]; // You can change the status here
+			const status = [`${BOT_NAME ? BOT_NAME : "?"} v${VERSION ? VERSION : "?"}`, "Developped by Serena Satella"]; // You can change the status here
 			const activity = { 
 				type: ActivityType.Playing, 
 				name: status[statusIndex],
