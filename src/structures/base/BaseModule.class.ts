@@ -3,6 +3,7 @@ import { BaseCommand, BaseInteraction, BaseClient, BaseSlashCommand } from "@src
 import { Routes } from "discord.js";
 import fs from "fs";
 import { Exception } from "../exception/exception.class";
+import { log } from "console";
 
 /**
  * @description Base class for modules
@@ -198,9 +199,7 @@ export abstract class BaseModule {
 			if (!(interaction instanceof BaseSlashCommand)) continue;
 			registered.push(interaction.getName());
 			const match = alreadyAdded.find(i => i.name === interaction.getName());
-			/*console.log("--------------------")
-			console.log("Match", match)
-			console.log("--------------------")*/
+			await interaction.beforeRegistered(client);
 			const statusIsChanged = this.isChanged(interaction, match)
 			if (match && !statusIsChanged) {
 				console.log(`Interaction ${interaction.getName()} already added`);
@@ -211,11 +210,15 @@ export abstract class BaseModule {
 		}
 		
 		if (toRegister.length === 0) {
+			for (const [, interaction] of this.interactions) {
+				if (!(interaction instanceof BaseSlashCommand)) continue;
+				await interaction.afterRegistered(client);
+			}
 			console.log(`No slash commands to register for module ${this.name}`);
 			return {hasChanged, registered};
 		}
-		
 		console.table(toRegister)
+		
 		if (!guildId) {
 			for (const command of toRegister) {
 				await client.getBaseRest().post(
@@ -230,6 +233,10 @@ export abstract class BaseModule {
 					{ body: command }
 				)
 			}
+		}
+		for (const [, interaction] of this.interactions) {
+			if (!(interaction instanceof BaseSlashCommand)) continue;
+			await interaction.afterRegistered(client);
 		}
 		hasChanged = true;
 
@@ -296,6 +303,7 @@ export abstract class BaseModule {
 			if (option.type !== restOption.type) return 7;
 			if (option.required !== restOption.required && (option.required != false && restOption.required != undefined)) return 8;
 			if (option.choices == undefined && restOption.choices == undefined) {continue}
+			if (option.choices == undefined) return 9;
 			if (option.choices.length > 0 && restOption.choices === undefined) return 10;
 			if (option.choices.length !== restOption.choices.length) return 11;
 			for (const choice of option.choices) {

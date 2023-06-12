@@ -6,7 +6,10 @@ import databaseSynchronisation from "./structures/database/sync.db";
 import { DBConnection } from "./structures/database/dbConnection.db.class";
 import { TicketModule } from "./modules/Ticket.module";
 import { ModerationModule } from "./modules/Moderation.module";
-import { OnePieceRPModule } from "./modules/OnePieceRP.module";
+import { RolePlayingModule } from "./modules/RolePlaying.module";
+import { ShopModule } from "./modules/Shop.module";
+import { MoneyModule } from "./modules/Money.module";
+import { InventoryModule } from "./modules/Inventory.module";
 
 dotenv.config();
 
@@ -47,9 +50,12 @@ async function main() {
 		// Load modules
 		console.log("Loading modules...");
 		//baseClient.addModule(new GameModule());
-		baseClient.addModule(new TicketModule());
-		baseClient.addModule(new ModerationModule());
-		baseClient.addModule(new OnePieceRPModule());
+		//baseClient.addModule(new TicketModule());
+		//baseClient.addModule(new ModerationModule());
+		baseClient.addModule(new MoneyModule());
+		baseClient.addModule(new ShopModule());
+		baseClient.addModule(new RolePlayingModule());
+		baseClient.addModule(new InventoryModule());
 		await baseClient.loadModules();
 		// Load keys
 		console.log("Loading keys for commands...");

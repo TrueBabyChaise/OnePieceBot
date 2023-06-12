@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SlashCommandBuilder, ApplicationCommandOptionType, APIApplicationCommandOptionChoice } from "discord.js";
-import { BaseInteraction } from "@src/structures";
+import { SlashCommandBuilder, ApplicationCommandOptionType, APIApplicationCommandOptionChoice, Base } from "discord.js";
+import { BaseClient, BaseInteraction } from "@src/structures";
 
 export enum SlashCommandOptionType {
 	USER = ApplicationCommandOptionType.User,
@@ -24,12 +24,18 @@ export interface SlashCommandOptions {
  */
 export abstract class BaseSlashCommand extends BaseInteraction {
 	private slashCommand: SlashCommandBuilder;
+	private dmAllowed: boolean;
 
 	constructor(name: string, description: string, options?: SlashCommandOptions[], cooldown?: number, isEnabled?: boolean, permissions?: bigint[], dmAllowed?: boolean) {
 		super(name, description, options, cooldown, isEnabled, permissions);
 		const bitField = permissions?.reduce((a, b) => a | b, BigInt(0)) || BigInt(1);
-		
-		this.slashCommand = new SlashCommandBuilder()
+		this.dmAllowed = dmAllowed || false;
+
+		this.slashCommand = this.buildSlashCommand(dmAllowed || false, bitField, options || []);
+	}
+
+	private buildSlashCommand(dmAllowed: boolean, bitField: bigint, options: SlashCommandOptions[]): SlashCommandBuilder {
+		let newSlashCommand = new SlashCommandBuilder()
 			.setName(this.getName())
 			.setDescription(this.getDescription())
 			.setDMPermission(dmAllowed || false)
@@ -37,23 +43,23 @@ export abstract class BaseSlashCommand extends BaseInteraction {
 		for (const option of options || []) {
 			if (!option.choices) {
 				if (option.type == SlashCommandOptionType.STRING)
-					this.slashCommand.addStringOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
+					newSlashCommand.addStringOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
 				else if (option.type == SlashCommandOptionType.USER)
-					this.slashCommand.addUserOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
+					newSlashCommand.addUserOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
 				else if (option.type == SlashCommandOptionType.CHANNEL)
-					this.slashCommand.addChannelOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
+					newSlashCommand.addChannelOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
 				else if (option.type == SlashCommandOptionType.INTEGER)
-					this.slashCommand.addIntegerOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
+					newSlashCommand.addIntegerOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
 				else if (option.type == SlashCommandOptionType.ROLE)
-					this.slashCommand.addRoleOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
+					newSlashCommand.addRoleOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
 				else if (option.type == SlashCommandOptionType.BOOLEAN)
-					this.slashCommand.addBooleanOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
+					newSlashCommand.addBooleanOption(opt => opt.setName(option.name).setDescription(option.description).setRequired(option.required || false));
 			} else {
 				if (option.type == SlashCommandOptionType.STRING) {
 					for (const choice of option.choices)
 						if (typeof choice.value != "string")
 							throw new Error("Choices must be of type string or number!");
-					this.slashCommand.addStringOption(opt => 
+					newSlashCommand.addStringOption(opt => 
 						opt.setName(option.name).
 							setDescription(option.description).
 							setRequired(option.required || false).
@@ -66,7 +72,7 @@ export abstract class BaseSlashCommand extends BaseInteraction {
 					for (const choice of option.choices)
 						if (typeof choice.value != "number")
 							throw new Error("Choices must be of type string or number!");
-					this.slashCommand.addNumberOption(opt => 
+					newSlashCommand.addNumberOption(opt => 
 						opt.setName(option.name).
 							setDescription(option.description).
 							setRequired(option.required || false).
@@ -77,6 +83,7 @@ export abstract class BaseSlashCommand extends BaseInteraction {
 					throw new Error("Boolean options cannot have choices!");
 			}
 		}
+		return newSlashCommand;
 	}
 
 	/**
@@ -87,4 +94,98 @@ export abstract class BaseSlashCommand extends BaseInteraction {
 	public getSlashCommand(): SlashCommandBuilder {
 		return this.slashCommand;
 	}
+
+	/**
+	 * @description Add Choices to the SlashCommandBuilder
+	 * @param {APIApplicationCommandOptionChoice<string | number>[]} choices
+	 * @returns {void}
+	 */
+	public addChoices(choices: APIApplicationCommandOptionChoice<string | number>[], optionName: string): void {
+		if (this.slashCommand.options.length == 0) throw new Error("You cannot add choices to a command without options!");
+		for (let option of this.options)
+			if (option.name == optionName) {
+				for (const choice of choices) {
+					if (typeof choice.value != "string" && typeof choice.value != "number")
+						throw new Error("Choices must be of type string or number!");
+					if ((typeof choice.value == "number" && option.type != SlashCommandOptionType.INTEGER)
+						|| (typeof choice.value == "string" && option.type != SlashCommandOptionType.STRING))
+						throw new Error("Choices must fit the type of the option!");
+					if (option.type== SlashCommandOptionType.STRING) {
+						if (option.choices) option.choices.push(choice as APIApplicationCommandOptionChoice<string>);
+						else option.choices = [choice as APIApplicationCommandOptionChoice<string>];
+					}
+					else if (option.type == SlashCommandOptionType.INTEGER) {
+						if (option.choices) option.choices.push(choice as APIApplicationCommandOptionChoice<number>);
+						else option.choices = [choice as APIApplicationCommandOptionChoice<number>];
+					}
+				}
+		}
+		this.slashCommand = this.buildSlashCommand(this.dmAllowed || false, this.getPermissionValue(), this.getOptions() || []);
+	}
+
+	/**
+	 * @description Remove choices the SlashCommandBuilder
+	 * @param {APIApplicationCommandOptionChoice<string | number>[]} choices
+	 * @returns {void}
+	 *
+	 */
+	public removeChoices(choices: APIApplicationCommandOptionChoice<string | number>[], optionName: string): void {
+		if (this.slashCommand.options.length == 0) throw new Error("You cannot remove choices from a command without options!");
+		for (let option of this.options)
+			if (option.name == optionName) {
+				for (const choice of choices) {
+					if (typeof choice.value != "string" && typeof choice.value != "number")
+						throw new Error("Choices must be of type string or number!");
+					if ((typeof choice.value == "number" && option.type != SlashCommandOptionType.INTEGER)
+						|| (typeof choice.value == "string" && option.type != SlashCommandOptionType.STRING))
+						throw new Error("Choices must fit the type of the option!");
+					if (option.type== SlashCommandOptionType.STRING) {
+						if (option.choices) option.choices = option.choices.filter((c: APIApplicationCommandOptionChoice<string>) => c.name != choice.name);
+					}
+					else if (option.type == SlashCommandOptionType.INTEGER) {
+						if (option.choices) option.choices = option.choices.filter((c: APIApplicationCommandOptionChoice<number>) => c.name != choice.name);
+					}
+				}
+			}
+		this.slashCommand = this.buildSlashCommand(this.dmAllowed || false, this.getPermissionValue(), this.getOptions() || []);
+	}
+						 
+
+	
+	public async updateSlashCommand(client: BaseClient): Promise<void> {
+		this.slashCommand = this.buildSlashCommand(this.dmAllowed || false, this.getPermissionValue(), this.getOptions() || []);
+		let restSlashCommands = await client.getBaseRest().get(
+			`/applications/${client.getClientId()}/commands`,
+		) as unknown as any[];
+
+		if (restSlashCommands.length == 0) return;
+		if (restSlashCommands.find((command: any) => command.name == this.getName())) {
+			const command = restSlashCommands.find((command: any) => command.name == this.getName());
+			await client.getBaseRest().patch(
+				`/applications/${client.getClientId()}/commands/${command.id}`,
+				{ body: this.getSlashCommand().toJSON() },
+			);
+		}
+	}
+			
+	/**
+	 * @description Update the SlashCommandBuilder before registering
+	 * @param {SlashCommandBuilder} slashCommand
+	 * @returns {void}
+	 * @example
+	 */
+	public async beforeRegistered(client: BaseClient): Promise<void> {
+		return;
+	}
+
+	/**
+	 * @description Update the SlashCommandBuilder after registering
+	 * @param {BaseClient} client
+	 * @param {ChatInputCommandInteraction} interaction
+	 * @returns {Promise<void>}
+	 */
+	public async afterRegistered(client: BaseClient):  Promise<void> {
+		return;
+	}
+
 }

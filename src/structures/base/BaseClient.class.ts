@@ -2,6 +2,7 @@
 import { Client, REST } from "discord.js";
 import { BaseModule } from "@src/structures";
 import eventLoader from "@events/loader"
+import fs from "fs";
 
 /**
  * @description Base class for client
@@ -134,7 +135,11 @@ export class BaseClient extends Client {
 				) as any[];
 			}
 
-
+			if (!fs.existsSync("src/commands" + "/" + module.getName())) {
+				console.log("Folder", module.getName(), "does not exist");
+				console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+				continue;
+			}
 			await module.loadCommands("src/commands" + "/" + module.getName());
 			await module.loadSlashCommands("src/commands" + "/" + module.getName());
 			const result = await module.registerSlashCommands(this, restSlashCommands);
@@ -142,6 +147,7 @@ export class BaseClient extends Client {
 				registeredSlashCommand.push(slashCommand);
 			}
 			hasChanged = result.hasChanged;
+			
 			console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		}
 
