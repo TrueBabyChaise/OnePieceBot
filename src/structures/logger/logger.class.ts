@@ -5,6 +5,7 @@ export class LoggerEnum {
 	static INFO = "info";
 	static DEBUG = "debug";
 	static ERROR = "error";
+     static USER = "user";
 }
 
 /*
@@ -15,6 +16,7 @@ export class Logger {
 	static infoFile = "info.log";
 	static debugFile = "debug.log";
 	static errorFile = "error.log";
+     static userFile = "user.log";
 	static pathToLog = "./logs/";
 
 	/**

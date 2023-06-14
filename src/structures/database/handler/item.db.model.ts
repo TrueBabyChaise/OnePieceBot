@@ -21,11 +21,11 @@ export class ItemHandler {
         this.description = description ? description : "";
         this.price = price ? price : 0;
         this.stocks = stocks ? stocks : -1;
-        this.useable = useable ? useable : true;
-        this.sellable = sellable ? sellable : true;
+        this.useable = useable != null ? useable : true;
+        this.sellable = sellable != null ? sellable : true;
         this.image = image ? image : "";
         this.type = type ? type : "misc";
-        this.stockable = stockable ? stockable : true;
+        this.stockable = stockable != null ? stockable : true;
         this.special = special ? special : "";
     }
 

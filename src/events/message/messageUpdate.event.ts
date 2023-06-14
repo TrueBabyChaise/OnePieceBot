@@ -1,6 +1,6 @@
 import { Message,Events } from "discord.js";
 import { BaseEvent, BaseClient  } from "@src/structures";
-
+import { Logger, LoggerEnum } from "@src/structures/logger/logger.class";
 /**
  * @description MessageEdited event
  * @class MessageEditedEvent
@@ -23,8 +23,8 @@ export class MessageEditedEvent extends BaseEvent {
 		if (message.author && message.author.bot) return;
 
 		if (!message.author) {
-			console.log(`Message edited: ${message.content}, new content: ${args[0]}`);
+			Logger.logToFile(`Message edited: ${message.content}, new content: ${args[0]}`, LoggerEnum.USER);
 		} else
-			console.log(`Message edited: ${message.content}, new content: ${args[0]} by ${message.author.tag}`);
+			Logger.logToFile(`Message edited: ${message.content}, new content: ${args[0]} by ${message.author.tag}`, LoggerEnum.USER);
 	}
 }

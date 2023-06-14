@@ -1,6 +1,6 @@
 import { BaseSlashCommand, BaseClient, SlashCommandOptionType } from "@src/structures";
 import { ItemHandler } from "@src/structures/database/handler/item.db.model";
-import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, ButtonInteraction, Base } from "discord.js";
+import { ChatInputCommandInteraction, PermissionFlagsBits, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, ButtonInteraction, Base } from "discord.js";
 
 /**
  * @description ItemRemove command
@@ -28,7 +28,7 @@ export class ItemRemoveCommand extends BaseSlashCommand {
                 description: "The amount of the item",
                 type: SlashCommandOptionType.INTEGER,
             },
-        ], 0, true, []);
+        ], 0, true, [PermissionFlagsBits.ViewAuditLog]);
     }
 
     public async beforeRegistered(client: BaseClient): Promise<void> {
@@ -59,7 +59,7 @@ export class ItemRemoveCommand extends BaseSlashCommand {
         this.updateSlashCommand(client);
     }
 
-    public async AddDataStringSelect(data: [{ name: string, value: string }], optionName: string, client: BaseClient): Promise<void> {
+    public async addDataStringSelect(data: [{ name: string, value: string }], optionName: string, client: BaseClient): Promise<void> {
         this.addChoices(data, optionName);
         this.updateSlashCommand(client);
     }

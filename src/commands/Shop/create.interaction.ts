@@ -1,10 +1,12 @@
 import { BaseSlashCommand, BaseClient, SlashCommandOptionType } from "@src/structures";
 import { ItemHandler } from "@src/structures/database/handler/item.db.model";
-import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, ButtonInteraction } from "discord.js";
+import { ChatInputCommandInteraction, PermissionFlagsBits, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, ButtonInteraction } from "discord.js";
 import { ItemBuyCommand } from "./buy.interaction";
 import { ItemDestroyCommand } from "./destroy.interaction";
 import { ItemAddCommand } from "../Inventory/add.interaction";
 import { ItemRemoveCommand } from "../Inventory/remove.interaction";
+import { ItemEditCommand } from "./edit.interaction";
+import { ItemInfoCommand } from "./info.interaction";
 
 /**
  * @description ItemCreate command
@@ -60,7 +62,7 @@ export class ItemCreateCommand extends BaseSlashCommand {
                 description: "can the item be stocked",
                 type: SlashCommandOptionType.BOOLEAN,
             },
-        ], 0, true, []);
+        ], 0, true, [PermissionFlagsBits.Administrator]);
 	}
 
 	/**
@@ -120,21 +122,31 @@ export class ItemCreateCommand extends BaseSlashCommand {
         let tmp = client.getModules().get("Shop")?.getInteractions().get("item-buy");
         if (!tmp) return;
         let command = tmp as ItemBuyCommand;
-        await command.AddDataStringSelect([{name: name, value: name}], "name", client);
+        await command.addDataStringSelect([{name: name, value: name}], "name", client);
+
+        tmp = client.getModules().get("Shop")?.getInteractions().get("item-edit");
+        if (!tmp) return;
+        command = tmp as ItemEditCommand;
+        await command.addDataStringSelect([{name: name, value: name}], "item", client);
+
+        tmp = client.getModules().get("Shop")?.getInteractions().get("item-info");
+        if (!tmp) return;
+        command = tmp as ItemInfoCommand;
+        await command.addDataStringSelect([{name: name, value: name}], "name", client);
 
         tmp = client.getModules().get("Shop")?.getInteractions().get("item-destroy");
         if (!tmp) return;
         command = tmp as ItemDestroyCommand;
-        await command.AddDataStringSelect([{name: name, value: name}], "name", client);
+        await command.addDataStringSelect([{name: name, value: name}], "name", client);
 
         tmp = client.getModules().get("Inventory")?.getInteractions().get("item-add");
         if (!tmp) return;
         command = tmp as ItemAddCommand;
-        await command.AddDataStringSelect([{name: name, value: name}], "name", client);
+        await command.addDataStringSelect([{name: name, value: name}], "name", client);
 
         tmp = client.getModules().get("Inventory")?.getInteractions().get("item-remove");
         if (!tmp) return;
         command = tmp as ItemRemoveCommand;
-        await command.AddDataStringSelect([{name: name, value: name}], "name", client);
+        await command.addDataStringSelect([{name: name, value: name}], "name", client);
 	}
 }

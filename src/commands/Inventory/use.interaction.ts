@@ -8,20 +8,15 @@ import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonSty
  * @extends BaseSlashCommand
  */
 
-export class ItemAddCommand extends BaseSlashCommand {
+export class ItemUseCommand extends BaseSlashCommand {
     constructor() {
-        super("item-inventory-show", "Show an item of your inventory", [
+        super("item-use", "Use an item", [
             {
                 name: "name",
                 description: "The name of the item",
                 type: SlashCommandOptionType.STRING,
                 required: true,
             },
-            {
-                name: "private",
-                description: "Show the item privately",
-                type: SlashCommandOptionType.BOOLEAN,
-            }
         ], 0, true, []);
     }
 
@@ -34,7 +29,6 @@ export class ItemAddCommand extends BaseSlashCommand {
      */
     async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
         const name = interaction.options.getString("name", true);
-        const isPrivate = interaction.options.getBoolean("private", false);
 
         if (!name) {
             await interaction.reply({
@@ -66,28 +60,39 @@ export class ItemAddCommand extends BaseSlashCommand {
             return;
         }
 
+        if (!item.useable)
+        {
+            await interaction.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setTitle("Invalid item")
+                        .setDescription("You need to provide a useable item.")
+                        .setColor(Colors.Red)
+                        .setTimestamp()
+                ],
+                ephemeral: true,
+            });
+            return;
+        }
+
+        if (item.stocks != -1 && item.stocks < 1) {
+            await interaction.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setTitle("Not enough stocks")
+                        .setDescription(`There are not enough stocks for this item. You need ${1 - item.stocks} less.`)
+                        .setColor(Colors.Red)
+                        .setTimestamp()
+                ],
+                ephemeral: true,
+            });
+            return;
+        }
+
         const embed = new EmbedBuilder()
-            .setTitle(item.name)
-            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })
+            .setTitle(`Item used : **${item.name}**`)
             .setDescription(item.description)
-            .setColor(Colors.Blue)
-            .addFields(
-                {
-                    name: "Price",
-                    value: item.price == 0 ? "Free" : item.price.toString(),
-                    inline: true,
-                },
-                {
-                    name: "Useable",
-                    value: item.useable ? "Yes" : "No",
-                    inline: true,
-                },
-                {
-                    name: "Sellable",
-                    value: item.sellable ? "Yes" : "No",
-                    inline: true,
-                }
-            )
+            .setColor(Colors.Green)
             .setTimestamp();
         
         if (item.image.length > 0) {
@@ -97,7 +102,6 @@ export class ItemAddCommand extends BaseSlashCommand {
             embeds: [
                 embed
             ],              
-            ephemeral: isPrivate === null || isPrivate === true ? true : false,
         });
     }
 }

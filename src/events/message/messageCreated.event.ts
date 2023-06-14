@@ -55,6 +55,7 @@ export class MessageCreatedEvent extends BaseEvent {
 
 		// SKIP IF MESSAGE DOES NOT START WITH PREFIX
 		if (message.content.startsWith(client.getPrefix())) {
+			console.log(`Message ${message.content} received from ${message.author.tag}`);
 			const [commandName, ...args] = message.content.slice(client.getPrefix().length).trim().split(/ +/g);
 			for (const module of client.getModules().values()) {
 				if (!module.hasCommand(commandName) || !module.getCommand(commandName)) continue;
@@ -63,7 +64,6 @@ export class MessageCreatedEvent extends BaseEvent {
 				if (!command || !command.isEnabled()) continue;
 				if (command) {
 					try {
-						console.log(`Command ${commandName} executed by ${message.author.tag}`);
 						await command.execute(client, message, args);
 					} catch (error) {
 						console.error(error);

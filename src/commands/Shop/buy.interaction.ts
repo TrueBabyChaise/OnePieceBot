@@ -53,7 +53,7 @@ export class ItemBuyCommand extends BaseSlashCommand {
         this.updateSlashCommand(client);
     }
             
-    public async AddDataStringSelect(data: [{ name: string, value: string }], optionName: string, client: BaseClient): Promise<void> {
+    public async addDataStringSelect(data: [{ name: string, value: string }], optionName: string, client: BaseClient): Promise<void> {
         this.addChoices(data, optionName);
         this.updateSlashCommand(client);
     }

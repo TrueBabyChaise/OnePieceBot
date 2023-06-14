@@ -1,16 +1,16 @@
 import { BaseSlashCommand, BaseClient, SlashCommandOptionType } from "@src/structures";
 import { ItemHandler } from "@src/structures/database/handler/item.db.model";
-import { ChatInputCommandInteraction, PermissionFlagsBits, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, ButtonInteraction, Base } from "discord.js";
+import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, ButtonInteraction, Base } from "discord.js";
 
 /**
- * @description ItemBuy command
- * @class ItemBuy
+ * @description ItemInfo command
+ * @class ItemInfo
  * @extends BaseSlashCommand
  */
 
-export class ItemAddCommand extends BaseSlashCommand {
+export class ItemInfoCommand extends BaseSlashCommand {
     constructor() {
-        super("item-add", "Add an item", [
+        super("item-info", "Information on an item", [
             {
                 name: "name",
                 description: "The name of the item",
@@ -18,17 +18,11 @@ export class ItemAddCommand extends BaseSlashCommand {
                 required: true,
             },
             {
-                name: "target",
-                description: "The target of the item",
-                type: SlashCommandOptionType.USER,
-                required: true,
-            },
-            {
-                name: "amount",
-                description: "The amount of the item",
-                type: SlashCommandOptionType.INTEGER,
-            },
-        ], 0, true, [PermissionFlagsBits.ViewAuditLog]);
+                name: "private",
+                description: "Show the item privately",
+                type: SlashCommandOptionType.BOOLEAN,
+            }
+        ], 0, true, []);
     }
 
     public async beforeRegistered(client: BaseClient): Promise<void> {
@@ -58,7 +52,7 @@ export class ItemAddCommand extends BaseSlashCommand {
         this.addChoices(data, "name");
         this.updateSlashCommand(client);
     }
-
+            
     public async addDataStringSelect(data: [{ name: string, value: string }], optionName: string, client: BaseClient): Promise<void> {
         this.addChoices(data, optionName);
         this.updateSlashCommand(client);
@@ -78,10 +72,9 @@ export class ItemAddCommand extends BaseSlashCommand {
      */
     async execute(client: BaseClient, interaction: ChatInputCommandInteraction): Promise<void> {
         const name = interaction.options.getString("name", true);
-        const target = interaction.options.getUser("target", true);
-        const amount = interaction.options.getInteger("amount") || 1;
+        const isPrivate = interaction.options.getBoolean("private", false);
 
-        if (!name || !amount || amount < 1 || !target) {
+        if (!name) {
             await interaction.reply({
                 embeds: [
                     new EmbedBuilder()
@@ -95,7 +88,8 @@ export class ItemAddCommand extends BaseSlashCommand {
             return;
         }
 
-        const item = await ItemHandler.getItemByName(name);
+        const usersItems = await ItemHandler.getItemsOfUser(interaction.user.id);
+        const item = usersItems.find(i => i.name.toLowerCase() == name.toLowerCase());
         if (!item || !item.id) {
             await interaction.reply({
                 embeds: [
@@ -110,30 +104,37 @@ export class ItemAddCommand extends BaseSlashCommand {
             return;
         }
 
-        if (item.stocks != -1 && item.stocks < amount) {
-            await interaction.reply({
-                embeds: [
-                    new EmbedBuilder()
-                        .setTitle("Not enough stocks")
-                        .setDescription(`There are not enough stocks for this item. You need ${amount - item.stocks} less.`)
-                        .setColor(Colors.Red)
-                        .setTimestamp()
-                ],
-                ephemeral: true,
-            });
-            return;
+        const embed = new EmbedBuilder()
+            .setTitle(item.name)
+            .setDescription(item.description)
+            .setColor(Colors.Blue)
+            .addFields(
+                {
+                    name: "Price",
+                    value: item.price == 0 ? "Free" : item.price.toString(),
+                    inline: true,
+                },
+                {
+                    name: "Useable",
+                    value: item.useable ? "Yes" : "No",
+                    inline: true,
+                },
+                {
+                    name: "Sellable",
+                    value: item.sellable ? "Yes" : "No",
+                    inline: true,
+                }
+            )
+            .setTimestamp();
+        
+        if (item.image.length > 0) {
+            embed.setImage(item.image);
         }
-
-        ItemHandler.addItemToUser(interaction.user.id, item.id, amount);
         await interaction.reply({
             embeds: [
-                new EmbedBuilder()
-                    .setTitle("Item Added")
-                    .setDescription(`You have successfully added ${amount} ${item.name} to ${target.tag} inventory`)
-                    .setColor(Colors.Green)
-                    .setTimestamp(new Date())
-            ],
-            ephemeral: true,
+                embed
+            ],              
+            ephemeral: isPrivate === null || isPrivate === true ? true : false,
         });
     }
 }

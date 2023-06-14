@@ -10,6 +10,8 @@ services:
             MYSQL_PASSWORD: ${DB_PASS}
         ports:
             - 3306:3306
+        volumes:
+            - ./db:/var/lib/mysql
 
     bot:
         build: .
@@ -28,5 +30,6 @@ services:
             TENOR_API_KEY: ${TENOR_API_KEY}
         volumes:
             - ./src:/app/src
+            - ./logs:/app/logs
         depends_on:
             - db

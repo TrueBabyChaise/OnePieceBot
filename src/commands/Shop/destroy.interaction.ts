@@ -1,9 +1,11 @@
 import { BaseSlashCommand, BaseClient, SlashCommandOptionType } from "@src/structures";
 import { ItemHandler } from "@src/structures/database/handler/item.db.model";
-import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, ButtonInteraction, Base } from "discord.js";
+import { ChatInputCommandInteraction, PermissionFlagsBits, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, ButtonInteraction, Base } from "discord.js";
 import { ItemBuyCommand } from "./buy.interaction";
 import { ItemAddCommand } from "../Inventory/add.interaction";
 import { ItemRemoveCommand } from "../Inventory/remove.interaction";
+import { ItemEditCommand } from "./edit.interaction";
+import { ItemInfoCommand } from "./info.interaction";
 
 /**
  * @description ItemDestroy command
@@ -20,7 +22,7 @@ export class ItemDestroyCommand extends BaseSlashCommand {
                 type: SlashCommandOptionType.STRING,
                 required: true,
             },
-        ], 0, true, []);
+        ], 0, true, [PermissionFlagsBits.Administrator]);
     }
 
     public async beforeRegistered(client: BaseClient): Promise<void> {
@@ -51,7 +53,7 @@ export class ItemDestroyCommand extends BaseSlashCommand {
         this.updateSlashCommand(client);
     }
             
-    public async AddDataStringSelect(data: [{ name: string, value: string }], optionName: string, client: BaseClient): Promise<void> {
+    public async addDataStringSelect(data: [{ name: string, value: string }], optionName: string, client: BaseClient): Promise<void> {
         this.addChoices(data, optionName);
         this.updateSlashCommand(client);
     }
@@ -120,10 +122,21 @@ export class ItemDestroyCommand extends BaseSlashCommand {
         let command = tmp as ItemBuyCommand;
         await command.removeDataStringSelect([{name: name, value: name}], "name", client);
 
+        tmp = client.getModules().get("Shop")?.getInteractions().get("item-edit");
+        if (!tmp) return;
+        command = tmp as ItemEditCommand;
+        await command.removeDataStringSelect([{name: name, value: name}], "item", client);
+
         tmp = client.getModules().get("Shop")?.getInteractions().get("item-destroy");
         if (!tmp) return;
         command = tmp as ItemDestroyCommand;
         await command.removeDataStringSelect([{name: name, value: name}], "name", client);
+
+        tmp = client.getModules().get("Shop")?.getInteractions().get("item-info");
+        if (!tmp) return;
+        command = tmp as ItemInfoCommand
+        await command.removeDataStringSelect([{name: name, value: name}], "name", client);
+
 
         tmp = client.getModules().get("Inventory")?.getInteractions().get("item-add");
         if (!tmp) return;
@@ -134,7 +147,5 @@ export class ItemDestroyCommand extends BaseSlashCommand {
         if (!tmp) return;
         command = tmp as ItemRemoveCommand;
         await command.removeDataStringSelect([{name: name, value: name}], "name", client);
-
-       
     }
 }
