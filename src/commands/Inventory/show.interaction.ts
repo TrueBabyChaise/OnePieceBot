@@ -57,7 +57,7 @@ export class ItemAddCommand extends BaseSlashCommand {
                 embeds: [
                     new EmbedBuilder()
                         .setTitle("Invalid item")
-                        .setDescription("You need to provide a valid item.")
+                        .setDescription("You need to provide an item that you have.")
                         .setColor(Colors.Red)
                         .setTimestamp()
                 ],
@@ -72,6 +72,11 @@ export class ItemAddCommand extends BaseSlashCommand {
             .setDescription(item.description)
             .setColor(Colors.Blue)
             .addFields(
+                {
+                    name: "Amount",
+                    value: item.stocks.toString(),
+                    inline: true,
+                },
                 {
                     name: "Price",
                     value: item.price == 0 ? "Free" : item.price.toString(),

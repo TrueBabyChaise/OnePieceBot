@@ -208,6 +208,7 @@ export class ItemHandler {
         for (let i = 0; i < items.length; i++) {
             let tmp = await ItemHandler.getItem(items[i].fkItem);
             if (!tmp) continue;
+            tmp.stocks = items[i].get('quantity') as number;
             itemHandlers.push(tmp);
         }
 

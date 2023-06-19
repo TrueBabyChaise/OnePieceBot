@@ -1,5 +1,6 @@
 import { BaseSlashCommand, BaseClient, SlashCommandOptionType } from "@src/structures";
 import { ItemHandler } from "@src/structures/database/handler/item.db.model";
+import { AccountHandler } from "@src/structures/database/handler/money.handler.class";
 import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, ButtonInteraction, Base } from "discord.js";
 
 /**
@@ -105,7 +106,7 @@ export class ItemBuyCommand extends BaseSlashCommand {
         }
 
         const price = item.price * amount;
-        const user = { balance: 1000 }; // TODO: Get user from database
+        const user = await AccountHandler.getAccount(interaction.user.id);
         if (user.balance < price) {
             await interaction.reply({
                 embeds: [
@@ -133,7 +134,8 @@ export class ItemBuyCommand extends BaseSlashCommand {
             return;
         }
 
-        ItemHandler.addItemToUser(interaction.user.id, item.id, amount); // TODO: Add item to user in database
+        user.addBalance(-price);
+        ItemHandler.addItemToUser(interaction.user.id, item.id, amount);
         await interaction.reply({
             embeds: [
                 new EmbedBuilder()

@@ -167,7 +167,7 @@ export class AccountHandler {
         await InvoiceHandler.createInvoice(sender.id, receiver.id, amount, reason, "accepted");
     }
 
-    public async updateBalance(amount: number): Promise<void> {
+    public async addBalance(amount: number): Promise<void> {
         this.balance += amount;
         await this.update();
     }

@@ -88,8 +88,8 @@ export class ItemInfoCommand extends BaseSlashCommand {
             return;
         }
 
-        const usersItems = await ItemHandler.getItemsOfUser(interaction.user.id);
-        const item = usersItems.find(i => i.name.toLowerCase() == name.toLowerCase());
+        const items = await ItemHandler.getItems();
+        const item = items.find(i => i.name.toLowerCase() == name.toLowerCase());
         if (!item || !item.id) {
             await interaction.reply({
                 embeds: [
@@ -106,7 +106,7 @@ export class ItemInfoCommand extends BaseSlashCommand {
 
         const embed = new EmbedBuilder()
             .setTitle(item.name)
-            .setDescription(item.description)
+            .setDescription(item.description ? item.description : "This item has no description")
             .setColor(Colors.Blue)
             .addFields(
                 {
