@@ -1,4 +1,5 @@
 import { BaseSlashCommand, BaseClient, SlashCommandOptionType } from "@src/structures";
+import { BoatHandler, BoatStatusEnum } from "@src/structures/database/handler/boat.handler.class";
 import { ItemHandler } from "@src/structures/database/handler/item.db.model";
 import { AccountHandler } from "@src/structures/database/handler/money.handler.class";
 import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, ButtonInteraction, Base } from "discord.js";
@@ -134,7 +135,37 @@ export class ItemBuyCommand extends BaseSlashCommand {
             return;
         }
 
+        if (item.unique) {
+            const userItems = await ItemHandler.getItemsOfUser(interaction.user.id);
+            const userItem = userItems.find((userItem) => userItem.id == item.id);
+            if (userItem && userItem.stocks >= 1) {
+                await interaction.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setTitle("Item is unique")
+                            .setDescription(`You already have this item.`)
+                            .setColor(Colors.Red)
+                            .setTimestamp()
+                    ],
+                    ephemeral: true,
+                });
+                return;
+            }
+        }
+
         user.addBalance(-price);
+        if (item.type == "boat") {
+            await BoatHandler.createBoat(
+                item.name,
+                "",
+                1,
+                false,
+                100,
+                "",
+                BoatStatusEnum.WORKING,
+                interaction.user.id,
+            )
+        }
         ItemHandler.addItemToUser(interaction.user.id, item.id, amount);
         await interaction.reply({
             embeds: [

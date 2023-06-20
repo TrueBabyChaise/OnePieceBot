@@ -10,12 +10,12 @@ export class ItemHandler {
     public sellable: boolean;
     public image: string;
     public type: string;
-    public stockable: boolean;
+    public unique: boolean;
     public special: string;
 
     constructor(name: string, description: string | null = "", price: number | null = 0, stocks: number | null = -1, 
                 useable: boolean | null = true, sellable: boolean | null = true, image: string | null = "", 
-                type: string | null = "misc", stockable: boolean | null = true, special: string | null = "") {
+                type: string | null = "misc", unique: boolean | null = true, special: string | null = "") {
         this._id = null;
         this.name = name;
         this.description = description ? description : "";
@@ -23,9 +23,10 @@ export class ItemHandler {
         this.stocks = stocks ? stocks : -1;
         this.useable = useable != null ? useable : true;
         this.sellable = sellable != null ? sellable : true;
+        this.unique = unique != null ? unique : true;
         this.image = image ? image : "";
         this.type = type ? type : "misc";
-        this.stockable = stockable != null ? stockable : true;
+        this.unique = unique != null ? unique : true;
         this.special = special ? special : "";
     }
 
@@ -44,7 +45,7 @@ export class ItemHandler {
             sellable: this.sellable,
             image: this.image,
             type: this.type,
-            stockable: this.stockable,
+            unique: this.unique,
             special: this.special,
         });
     }
@@ -59,7 +60,7 @@ export class ItemHandler {
             sellable: this.sellable,
             image: this.image,
             type: this.type,
-            stockable: this.stockable,
+            unique: this.unique,
             special: this.special,
         }, {
             where: {
@@ -89,7 +90,7 @@ export class ItemHandler {
         });
 
         if (!item) return null;
-        let tmp = new ItemHandler(item.name, item.description, item.price, item.stocks, item.useable, item.sellable, item.image, item.type, item.stockable, item.special);
+        let tmp = new ItemHandler(item.name, item.description, item.price, item.stocks, item.useable, item.sellable, item.image, item.type, item.unique, item.special);
         tmp._id = item.id;
         return tmp;
     }
@@ -100,7 +101,7 @@ export class ItemHandler {
         const itemHandlers: ItemHandler[] = [];
 
         for (let i = 0; i < items.length; i++) {
-            let tmp = new ItemHandler(items[i].name, items[i].description, items[i].price, items[i].stocks, items[i].useable, items[i].sellable, items[i].image, items[i].type, items[i].stockable, items[i].special);
+            let tmp = new ItemHandler(items[i].name, items[i].description, items[i].price, items[i].stocks, items[i].useable, items[i].sellable, items[i].image, items[i].type, items[i].unique, items[i].special);
             tmp._id = items[i].id;
             itemHandlers.push(tmp);
         }
@@ -118,7 +119,7 @@ export class ItemHandler {
         const itemHandlers: ItemHandler[] = [];
 
         for (let i = 0; i < items.length; i++) {
-            let tmp = new ItemHandler(items[i].name, items[i].description, items[i].price, items[i].stocks, items[i].useable, items[i].sellable, items[i].image, items[i].type, items[i].stockable, items[i].special);
+            let tmp = new ItemHandler(items[i].name, items[i].description, items[i].price, items[i].stocks, items[i].useable, items[i].sellable, items[i].image, items[i].type, items[i].unique, items[i].special);
             tmp._id = items[i].id;
             itemHandlers.push(tmp);
         }
@@ -135,7 +136,7 @@ export class ItemHandler {
 
         if (!item) return null;
 
-        const itemHandler = new ItemHandler(item.name, item.description, item.price, item.stocks, item.useable, item.sellable, item.image, item.type, item.stockable, item.special);
+        const itemHandler = new ItemHandler(item.name, item.description, item.price, item.stocks, item.useable, item.sellable, item.image, item.type, item.unique, item.special);
         itemHandler._id = item.id;
         return itemHandler;
     }
@@ -150,7 +151,7 @@ export class ItemHandler {
         const itemHandlers: ItemHandler[] = [];
 
         for (let i = 0; i < items.length; i++) {
-            let tmp = new ItemHandler(items[i].name, items[i].description, items[i].price, items[i].stocks, items[i].useable, items[i].sellable, items[i].image, items[i].type, items[i].stockable, items[i].special);
+            let tmp = new ItemHandler(items[i].name, items[i].description, items[i].price, items[i].stocks, items[i].useable, items[i].sellable, items[i].image, items[i].type, items[i].unique, items[i].special);
             tmp._id = items[i].id;
             itemHandlers.push(tmp);
         }

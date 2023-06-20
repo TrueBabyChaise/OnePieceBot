@@ -39,9 +39,9 @@ export const ItemModel = sequelize.define(
             type: Sequelize.STRING,
             defaultValue: "misc",
         },
-        stockable: {
+        unique: {
             type: Sequelize.BOOLEAN,
-            defaultValue: true,
+            defaultValue: false,
         },
         special: {
             type: Sequelize.STRING,

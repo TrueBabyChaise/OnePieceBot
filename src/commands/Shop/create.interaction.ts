@@ -58,8 +58,8 @@ export class ItemCreateCommand extends BaseSlashCommand {
                 type: SlashCommandOptionType.STRING,
             },
             {
-                name: "stockable",
-                description: "can the item be stocked",
+                name: "unique",
+                description: "Is the item unique",
                 type: SlashCommandOptionType.BOOLEAN,
             },
         ], 0, true, [PermissionFlagsBits.Administrator]);
@@ -80,7 +80,7 @@ export class ItemCreateCommand extends BaseSlashCommand {
         const sellable = interaction.options.getBoolean("sellable", false);
         const image = interaction.options.getString("image", false);
         const type = interaction.options.getString("type", false);
-        const stockable = interaction.options.getBoolean("stockable", false);
+        const unique = interaction.options.getBoolean("unique", false);
 
         if ((await ItemHandler.getItemsByName(name)).length > 0) {
             await interaction.reply({
@@ -90,7 +90,7 @@ export class ItemCreateCommand extends BaseSlashCommand {
             return;
         }
 
-        const item = new ItemHandler(name, description, price, stocks, useable, sellable, image, type, stockable);
+        const item = new ItemHandler(name, description, price, stocks, useable, sellable, image, type, unique);
         await item.save();
 
         let fields = [];
@@ -102,7 +102,7 @@ export class ItemCreateCommand extends BaseSlashCommand {
         useable ? fields.push({name: "Useable", value: "Yes", inline: true}) : fields.push({name: "Useable", value: "No", inline: true});
         sellable ? fields.push({name: "Sellable", value: "Yes", inline: true}) : fields.push({name: "Sellable", value: "No", inline: true});
         // image ? fields.push({name: "Image", value: image, inline: true}) : fields.push({name: "Image", value: "No image", inline: true});
-        stockable ? fields.push({name: "Stockable", value: "Yes", inline: true}) : fields.push({name: "Stockable", value: "No", inline: true});
+        unique ? fields.push({name: "Unique", value: "Yes", inline: true}) : fields.push({name: "Unique", value: "No", inline: true});
 
         const embed = new EmbedBuilder()
             .setTitle("Item created")

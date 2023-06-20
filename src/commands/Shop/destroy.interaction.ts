@@ -6,7 +6,7 @@ import { ItemAddCommand } from "../Inventory/add.interaction";
 import { ItemRemoveCommand } from "../Inventory/remove.interaction";
 import { ItemEditCommand } from "./edit.interaction";
 import { ItemInfoCommand } from "./info.interaction";
-
+import { BoatHandler } from "@src/structures/database/handler/boat.handler.class";
 /**
  * @description ItemDestroy command
  * @class ItemDestroy
@@ -104,8 +104,11 @@ export class ItemDestroyCommand extends BaseSlashCommand {
         }
 
         
+        if (item.type == "boat") {
+            await BoatHandler.deleteBoat(item.name);
+        }
         await item.delete();
-
+        
         await interaction.reply({
             embeds: [
                 new EmbedBuilder()

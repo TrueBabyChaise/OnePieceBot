@@ -5,6 +5,7 @@ import { TicketModel, UserTicketModel, GuildTicketModel } from "./models/ticket.
 import { PanelTicketModel } from "./models/panelTicket.db.model";
 import { ItemModel, ItemUserModel } from "./models/item.db.model";
 import { AccountModel, InvoiceModel } from "./models/account.db.model";
+import { BoatModel } from "./models/boat.db.model";
 
 export default async function databaseSynchronisation(): Promise<void> {
 	const sequelize = DBConnection.getInstance().sequelize;
@@ -19,6 +20,7 @@ export default async function databaseSynchronisation(): Promise<void> {
 	await ItemUserModel.sync();
 	await AccountModel.sync();
 	await InvoiceModel.sync();
+	await BoatModel.sync();
 	await sequelize.sync();
 
 }

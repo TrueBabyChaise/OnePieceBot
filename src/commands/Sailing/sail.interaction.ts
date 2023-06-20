@@ -2,6 +2,7 @@ import { BaseSlashCommand, BaseClient, SlashCommandOptionType } from "@src/struc
 import { ItemHandler } from "@src/structures/database/handler/item.db.model";
 import { AccountHandler } from "@src/structures/database/handler/money.handler.class";
 import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Colors, ButtonInteraction, Base } from "discord.js";
+import { BoatHandler } from "@src/structures/database/handler/boat.handler.class";
 
 /**
  * @description Sail command
@@ -45,8 +46,8 @@ export class SailCommand extends BaseSlashCommand {
             });
             return
         }
-        const items = await ItemHandler.getItems();
-        const item = items.find((item) => item.name == boat);
+        const boats = await BoatHandler.getBoatByUser(interaction.user.id);
+        const item = boats.find(i => i.name.toLowerCase() == boat.toLowerCase());
         if (!item) {
             await interaction.reply({
                 content: "You must provide a valid boat",
@@ -55,9 +56,8 @@ export class SailCommand extends BaseSlashCommand {
             return
         }
 
-
-        
-        
+        // TODO Sail    
+    
         const embed = new EmbedBuilder()
             .setColor(Colors.Blue)
             .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL()})
